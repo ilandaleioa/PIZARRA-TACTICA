@@ -690,10 +690,18 @@ function openPlayerModal(playerId, posKey) {
     btn.classList.toggle('active', btn.dataset.pos === posKey)
   );
 
-  const preview = document.getElementById('modal-photo-preview');
-  const photo   = playerPhotos[playerId] || player.photo || null;
-  if (photo) { preview.src = photo; preview.style.display = 'block'; }
-  else        { preview.src = '';    preview.style.display = 'none';  }
+  const preview     = document.getElementById('modal-photo-preview');
+  const placeholder = document.getElementById('modal-photo-placeholder');
+  const photo       = playerPhotos[playerId] || player.photo || null;
+  if (photo) {
+    preview.src          = photo;
+    preview.style.display    = 'block';
+    placeholder.style.display = 'none';
+  } else {
+    preview.src          = '';
+    preview.style.display    = 'none';
+    placeholder.style.display = 'flex';
+  }
 
   document.getElementById('modal-photo-input').value = '';
   document.getElementById('player-modal-overlay').classList.remove('hidden');
@@ -719,9 +727,11 @@ function previewModalPhoto(e) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    const preview = document.getElementById('modal-photo-preview');
-    preview.src = ev.target.result;
-    preview.style.display = 'block';
+    const preview     = document.getElementById('modal-photo-preview');
+    const placeholder = document.getElementById('modal-photo-placeholder');
+    preview.src           = ev.target.result;
+    preview.style.display     = 'block';
+    placeholder.style.display = 'none';
   };
   reader.readAsDataURL(file);
 }

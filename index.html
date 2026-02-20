@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
 
@@ -230,6 +230,19 @@
   <div class="player-modal">
     <h3>PERFIL DEL JUGADOR</h3>
 
+    <!-- FOTO HERO -->
+    <div class="modal-photo-hero" onclick="document.getElementById('modal-photo-input').click()" title="Haz clic para cambiar la foto">
+      <img id="modal-photo-preview" src="" alt="Foto jugador" />
+      <div class="modal-photo-placeholder" id="modal-photo-placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="modal-placeholder-icon">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+        </svg>
+        <span>AÑADIR FOTO</span>
+      </div>
+      <div class="modal-photo-change-overlay">&#128247; CAMBIAR FOTO</div>
+    </div>
+    <input type="file" id="modal-photo-input" accept="image/*" onchange="previewModalPhoto(event)" style="display:none" />
+
     <div class="modal-fields">
       <div class="modal-field" style="width:80px">
         <label>DORSAL</label>
@@ -253,12 +266,6 @@
       <button class="modal-pos-btn" data-pos="delantero" onclick="setModalPos('delantero')">DELANTERO</button>
     </div>
 
-    <div class="modal-photo-section">
-      <label>SUBIR FOTO</label>
-      <img id="modal-photo-preview" src="" alt="Foto jugador" />
-      <input type="file" id="modal-photo-input" accept="image/*" onchange="previewModalPhoto(event)" />
-    </div>
-
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closePlayerModal()">CANCELAR</button>
       <button class="modal-btn save"   onclick="savePlayerModal()">GUARDAR</button>
@@ -266,6 +273,6 @@
   </div>
 </div>
 
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
