@@ -729,7 +729,7 @@ html, body {
     ),
     #0f3d0f;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 0 40px rgba(0,0,0,.7);
 }
 

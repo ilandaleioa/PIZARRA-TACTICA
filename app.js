@@ -430,58 +430,39 @@ function renderPlayers() {
 
 // ─── DRAG ────────────────────────────────────
 
-// Calcula los límites en Y para un jugador según su posición en el campo.
-// Los jugadores en zona atacante no pueden atravesar la línea defensiva propia.
+// Calcula los límites en Y para un jugador según su posición relativa al resto.
+// Ningún jugador (salvo GK) puede cruzar a un compañero que esté actualmente detrás de él.
+// Esto garantiza que los delanteros NUNCA puedan quedar detrás de los defensas,
+// independientemente de la posición actual del token.
 function computeYLimits(playerData) {
   const isGK = playerData.jersey === 1;
   if (isGK) return { yMin: 1, yMax: 99 };
 
   const team = playerData.team;
+  // Todos los compañeros de campo (sin GK, sin el propio jugador)
   const teammates = state.players.filter(p => p.team === team && p.jersey !== 1 && p.id !== playerData.id);
-  const rivals    = state.players.filter(p => p.team !== team && p.jersey !== 1);
 
   if (team === 'my') {
-    // Mi equipo ataca hacia arriba (y pequeño). Delanteros/atacantes tienen y < 50.
-    if (playerData.y <= 52) {
-      let yMax = 99;
-
-      // Restricción 1: no puede pasar la línea defensiva PROPIA
-      const ownDefs = teammates.filter(p => p.y > 52);
-      if (ownDefs.length > 0) {
-        yMax = Math.min(yMax, Math.min(...ownDefs.map(p => p.y)) - 3);
-      }
-
-      // Restricción 2: no puede quedar por detrás de la línea defensiva RIVAL
-      const rivalDefPlayers = rivals.filter(p => p.y < 50);
-      if (rivalDefPlayers.length > 0) {
-        const rivalDefLine = Math.max(...rivalDefPlayers.map(p => p.y));
-        yMax = Math.min(yMax, rivalDefLine - 3);
-      }
-
-      return { yMin: 1, yMax };
+    // Mi equipo ataca hacia arriba: menor y = más adelantado.
+    // Este jugador no puede superar (hacia atrás = mayor y) a ningún compañero
+    // que esté actualmente detrás de él.
+    const behind = teammates.filter(p => p.y >= playerData.y + 3);
+    let yMax = 95;
+    if (behind.length > 0) {
+      yMax = Math.min(yMax, Math.min(...behind.map(p => p.y)) - 3);
     }
+    return { yMin: 1, yMax };
   } else {
-    // Rival ataca hacia abajo (y grande). Delanteros/atacantes tienen y > 50.
-    if (playerData.y >= 48) {
-      let yMin = 1;
-
-      // Restricción 1: no puede pasar la línea defensiva PROPIA
-      const ownDefs = teammates.filter(p => p.y < 48);
-      if (ownDefs.length > 0) {
-        yMin = Math.max(yMin, Math.max(...ownDefs.map(p => p.y)) + 3);
-      }
-
-      // Restricción 2: no puede quedar por detrás de la línea defensiva RIVAL
-      const myDefPlayers = rivals.filter(p => p.y > 50);
-      if (myDefPlayers.length > 0) {
-        const myDefLine = Math.min(...myDefPlayers.map(p => p.y));
-        yMin = Math.max(yMin, myDefLine + 3);
-      }
-
-      return { yMin, yMax: 99 };
+    // Rival ataca hacia abajo: mayor y = más adelantado.
+    // Este jugador no puede superar (hacia atrás = menor y) a ningún compañero
+    // que esté actualmente por delante de él.
+    const ahead = teammates.filter(p => p.y <= playerData.y - 3);
+    let yMin = 5;
+    if (ahead.length > 0) {
+      yMin = Math.max(yMin, Math.max(...ahead.map(p => p.y)) + 3);
     }
+    return { yMin, yMax: 99 };
   }
-  return { yMin: 1, yMax: 99 };
 }
 
 function makeDraggable(el, playerData) {
@@ -697,6 +678,14 @@ function assignPlayer(player, posKey) {
   selectedTokenId = null;
   updateAssignHint();
   renderPlayerList();
+
+  // En móvil: cerrar la vista plantilla y volver al campo
+  if (window.innerWidth <= 768) {
+    const pv = document.getElementById('plantilla-view');
+    if (pv && !pv.classList.contains('hidden')) {
+      closeMobilePanels();
+    }
+  }
 }
 
 // ─── PHOTO MODE ──────────────────────────────
