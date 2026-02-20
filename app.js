@@ -86,30 +86,58 @@ const SQUAD = {
 const FORMATIONS = {
   '4-4-2': {
     my: [
-      [50,  90],            // 1 GK
-      [18,  72], [38, 72], [62, 72], [82, 72], // 2-5 DEF
-      [18,  52], [38, 52], [62, 52], [82, 52], // 6-9 MID
-      [35,  32], [65, 32],                      // 10-11 FWD
+      [50,  90],  // 1 GK
+      [82,  60],  // 2 Lat Der
+      [13,  60],  // 3 Lat Izq
+      [35,  72],  // 4 Central Izq
+      [60,  72],  // 5 Central Der
+      [34,  53],  // 6 Medio centro
+      [82,  38],  // 7 Extremo Der
+      [58,  53],  // 8 Medio centro
+      [37,  25],  // 9 Delantero Izq
+      [58,  25],  // 10 Delantero Der
+      [10,  38],  // 11 Extremo Izq
     ],
     rival: [
-      [50,  10],
-      [18,  28], [38, 28], [62, 28], [82, 28],
-      [18,  48], [38, 48], [62, 48], [82, 48],
-      [35,  68], [65, 68],
+      [50,  10],  // 1 GK
+      [82,  40],  // 2 Lat Der
+      [13,  40],  // 3 Lat Izq
+      [35,  28],  // 4 Central Izq
+      [60,  28],  // 5 Central Der
+      [34,  47],  // 6 Medio centro
+      [82,  62],  // 7 Extremo Der
+      [58,  47],  // 8 Medio centro
+      [37,  75],  // 9 Delantero Izq
+      [58,  75],  // 10 Delantero Der
+      [10,  62],  // 11 Extremo Izq
     ]
   },
   '4-3-3': {
     my: [
-      [50,  90],
-      [18,  72], [38, 72], [62, 72], [82, 72],
-      [28,  52], [50, 52], [72, 52],
-      [20,  30], [50, 28], [80, 30],
+      [50,  90],  // 1 GK
+      [83,  55],  // 2 Lat Der
+      [8,   55],  // 3 Lat Izq
+      [36,  68],  // 4 Central Izq
+      [60,  68],  // 5 Central Der
+      [48,  53],  // 6 Medio centro
+      [83,  17],  // 7 Extremo Der
+      [68,  38],  // 8 Medio Der
+      [48,  13],  // 9 Delantero Centro
+      [27,  38],  // 10 Medio Izq
+      [8,   17],  // 11 Extremo Izq
     ],
     rival: [
-      [50, 10],
-      [18, 28], [38, 28], [62, 28], [82, 28],
-      [28, 48], [50, 48], [72, 48],
-      [20, 70], [50, 72], [80, 70],
+      [50,  10],  // 1 GK
+      [83,  45],  // 2 Lat Der
+      [8,   45],  // 3 Lat Izq
+      [36,  32],  // 4 Central Izq
+      [60,  32],  // 5 Central Der
+      [48,  47],  // 6 Medio centro
+      [83,  83],  // 7 Extremo Der
+      [68,  62],  // 8 Medio Der
+      [48,  87],  // 9 Delantero Centro
+      [27,  62],  // 10 Medio Izq
+      [8,   83],  // 11 Extremo Izq
     ]
   },
   '4-2-3-1': {
