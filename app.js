@@ -923,7 +923,7 @@ function playAnimation() {
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
-  let i = 0;
+  let i = state.currentSlide;
   animInterval = setInterval(() => {
     if (i >= total) {
       clearInterval(animInterval);
