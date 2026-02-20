@@ -7,15 +7,16 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="styles.css?v=13" />
+  <link rel="stylesheet" href="styles.css?v=14" />
 </head>
 <body>
 
 <!-- ═══════════════════════  TOP NAV  ═══════════════════════ -->
 <header class="topnav">
   <div class="topnav-logo">
-    <div class="nav-logo-wrap" title="Haz clic para cambiar el logo" onclick="document.getElementById('nav-logo-input').click()">
-      <img id="nav-logo-img" src="" alt="Escudo" />
+    <div class="nav-logo-wrap" title="Haz clic para subir el escudo" onclick="document.getElementById('nav-logo-input').click()">
+      <img id="nav-logo-img" src="" alt="" style="display:none" onerror="this.style.display='none'" />
+      <span id="nav-logo-placeholder" title="Subir escudo">&#128247;</span>
     </div>
     <input type="file" id="nav-logo-input" accept="image/*" style="display:none" onchange="loadNavLogo(event)" />
     <div class="logo-texts">

@@ -292,14 +292,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initNavLogo() {
-  const img  = document.getElementById('nav-logo-img');
-  const wrap = img ? img.closest('.nav-logo-wrap') : null;
+  const img         = document.getElementById('nav-logo-img');
+  const placeholder = document.getElementById('nav-logo-placeholder');
+  const wrap        = img ? img.closest('.nav-logo-wrap') : null;
   if (!img || !wrap) return;
   const saved = localStorage.getItem('ac-nav-logo');
-  const src = saved || 'escudo.png';
-  img.src = src;
-  img.classList.add('loaded');
-  wrap.classList.add('has-logo');
+  if (saved) {
+    img.src = saved;
+    img.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+    wrap.classList.add('has-logo');
+  }
 }
 
 function loadNavLogo(event) {
@@ -307,10 +310,12 @@ function loadNavLogo(event) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    const img  = document.getElementById('nav-logo-img');
-    const wrap = img.closest('.nav-logo-wrap');
+    const img         = document.getElementById('nav-logo-img');
+    const placeholder = document.getElementById('nav-logo-placeholder');
+    const wrap        = img.closest('.nav-logo-wrap');
     img.src = e.target.result;
-    img.classList.add('loaded');
+    img.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
     wrap.classList.add('has-logo');
     try { localStorage.setItem('ac-nav-logo', e.target.result); } catch(err) {}
   };

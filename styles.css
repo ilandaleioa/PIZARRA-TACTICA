@@ -60,9 +60,17 @@ html, body {
   justify-content: center;
   border-radius: 4px;
   overflow: hidden;
-  transition: opacity .2s;
+  border: 1px dashed var(--border);
+  transition: opacity .2s, border-color .2s;
 }
-.nav-logo-wrap:hover { opacity: 0.8; }
+.nav-logo-wrap:hover { opacity: 0.8; border-color: var(--accent); }
+.nav-logo-wrap.has-logo { border: none; }
+
+#nav-logo-placeholder {
+  font-size: 22px;
+  opacity: 0.4;
+  pointer-events: none;
+}
 
 #nav-logo-img {
   width: 100%;
