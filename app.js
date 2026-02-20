@@ -335,6 +335,8 @@ function initState() {
     state.players.push({ id: `my-${i}`,    team: 'my',    jersey: i + 1, x: myPos[i][0],    y: myPos[i][1],    name: '', abbr: '' });
     state.players.push({ id: `rival-${i}`, team: 'rival', jersey: i + 1, x: rivalPos[i][0], y: rivalPos[i][1], name: '', abbr: '' });
   }
+  // Balón por defecto a los pies del portero de mi equipo
+  state.ball = { x: myPos[0][0], y: myPos[0][1] };
   // Populate slide 0 with initial positions
   state.slides[0] = {
     players: JSON.parse(JSON.stringify(state.players)),
@@ -915,6 +917,7 @@ function resetBoard() {
   initState();
   renderPlayers();
   renderPlayerList();
+  applyBallPosition();
 }
 
 // ─── SLIDES ──────────────────────────────────
