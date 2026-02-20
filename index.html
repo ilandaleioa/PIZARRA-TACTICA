@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="styles.css?v=19" />
+  <link rel="stylesheet" href="styles.css?v=20" />
 </head>
 <body>
 
@@ -102,6 +102,9 @@
       <div class="action-row">
         <button class="action-btn secondary" onclick="undo()">&#8617; <span data-i18n="deshacer">DESHACER</span></button>
         <button class="action-btn secondary" onclick="share()">&#10143; <span data-i18n="compartir">COMPARTIR</span></button>
+      </div>
+      <div class="action-row">
+        <button class="action-btn full" id="btn-photo-mode" onclick="togglePhotoMode()" title="Mostrar fotos de jugadores">&#128100; <span>FOTOS JUGADORES</span></button>
       </div>
       <div class="action-row">
         <button class="action-btn danger full" onclick="resetBoard()">&#9632; <span data-i18n="resetear">RESETEAR</span></button>
@@ -275,7 +278,7 @@
   </div>
 </div>
 
-<script src="app.js?v=101"></script><script>
+<script src="app.js?v=102"></script><script>
 (function() {
   function initBall() {
     var ball = document.getElementById('ball-token');

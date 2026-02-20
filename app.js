@@ -261,9 +261,10 @@ let state = {
   rivalFormation: '1-4-4-2',
   slides: [null],   // will be populated
   currentSlide: 0,
-  players: [],      // { id, team, jersey, x, y, name, abbr }
+  players: [],      // { id, team, jersey, x, y, name, abbr, photo }
   assignedPlayers: {},  // jerseyKey -> squad player id
   ball: { x: 50, y: 50 },     // balón
+  photoMode: false, // mostrar fotos de jugadores en los tokens
 };
 
 let history = [];   // undo stack
@@ -387,7 +388,8 @@ function renderPlayers() {
   container.innerHTML = '';
   state.players.forEach(p => {
     const el = document.createElement('div');
-    el.className = 'player-token' + (p.name ? ' has-player' : '');
+    const usePhoto = state.photoMode && p.name && p.photo;
+    el.className = 'player-token' + (p.name ? ' has-player' : '') + (usePhoto ? ' photo-mode' : '');
     el.id = 'token-' + p.id;
     el.style.left = p.x + '%';
     el.style.top  = p.y + '%';
@@ -395,11 +397,13 @@ function renderPlayers() {
     const isMyGK    = p.team === 'my'    && p.jersey === 1;
     const isRivalGK = p.team === 'rival' && p.jersey === 1;
     const color = isMyGK ? GK_COLOR : isRivalGK ? RIVAL_GK_COLOR : (p.team === 'my' ? state.myColor : state.rivalColor);
-    el.style.background = color;
-    el.style.border = `2px solid ${(isMyGK || isRivalGK) ? '#555' : lighten(color, 40)}`;
+    el.style.background = usePhoto ? 'transparent' : color;
+    el.style.border = `2px solid ${usePhoto ? lighten(color, 40) : (isMyGK || isRivalGK) ? '#555' : lighten(color, 40)}`;
     el.style.color = isLight(color) ? '#111' : '#fff';
 
-    if (p.name) {
+    if (usePhoto) {
+      el.innerHTML = `<div class="token-photo-wrap"><img class="token-photo" src="${p.photo}" onerror="this.parentElement.style.display='none'"></div><span class="dorsal-badge">${p.dorsal || p.jersey}</span><span class="token-name-label">${p.name}</span>`;
+    } else if (p.name) {
       el.innerHTML = `<span class="jersey-num">${p.dorsal || p.jersey}</span><span class="token-initials">${p.name}</span>`;
     } else {
       el.textContent = p.jersey;
@@ -667,13 +671,22 @@ function assignPlayer(player, posKey) {
   slot.name   = player.name;
   slot.abbr   = player.abbr;
   slot.dorsal = player.dorsal;
+  slot.photo  = player.photo;
   state.assignedPlayers[slot.id] = player.id;
 
   const el = document.getElementById('token-' + slot.id);
   if (el) {
     el.classList.add('has-player');
     el.classList.remove('selected');
-    el.innerHTML = `<span class="jersey-num">${player.dorsal}</span><span class="token-initials">${slot.name}</span>`;
+    const usePhotoNow = state.photoMode && !!player.photo;
+    el.classList.toggle('photo-mode', usePhotoNow);
+    if (usePhotoNow) {
+      el.style.background = 'transparent';
+      el.innerHTML = `<div class="token-photo-wrap"><img class="token-photo" src="${player.photo}" onerror="this.parentElement.style.display='none'"></div><span class="dorsal-badge">${player.dorsal}</span><span class="token-name-label">${slot.name}</span>`;
+    } else {
+      el.style.background = '';
+      el.innerHTML = `<span class="jersey-num">${player.dorsal}</span><span class="token-initials">${slot.name}</span>`;
+    }
     el.style.color = isLight(state.myColor) ? '#111' : '#fff';
   }
 
@@ -681,6 +694,17 @@ function assignPlayer(player, posKey) {
   selectedTokenId = null;
   updateAssignHint();
   renderPlayerList();
+}
+
+// ─── PHOTO MODE ──────────────────────────────
+function togglePhotoMode() {
+  state.photoMode = !state.photoMode;
+  const btn = document.getElementById('btn-photo-mode');
+  if (btn) {
+    btn.classList.toggle('active', state.photoMode);
+    btn.title = state.photoMode ? 'Ocultar fotos de jugadores' : 'Mostrar fotos de jugadores';
+  }
+  renderPlayers();
 }
 
 // ─── TAB SWITCH ──────────────────────────────

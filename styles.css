@@ -872,6 +872,68 @@ html, body {
 }
 .player-token .player-abbr { display: none; }
 
+/* ─── PHOTO MODE TOKENS ───────────────────────── */
+.player-token.photo-mode {
+  overflow: visible;
+  background: transparent !important;
+}
+.token-photo-wrap {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 0;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.25);
+}
+.token-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  border-radius: 50%;
+}
+.dorsal-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -4px;
+  background: rgba(10,10,10,0.88);
+  color: #fff;
+  font-size: clamp(7px, 0.58vw, 11px);
+  font-weight: 800;
+  min-width: clamp(13px, 1vw, 18px);
+  height: clamp(13px, 1vw, 18px);
+  border-radius: 999px;
+  padding: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  border: 1.5px solid rgba(255,255,255,0.6);
+  line-height: 1;
+  pointer-events: none;
+}
+.token-name-label {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: clamp(8px, 0.72vw, 13px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,0.9);
+  pointer-events: none;
+  z-index: 11;
+}
+
+/* Botón FOTOS activo */
+#btn-photo-mode.active {
+  background: rgba(198,40,40,0.75) !important;
+  border-color: #c62828 !important;
+  color: #fff !important;
+}
+
 /* ─── RIGHT SIDEBAR ────────────────────────── */
 .sidebar-right {
   width: var(--right-w);
