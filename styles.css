@@ -1233,6 +1233,80 @@ body.light .mbn-btn.active { color: var(--accent); }
   .action-btn { font-size: 10px; }
 }
 
+/* ─── MOBILE ASSIGN BOTTOM SHEET ──────────────────────────── */
+.mobile-assign-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+  z-index: 310;
+  align-items: flex-end;
+}
+.mobile-assign-overlay.active {
+  display: flex;
+}
+.mobile-assign-sheet {
+  width: 100%;
+  background: var(--sidebar-bg, #111);
+  border-top: 2.5px solid var(--accent, #C62828);
+  border-radius: 20px 20px 0 0;
+  max-height: 72dvh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  animation: slideUpSheet .26s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 -8px 40px rgba(0,0,0,.7);
+}
+@keyframes slideUpSheet {
+  from { transform: translateY(100%); opacity: .4; }
+  to   { transform: translateY(0);    opacity: 1;  }
+}
+.mobile-assign-handle {
+  width: 44px;
+  height: 4px;
+  background: var(--border, #333);
+  border-radius: 2px;
+  margin: 10px auto 4px;
+  flex-shrink: 0;
+}
+.mobile-assign-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 10px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border, #333);
+}
+.mobile-assign-header span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent, #C62828);
+}
+.mobile-assign-close {
+  background: none;
+  border: none;
+  color: var(--text-dim, #888);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.mobile-assign-close:active { background: rgba(255,255,255,.1); }
+#mobile-assign-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 12px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* ─── LANDSCAPE MOBILE (altura ≤ 500px) ─────── */
 @media (max-height: 500px) and (orientation: landscape) {
 

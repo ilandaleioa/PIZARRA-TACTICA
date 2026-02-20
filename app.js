@@ -361,6 +361,11 @@ function selectToken(id) {
   const el = document.getElementById('token-' + id);
   if (el) el.classList.add('selected');
   updateAssignHint();
+
+  // En móvil abrir el panel de asignación automáticamente
+  if (window.innerWidth <= 768) {
+    openMobileAssignModal();
+  }
 }
 
 function updateAssignHint() {
@@ -483,10 +488,11 @@ function makeDraggable(el, playerData) {
     yMin = limits.yMin;
     yMax = limits.yMax;
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
-    const elLeft  = playerData.x / 100 * pitchRect.width  + pitchRect.left;
-    const elTop   = playerData.y / 100 * pitchRect.height + pitchRect.top;
-    offsetX = e.clientX - elLeft;
-    offsetY = e.clientY - elTop;
+    const elRect  = el.getBoundingClientRect();
+    const elCenterX = elRect.left + elRect.width  / 2;
+    const elCenterY = elRect.top  + elRect.height / 2;
+    offsetX = e.clientX - elCenterX;
+    offsetY = e.clientY - elCenterY;
     el.classList.add('dragging');
 
     document.onmousemove = mv => {
@@ -514,10 +520,11 @@ function makeDraggable(el, playerData) {
     yMax = limits.yMax;
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
     const t = e.touches[0];
-    const elLeft = playerData.x / 100 * pitchRect.width  + pitchRect.left;
-    const elTop  = playerData.y / 100 * pitchRect.height + pitchRect.top;
-    offsetX = t.clientX - elLeft;
-    offsetY = t.clientY - elTop;
+    const elRect    = el.getBoundingClientRect();
+    const elCenterX = elRect.left + elRect.width  / 2;
+    const elCenterY = elRect.top  + elRect.height / 2;
+    offsetX = t.clientX - elCenterX;
+    offsetY = t.clientY - elCenterY;
     el.classList.add('dragging');
 
     el.ontouchmove = mv => {
@@ -1263,6 +1270,93 @@ document.addEventListener('fullscreenchange', () => {
 
 // Run on load
 window.addEventListener('load', loadFromHash);
+
+// ── MOBILE ASSIGN MODAL ─────────────────────────────────────
+function openMobileAssignModal() {
+  const p = state.players.find(pl => pl.id === selectedTokenId);
+  const title = document.getElementById('mobile-assign-title');
+  if (title) {
+    title.textContent = p
+      ? `Asignar al círculo ${p.jersey}`
+      : 'Selecciona un jugador';
+  }
+  renderMobileAssignList();
+  const overlay = document.getElementById('mobile-assign-overlay');
+  if (overlay) {
+    overlay.classList.remove('hidden');
+    // Forzar reflow para que la animación se dispare
+    void overlay.offsetWidth;
+    overlay.classList.add('active');
+  }
+}
+
+function closeMobileAssignModal() {
+  const overlay = document.getElementById('mobile-assign-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('active');
+  // Esperar a que termine la animación antes de ocultar
+  overlay.addEventListener('transitionend', () => overlay.classList.add('hidden'), { once: true });
+  // Fallback por si no hay transitionend
+  setTimeout(() => overlay.classList.add('hidden'), 320);
+  // Deseleccionar token si se cierra sin asignar
+  if (selectedTokenId) {
+    const el = document.getElementById('token-' + selectedTokenId);
+    if (el) el.classList.remove('selected');
+    selectedTokenId = null;
+    updateAssignHint();
+  }
+}
+
+function renderMobileAssignList() {
+  const lang = LANGS[currentLang];
+  const container = document.getElementById('mobile-assign-list');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const positions = [
+    { key: 'portero',   label: lang.portero,   cls: 'assigned-gk'  },
+    { key: 'defensa',   label: lang.defensa,   cls: 'assigned-def' },
+    { key: 'medio',     label: lang.medio,     cls: 'assigned-mid' },
+    { key: 'delantero', label: lang.delantero, cls: 'assigned-fwd' },
+  ];
+
+  positions.forEach(pos => {
+    const group = document.createElement('div');
+    group.className = 'position-group';
+    const lbl = document.createElement('div');
+    lbl.className = 'position-label';
+    lbl.textContent = pos.label;
+    group.appendChild(lbl);
+
+    SQUAD[pos.key].forEach(player => {
+      const isAssigned = Object.values(state.assignedPlayers).includes(player.id);
+      const row = document.createElement('div');
+      row.className = 'player-row' + (isAssigned ? ' assigned' : '');
+
+      const avatar = document.createElement('div');
+      avatar.className = 'player-avatar' + (isAssigned ? ` ${pos.cls}` : '');
+      avatar.textContent = player.dorsal;
+
+      const name = document.createElement('div');
+      name.className = 'player-name';
+      name.textContent = player.name;
+
+      row.appendChild(avatar);
+      row.appendChild(name);
+
+      if (!isAssigned) {
+        row.addEventListener('click', () => {
+          // Cerrar modal ANTES de asignar para no interferir con la deselección
+          const overlay = document.getElementById('mobile-assign-overlay');
+          if (overlay) { overlay.classList.remove('active'); overlay.classList.add('hidden'); }
+          assignPlayer(player, pos.key);
+        });
+      }
+      group.appendChild(row);
+    });
+    container.appendChild(group);
+  });
+}
 
 // ── MOBILE PANEL TOGGLE ──────────────────────────────────────
 function toggleMobilePanel(side) {

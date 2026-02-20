@@ -215,6 +215,18 @@
 </nav>
 <div class="mobile-overlay" id="mobile-overlay" onclick="closeMobilePanels()"></div>
 
+<!-- ═══════════════════  MOBILE ASSIGN SHEET  ═══════════════════ -->
+<div id="mobile-assign-overlay" class="mobile-assign-overlay hidden" onclick="closeMobileAssignModal()">
+  <div class="mobile-assign-sheet" onclick="event.stopPropagation()">
+    <div class="mobile-assign-handle"></div>
+    <div class="mobile-assign-header">
+      <span id="mobile-assign-title">Selecciona un jugador</span>
+      <button class="mobile-assign-close" onclick="closeMobileAssignModal()">&#10005;</button>
+    </div>
+    <div id="mobile-assign-list"></div>
+  </div>
+</div>
+
 <!-- ═══════════════════  PLAYER MODAL  ═══════════════════ -->
 <div id="player-modal-overlay" class="modal-overlay hidden" onclick="handleModalOverlayClick(event)">
   <div class="player-modal">
