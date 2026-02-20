@@ -761,9 +761,9 @@ html, body {
 /* ─── BALL TOKEN ───────────────────────────── */
 .ball-token {
   position: absolute;
-  width: 36px;
-  height: 36px;
-  font-size: 36px;
+  width: clamp(24px, 2.4vw, 52px);
+  height: clamp(24px, 2.4vw, 52px);
+  font-size: clamp(24px, 2.4vw, 52px);
   cursor: grab;
   transform: translate(-50%, -50%);
   user-select: none;
@@ -786,13 +786,13 @@ html, body {
 .player-token {
   position: absolute;
   pointer-events: auto;
-  width: 58px !important;
-  height: 58px !important;
+  width: clamp(36px, 3.2vw, 72px) !important;
+  height: clamp(36px, 3.2vw, 72px) !important;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 21px !important;
+  font-size: clamp(12px, 1.15vw, 23px) !important;
   font-weight: 800;
   color: #fff;
   cursor: grab;
@@ -850,7 +850,7 @@ html, body {
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-size: 13px;
+  font-size: clamp(9px, 0.75vw, 14px);
   font-weight: 700;
   color: #fff;
   text-shadow: 0 1px 4px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,0.9);
@@ -860,11 +860,11 @@ html, body {
 }
 /* Token: número dentro, nombre debajo */
 .player-token.has-player {
-  font-size: 20px;
+  font-size: clamp(12px, 1.1vw, 22px);
   font-weight: 900;
 }
 .player-token.has-player .jersey-num {
-  font-size: 20px;
+  font-size: clamp(12px, 1.1vw, 22px);
   font-weight: 900;
   line-height: 1;
 }
@@ -986,11 +986,315 @@ body.light ::-webkit-scrollbar-thumb { background: #b0b6c2; }
 body.light ::-webkit-scrollbar-thumb:hover { background: #8e96a4; }
 body.light .modal-overlay { background: rgba(0,0,0,.55); }
 
-/* ─── RESPONSIVE TWEAK ─────────────────────── */
+/* ─── MOBILE BOTTOM NAV ────────────────────── */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 56px;
+  background: #000;
+  border-top: 1px solid var(--border);
+  z-index: 200;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 150;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-overlay.active { display: block; }
+
+.mbn-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: none;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 8px 4px;
+  transition: color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mbn-btn.active { color: var(--accent); }
+.mbn-icon { font-size: 20px; line-height: 1; }
+.mbn-label { font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; }
+
+body.light .mobile-bottom-nav { background: #1c1c2e; border-top-color: #333; }
+body.light .mbn-btn { color: rgba(255,255,255,.45); }
+body.light .mbn-btn.active { color: var(--accent); }
+
+/* ─── RESPONSIVE TWEAK (tablet) ─────────────── */
 @media (max-width: 900px) {
   :root { --sidebar-w: 180px; --right-w: 220px; }
-  .player-token { width: 46px; height: 46px; font-size: 16px; }
+  .player-token { width: 46px !important; height: 46px !important; font-size: 16px !important; }
 }
-@media (max-width: 680px) {
-  .sidebar-right { display: none; }
+
+/* ─── RESPONSIVE MOBILE (≤ 768px) ──────────── */
+@media (max-width: 768px) {
+
+  html, body { overflow: hidden; }
+
+  /* ── TOP NAV ────────────────────────────── */
+  .topnav {
+    height: 50px;
+    padding: 0 10px;
+  }
+  .lang-switcher { display: none; }
+  .logo-title { font-size: 13px; letter-spacing: 1.5px; }
+  .logo-sub   { font-size: 9px;  letter-spacing: 1.5px; }
+  .nav-logo-wrap { width: 34px; height: 34px; }
+  .topnav-right { gap: 6px; }
+  .icon-btn { font-size: 17px; padding: 5px; }
+
+  /* ── MAIN LAYOUT ────────────────────────── */
+  .main-layout {
+    height: calc(100dvh - 50px - 56px);
+    flex-direction: row;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── LEFT SIDEBAR → bottom drawer ──────── */
+  .sidebar-left {
+    position: fixed;
+    bottom: 56px; left: 0; right: 0;
+    top: auto;
+    width: 100% !important;
+    max-height: 65dvh;
+    z-index: 160;
+    transform: translateY(105%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    border-top: 2px solid var(--accent);
+    border-right: none;
+    flex-direction: column;
+    overflow-y: auto;
+    display: flex;
+  }
+  .sidebar-left.mobile-open { transform: translateY(0); }
+
+  /* Hide sidebar tab buttons on mobile (use bottom nav) */
+  .sidebar-tab { display: none; }
+  /* Always show the pizarra section inside the drawer */
+  #section-pizarra { display: flex !important; flex-direction: column; flex: 1; }
+
+  /* ── RIGHT SIDEBAR → bottom drawer ─────── */
+  .sidebar-right {
+    position: fixed;
+    bottom: 56px; left: 0; right: 0;
+    top: auto;
+    width: 100% !important;
+    max-height: 65dvh;
+    z-index: 160;
+    transform: translateY(105%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    border-top: 2px solid var(--accent2);
+    border-left: none;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-right.mobile-open { transform: translateY(0); }
+
+  /* ── CENTER AREA ────────────────────────── */
+  .center-area {
+    flex: 1;
+    padding: 5px 5px 5px;
+    width: 100%;
+    gap: 5px;
+  }
+
+  /* ── SLIDE CONTROLS ─────────────────────── */
+  .slide-controls {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .slide-controls::-webkit-scrollbar { display: none; }
+  .slide-btn  { width: 36px; height: 36px; font-size: 16px; }
+  .speed-select { height: 36px; font-size: 13px; }
+  .slide-chip { height: 36px; font-size: 14px; }
+
+  /* ── PITCH TOUCH ─────────────────────────── */
+  .pitch { touch-action: none; }
+
+  /* ── PLAYER TOKENS ──────────────────────── */
+  .player-token {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 16px !important;
+  }
+  .player-token .token-initials { font-size: 10px; margin-top: 2px; }
+  .player-token.has-player .jersey-num { font-size: 16px !important; }
+  .player-token.selected { outline-width: 2px; outline-offset: 2px; }
+
+  /* ── BALL TOKEN ─────────────────────────── */
+  .ball-token { width: 30px; height: 30px; }
+
+  /* ── MOBILE BOTTOM NAV ──────────────────── */
+  .mobile-bottom-nav {
+    display: grid;
+    height: 58px;
+  }
+  .mbn-btn {
+    padding: 10px 4px;
+    min-height: 44px;
+  }
+  .mbn-icon { font-size: 22px; }
+  .mbn-label { font-size: 9px; }
+
+  /* ── VIS TOGGLE ─────────────────────────── */
+  .vis-toggle { padding: 5px 10px; font-size: 10px; }
+
+  /* ── ACTION BUTTONS (touch targets) ─────── */
+  .action-btn {
+    font-size: 11px;
+    padding: 10px 4px;
+    min-height: 44px;
+  }
+
+  /* ── SIDEBAR SECTION ────────────────────── */
+  .sidebar-section { padding: 14px 12px; }
+
+  /* ── PLAYER ROWS (enlarge touch) ────────── */
+  .player-row { padding: 11px 10px; }
+  .player-avatar { width: 40px; height: 40px; }
+
+  /* ── MODAL ──────────────────────────────── */
+  .player-modal {
+    padding: 18px 14px 16px;
+    width: 96vw;
+    max-height: 88dvh;
+    overflow-y: auto;
+    border-radius: 16px;
+  }
+  .modal-photo-hero { width: 110px; height: 110px; }
+  .modal-fields { flex-wrap: wrap; }
+  .modal-field[style*="width:80px"] { width: 70px !important; }
+  .modal-field[style*="width:72px"] { width: 64px !important; }
+  .modal-field input[type="text"],
+  .modal-field input[type="number"] {
+    font-size: 16px; /* prevent iOS zoom */
+    padding: 11px 10px;
+  }
+  .modal-btn { min-height: 48px; font-size: 12px; }
+  .modal-pos-btn { min-height: 44px; }
+
+  /* ── FORMATION SELECT ───────────────────── */
+  .formation-select { font-size: 16px; padding: 12px; }
+
+  /* ── DRAWER DRAG HANDLE ─────────────────── */
+  .sidebar-left::before,
+  .sidebar-right::before {
+    content: '';
+    display: block;
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 10px auto 6px;
+    flex-shrink: 0;
+    animation: handle-hint 1.6s 0.5s ease-in-out 2 alternate;
+  }
+  @keyframes handle-hint {
+    from { width: 40px; opacity: .5; }
+    to   { width: 56px; opacity: 1; }
+  }
 }
+
+/* ─── EXTRA SMALL (≤ 480px) ─────────────────── */
+@media (max-width: 480px) {
+  .topnav { padding: 0 8px; }
+  .logo-title { font-size: 11px; letter-spacing: 1px; }
+  .logo-sub   { font-size: 8px;  letter-spacing: 1px; }
+  .nav-logo-wrap { width: 30px; height: 30px; }
+  .topnav-right { gap: 4px; }
+  .icon-btn { font-size: 15px; padding: 4px; }
+
+  .player-token {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 14px !important;
+  }
+  .player-token.has-player .jersey-num { font-size: 14px !important; }
+  .player-token .token-initials { font-size: 9px; }
+  .ball-token { width: 26px; height: 26px; }
+
+  .action-row { gap: 6px; }
+  .action-btn { font-size: 10px; }
+}
+
+/* ─── LANDSCAPE MOBILE (altura ≤ 500px) ─────── */
+@media (max-height: 500px) and (orientation: landscape) {
+
+  .topnav { height: 42px; padding: 0 8px; }
+  .logo-title { font-size: 12px; }
+  .logo-sub   { font-size: 8px; }
+
+  .main-layout {
+    height: calc(100dvh - 42px - 48px);
+  }
+
+  .sidebar-left,
+  .sidebar-right {
+    bottom: 48px;
+    max-height: 78dvh;
+  }
+
+  /* En landscape hacemos los drawers laterales */
+  .sidebar-left {
+    left: 0; right: auto;
+    width: 260px !important;
+    max-height: calc(100dvh - 42px - 48px);
+    bottom: 48px;
+    top: 42px;
+    border-top: none;
+    border-right: 2px solid var(--accent);
+    transform: translateX(-105%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar-left.mobile-open { transform: translateX(0); }
+
+  .sidebar-right {
+    right: 0; left: auto;
+    width: 240px !important;
+    max-height: calc(100dvh - 42px - 48px);
+    bottom: 48px;
+    top: 42px;
+    border-top: none;
+    border-left: 2px solid var(--accent2);
+    transform: translateX(105%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar-right.mobile-open { transform: translateX(0); }
+
+  /* Ocultar handle vertical en landscape (se abre lateralmente) */
+  .sidebar-left::before,
+  .sidebar-right::before { display: none; }
+
+  .mobile-bottom-nav { height: 48px; }
+  .mbn-label { display: none; }
+  .mbn-icon  { font-size: 20px; }
+
+  .center-area { padding: 4px; gap: 4px; }
+
+  .player-token {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 13px !important;
+  }
+  .player-token.has-player .jersey-num { font-size: 13px !important; }
+  .ball-token { width: 24px; height: 24px; }
+
+  .slide-btn   { width: 30px; height: 30px; font-size: 13px; }
+  .speed-select { height: 30px; font-size: 12px; }
+  .slide-chip  { height: 30px; font-size: 12px; }
+}
+

@@ -1166,3 +1166,96 @@ document.addEventListener('fullscreenchange', () => {
 
 // Run on load
 window.addEventListener('load', loadFromHash);
+
+// ── MOBILE PANEL TOGGLE ──────────────────────────────────────
+function toggleMobilePanel(side) {
+  if (window.innerWidth > 768) return;
+
+  const leftSidebar  = document.querySelector('.sidebar-left');
+  const rightSidebar = document.querySelector('.sidebar-right');
+  const overlay      = document.getElementById('mobile-overlay');
+  const btnLeft      = document.getElementById('mbn-left');
+  const btnRight     = document.getElementById('mbn-right');
+  const btnPitch     = document.getElementById('mbn-pitch');
+
+  if (side === 'left') {
+    const isOpen = leftSidebar.classList.contains('mobile-open');
+    if (isOpen) {
+      closeMobilePanels();
+    } else {
+      leftSidebar.classList.add('mobile-open');
+      rightSidebar.classList.remove('mobile-open');
+      overlay.classList.add('active');
+      btnLeft.classList.add('active');
+      btnRight.classList.remove('active');
+      btnPitch.classList.remove('active');
+    }
+  } else if (side === 'right') {
+    const isOpen = rightSidebar.classList.contains('mobile-open');
+    if (isOpen) {
+      closeMobilePanels();
+    } else {
+      rightSidebar.classList.add('mobile-open');
+      leftSidebar.classList.remove('mobile-open');
+      overlay.classList.add('active');
+      btnRight.classList.add('active');
+      btnLeft.classList.remove('active');
+      btnPitch.classList.remove('active');
+    }
+  }
+}
+
+function closeMobilePanels() {
+  document.querySelector('.sidebar-left').classList.remove('mobile-open');
+  document.querySelector('.sidebar-right').classList.remove('mobile-open');
+  const overlay = document.getElementById('mobile-overlay');
+  if (overlay) overlay.classList.remove('active');
+  const btnLeft  = document.getElementById('mbn-left');
+  const btnRight = document.getElementById('mbn-right');
+  const btnPitch = document.getElementById('mbn-pitch');
+  if (btnLeft)  btnLeft.classList.remove('active');
+  if (btnRight) btnRight.classList.remove('active');
+  if (btnPitch) btnPitch.classList.add('active');
+}
+
+// Close mobile panels when resizing to desktop
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768) closeMobilePanels();
+});
+
+// ── SWIPE-TO-CLOSE DRAWERS ───────────────────────────────────
+(function initDrawerSwipe() {
+  const drawers = [
+    document.querySelector('.sidebar-left'),
+    document.querySelector('.sidebar-right')
+  ];
+  drawers.forEach(drawer => {
+    if (!drawer) return;
+    let startX = 0, startY = 0;
+    drawer.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    drawer.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      const landscape = window.innerHeight < 500 && window.innerWidth > window.innerHeight;
+      if (landscape) {
+        // En landscape los paneles se deslizan horizontalmente
+        const isLeft  = drawer.classList.contains('sidebar-left');
+        const isRight = drawer.classList.contains('sidebar-right');
+        if (isLeft  && dx < -80 && Math.abs(dy) < 80) closeMobilePanels();
+        if (isRight && dx >  80 && Math.abs(dy) < 80) closeMobilePanels();
+      } else {
+        // En portrait los paneles se deslizan verticalmente hacia abajo
+        if (dy > 80 && Math.abs(dx) < 80) closeMobilePanels();
+      }
+    }, { passive: true });
+  });
+})();
+
+// ── ORIENTACIÓN: reajustar paneles al girar ──────────────────
+window.addEventListener('orientationchange', () => {
+  setTimeout(closeMobilePanels, 100);
+});

@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="styles.css?v=17" />
+  <link rel="stylesheet" href="styles.css?v=19" />
 </head>
 <body>
 
@@ -222,6 +222,23 @@
 
 </div>
 
+<!-- ═══════════════════  MOBILE BOTTOM NAV  ═══════════════════ -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+  <button class="mbn-btn" id="mbn-left" onclick="toggleMobilePanel('left')">
+    <span class="mbn-icon">&#9776;</span>
+    <span class="mbn-label">EQUIPO</span>
+  </button>
+  <button class="mbn-btn active" id="mbn-pitch" onclick="closeMobilePanels()">
+    <span class="mbn-icon">&#9633;</span>
+    <span class="mbn-label">PIZARRA</span>
+  </button>
+  <button class="mbn-btn" id="mbn-right" onclick="toggleMobilePanel('right')">
+    <span class="mbn-icon">&#128100;</span>
+    <span class="mbn-label">JUGADORES</span>
+  </button>
+</nav>
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeMobilePanels()"></div>
+
 <!-- ═══════════════════  PLAYER MODAL  ═══════════════════ -->
 <div id="player-modal-overlay" class="modal-overlay hidden" onclick="handleModalOverlayClick(event)">
   <div class="player-modal">
@@ -270,7 +287,7 @@
   </div>
 </div>
 
-<script src="app.js?v=100"></script><script>
+<script src="app.js?v=101"></script><script>
 (function() {
   function initBall() {
     var ball = document.getElementById('ball-token');
