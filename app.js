@@ -513,7 +513,7 @@ function renderPlayerList() {
 
       const avatar = document.createElement('div');
       avatar.className = 'player-avatar' + (isAssigned ? ` ${pos.cls}` : '');
-      avatar.textContent = player.id;
+      avatar.textContent = player.dorsal;
 
       const name = document.createElement('div');
       name.className = 'player-name';
