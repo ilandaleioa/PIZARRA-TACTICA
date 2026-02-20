@@ -116,134 +116,135 @@ const SQUAD = {
 // "My team" plays bottom half (top ~50%–95%), rival top half (~5%–50%).
 const FORMATIONS = {
   // Área grande superior: 0–20% | Área grande inferior: 80–100%
-  // mi equipo: GK=90%, DEF=67%, MED=43%, FWD=20%  → step ~23% igual entre líneas
-  // rival:     GK=10%, DEF=33%, MED=57%, FWD=80%  → step ~23% igual entre líneas
+  // mi equipo: GK=93%, DEF=80%, MED=57%, FWD=34%  → step ~23% igual entre líneas
+  // rival:     GK=7%,  DEF=20%, MED=43%, FWD=66%  → step ~23% igual entre líneas
+  // Laterales/extremos adelantados 3% respecto a sus compañeros de línea
   '1-4-4-2': {
     my: [
-      [50,  90],  // 1 GK
-      [82,  67],  // 2 Lat Der
-      [13,  67],  // 3 Lat Izq
-      [35,  67],  // 4 Central Izq
-      [60,  67],  // 5 Central Der
-      [34,  43],  // 6 Medio centro
-      [82,  43],  // 7 Extremo Der
-      [58,  43],  // 8 Medio centro
-      [37,  20],  // 9 Delantero Izq
-      [58,  20],  // 10 Delantero Der
-      [10,  43],  // 11 Extremo Izq
+      [50,  93],  // 1 GK
+      [82,  77],  // 2 Lat Der  (adelantado)
+      [13,  77],  // 3 Lat Izq  (adelantado)
+      [35,  80],  // 4 Central Izq
+      [60,  80],  // 5 Central Der
+      [34,  57],  // 6 Medio centro
+      [82,  54],  // 7 Extremo Der  (adelantado)
+      [58,  57],  // 8 Medio centro
+      [37,  34],  // 9 Delantero Izq
+      [58,  34],  // 10 Delantero Der
+      [10,  54],  // 11 Extremo Izq  (adelantado)
     ],
     rival: [
-      [50,  10],  // 1 GK
-      [82,  33],  // 2 Lat Der
-      [13,  33],  // 3 Lat Izq
-      [35,  33],  // 4 Central Izq
-      [60,  33],  // 5 Central Der
-      [34,  57],  // 6 Medio centro
-      [82,  57],  // 7 Extremo Der
-      [58,  57],  // 8 Medio centro
-      [37,  80],  // 9 Delantero Izq
-      [58,  80],  // 10 Delantero Der
-      [10,  57],  // 11 Extremo Izq
+      [50,   7],  // 1 GK
+      [82,  23],  // 2 Lat Der  (adelantado)
+      [13,  23],  // 3 Lat Izq  (adelantado)
+      [35,  20],  // 4 Central Izq
+      [60,  20],  // 5 Central Der
+      [34,  43],  // 6 Medio centro
+      [82,  46],  // 7 Extremo Der  (adelantado)
+      [58,  43],  // 8 Medio centro
+      [37,  66],  // 9 Delantero Izq
+      [58,  66],  // 10 Delantero Der
+      [10,  46],  // 11 Extremo Izq  (adelantado)
     ]
   },
   '1-4-3-3': {
     my: [
-      [50,  90],  // 1 GK
-      [83,  67],  // 2 Lat Der
-      [8,   67],  // 3 Lat Izq
-      [36,  67],  // 4 Central Izq
-      [60,  67],  // 5 Central Der
-      [50,  49],  // 6 Medio pivote (más profundo)
-      [68,  36],  // 7 Interior Der (más avanzado)
-      [27,  36],  // 8 Interior Izq (más avanzado)
-      [83,  20],  // 9 Extremo Der
-      [50,  20],  // 10 Delantero Centro
-      [8,   20],  // 11 Extremo Izq
+      [50,  93],  // 1 GK
+      [83,  77],  // 2 Lat Der  (adelantado)
+      [8,   77],  // 3 Lat Izq  (adelantado)
+      [36,  80],  // 4 Central Izq
+      [60,  80],  // 5 Central Der
+      [50,  62],  // 6 Medio pivote (más profundo)
+      [68,  49],  // 7 Interior Der (más avanzado)
+      [27,  49],  // 8 Interior Izq (más avanzado)
+      [83,  34],  // 9 Extremo Der
+      [50,  34],  // 10 Delantero Centro
+      [8,   34],  // 11 Extremo Izq
     ],
     rival: [
-      [50,  10],  // 1 GK
-      [83,  33],  // 2 Lat Der
-      [8,   33],  // 3 Lat Izq
-      [36,  33],  // 4 Central Izq
-      [60,  33],  // 5 Central Der
-      [50,  51],  // 6 Medio pivote (más profundo)
-      [68,  64],  // 7 Interior Der (más avanzado)
-      [27,  64],  // 8 Interior Izq (más avanzado)
-      [83,  80],  // 9 Extremo Der
-      [50,  80],  // 10 Delantero Centro
-      [8,   80],  // 11 Extremo Izq
+      [50,   7],  // 1 GK
+      [83,  23],  // 2 Lat Der  (adelantado)
+      [8,   23],  // 3 Lat Izq  (adelantado)
+      [36,  20],  // 4 Central Izq
+      [60,  20],  // 5 Central Der
+      [50,  38],  // 6 Medio pivote (más profundo)
+      [68,  51],  // 7 Interior Der (más avanzado)
+      [27,  51],  // 8 Interior Izq (más avanzado)
+      [83,  66],  // 9 Extremo Der
+      [50,  66],  // 10 Delantero Centro
+      [8,   66],  // 11 Extremo Izq
     ]
   },
   '1-4-2-3-1': {
     my: [
-      [50,  90],  // 1 GK
-      [18,  73], [38, 73], [62, 73], [82, 73],  // DEF  (step ~17)
-      [36,  56], [64, 56],                       // doble pivote
-      [15,  38], [50, 38], [85, 38],             // mediapuntas
-      [50,  20],                                 // delantero
+      [50,  93],  // 1 GK
+      [18,  77], [38, 80], [62, 80], [82, 77],  // DEF: laterales adelantados
+      [36,  57], [64, 57],                       // doble pivote
+      [15,  41], [50, 44], [85, 41],             // mediapuntas: extremos adelantados
+      [50,  31],                                 // delantero
     ],
     rival: [
-      [50,  10],  // 1 GK
-      [18,  27], [38, 27], [62, 27], [82, 27],  // DEF
-      [36,  44], [64, 44],                       // doble pivote
-      [15,  62], [50, 62], [85, 62],             // mediapuntas
-      [50,  80],                                 // delantero
+      [50,   7],  // 1 GK
+      [18,  23], [38, 20], [62, 20], [82, 23],  // DEF: laterales adelantados
+      [36,  43], [64, 43],                       // doble pivote
+      [15,  59], [50, 56], [85, 59],             // mediapuntas: extremos adelantados
+      [50,  69],                                 // delantero
     ]
   },
   '1-3-5-2': {
     my: [
-      [50,  90],  // 1 GK
-      [25,  67], [50, 67], [75, 67],             // 3 DEF
-      [8,   43], [28, 43], [50, 43], [72, 43], [92, 43],  // 5 MED
-      [34,  20], [66, 20],                       // 2 DEL
+      [50,  93],  // 1 GK
+      [25,  80], [50, 80], [75, 80],             // 3 DEF
+      [8,   54], [28, 57], [50, 57], [72, 57], [92, 54],  // 5 MED: carrileros adelantados
+      [34,  34], [66, 34],                       // 2 DEL
     ],
     rival: [
-      [50,  10],  // 1 GK
-      [25,  33], [50, 33], [75, 33],             // 3 DEF
-      [8,   57], [28, 57], [50, 57], [72, 57], [92, 57],  // 5 MED
-      [34,  80], [66, 80],                       // 2 DEL
+      [50,   7],  // 1 GK
+      [25,  20], [50, 20], [75, 20],             // 3 DEF
+      [8,   46], [28, 43], [50, 43], [72, 43], [92, 46],  // 5 MED: carrileros adelantados
+      [34,  66], [66, 66],                       // 2 DEL
     ]
   },
   '1-3-4-3': {
     my: [
-      [50,  90],  // 1 GK
-      [25,  67], [50, 67], [75, 67],             // 3 DEF
-      [15,  43], [38, 43], [62, 43], [85, 43],   // 4 MED
-      [15,  20], [50, 20], [85, 20],             // 3 DEL
+      [50,  93],  // 1 GK
+      [25,  80], [50, 80], [75, 80],             // 3 DEF
+      [15,  54], [38, 57], [62, 57], [85, 54],   // 4 MED: extremos adelantados
+      [15,  34], [50, 34], [85, 34],             // 3 DEL
     ],
     rival: [
-      [50,  10],  // 1 GK
-      [25,  33], [50, 33], [75, 33],             // 3 DEF
-      [15,  57], [38, 57], [62, 57], [85, 57],   // 4 MED
-      [15,  80], [50, 80], [85, 80],             // 3 DEL
+      [50,   7],  // 1 GK
+      [25,  20], [50, 20], [75, 20],             // 3 DEF
+      [15,  46], [38, 43], [62, 43], [85, 46],   // 4 MED: extremos adelantados
+      [15,  66], [50, 66], [85, 66],             // 3 DEL
     ]
   },
   '1-5-3-2': {
     my: [
-      [50,  90],  // 1 GK
-      [8,   67], [26, 67], [50, 67], [74, 67], [92, 67],  // 5 DEF
-      [25,  43], [50, 43], [75, 43],             // 3 MED
-      [34,  20], [66, 20],                       // 2 DEL
+      [50,  93],  // 1 GK
+      [8,   77], [26, 80], [50, 80], [74, 80], [92, 77],  // 5 DEF: carrileros adelantados
+      [25,  57], [50, 57], [75, 57],             // 3 MED
+      [34,  34], [66, 34],                       // 2 DEL
     ],
     rival: [
-      [50,  10],  // 1 GK
-      [8,   33], [26, 33], [50, 33], [74, 33], [92, 33],  // 5 DEF
-      [25,  57], [50, 57], [75, 57],             // 3 MED
-      [34,  80], [66, 80],                       // 2 DEL
+      [50,   7],  // 1 GK
+      [8,   23], [26, 20], [50, 20], [74, 20], [92, 23],  // 5 DEF: carrileros adelantados
+      [25,  43], [50, 43], [75, 43],             // 3 MED
+      [34,  66], [66, 66],                       // 2 DEL
     ]
   },
   '1-5-4-1': {
     my: [
-      [50,  90],  // 1 GK
-      [8,   67], [26, 67], [50, 67], [74, 67], [92, 67],  // 5 DEF
-      [15,  43], [38, 43], [62, 43], [85, 43],  // 4 MED
-      [50,  20],                                 // 1 DEL
+      [50,  93],  // 1 GK
+      [8,   77], [26, 80], [50, 80], [74, 80], [92, 77],  // 5 DEF: carrileros adelantados
+      [15,  54], [38, 57], [62, 57], [85, 54],  // 4 MED: extremos adelantados
+      [50,  34],                                 // 1 DEL
     ],
     rival: [
-      [50,  10],  // 1 GK
-      [8,   33], [26, 33], [50, 33], [74, 33], [92, 33],  // 5 DEF
-      [15,  57], [38, 57], [62, 57], [85, 57],  // 4 MED
-      [50,  80],                                 // 1 DEL
+      [50,   7],  // 1 GK
+      [8,   23], [26, 20], [50, 20], [74, 20], [92, 23],  // 5 DEF: carrileros adelantados
+      [15,  46], [38, 43], [62, 43], [85, 46],  // 4 MED: extremos adelantados
+      [50,  66],                                 // 1 DEL
     ]
   },
 };
