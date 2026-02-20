@@ -281,12 +281,39 @@ function savePhotos() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadPhotos();
+  initNavLogo();
   initState();
   renderPlayers();
   renderPlayerList();
   setupCanvas();
   setupBall();
 });
+
+function initNavLogo() {
+  const saved = localStorage.getItem('ac-nav-logo');
+  if (saved) {
+    const img = document.getElementById('nav-logo-img');
+    const wrap = img.closest('.nav-logo-wrap');
+    img.src = saved;
+    img.classList.add('loaded');
+    wrap.classList.add('has-logo');
+  }
+}
+
+function loadNavLogo(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('nav-logo-img');
+    const wrap = img.closest('.nav-logo-wrap');
+    img.src = e.target.result;
+    img.classList.add('loaded');
+    wrap.classList.add('has-logo');
+    try { localStorage.setItem('ac-nav-logo', e.target.result); } catch(err) {}
+  };
+  reader.readAsDataURL(file);
+}
 
 function initState() {
   const myPos    = FORMATIONS['1-4-4-2'].my;
@@ -900,25 +927,25 @@ function setupBall() {
     e.preventDefault();
     e.stopPropagation();
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
-    const elLeft = bData.x / 100 * pitchRect.width  + pitchRect.left;
-    const elTop  = bData.y / 100 * pitchRect.height + pitchRect.top;
-    offsetX = e.clientX - elLeft;
-    offsetY = e.clientY - elTop;
+    offsetX = e.clientX - (bData.x / 100 * pitchRect.width  + pitchRect.left);
+    offsetY = e.clientY - (bData.y / 100 * pitchRect.height + pitchRect.top);
     ball.classList.add('dragging');
 
-    document.onmousemove = mv => {
+    function onMove(mv) {
       const x = ((mv.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
       const y = ((mv.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
       bData.x = Math.min(Math.max(x, 1), 99);
       bData.y = Math.min(Math.max(y, 1), 99);
       ball.style.left = bData.x + '%';
       ball.style.top  = bData.y + '%';
-    };
-    document.onmouseup = () => {
+    }
+    function onUp() {
       ball.classList.remove('dragging');
-      document.onmousemove = null;
-      document.onmouseup   = null;
-    };
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
   });
 
   ball.addEventListener('touchstart', e => {

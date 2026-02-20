@@ -44,8 +44,53 @@ html, body {
 
 .topnav-logo {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.1;
+}
+.logo-texts {
+  display: flex;
   flex-direction: column;
   line-height: 1.1;
+}
+.nav-logo-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px dashed rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s;
+}
+.nav-logo-wrap:hover {
+  border-color: var(--accent);
+}
+.nav-logo-wrap #nav-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+}
+.nav-logo-wrap #nav-logo-img.loaded {
+  display: block;
+}
+.nav-logo-placeholder {
+  font-size: 22px;
+  color: rgba(255,255,255,0.35);
+  user-select: none;
+  transition: color 0.2s;
+}
+.nav-logo-wrap:hover .nav-logo-placeholder {
+  color: var(--accent);
+}
+.nav-logo-wrap.has-logo .nav-logo-placeholder {
+  display: none;
 }
 .logo-title {
   font-size: 19px;
@@ -629,6 +674,7 @@ html, body {
   inset: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 
 /* Perfect circle overlay for centre circle */
@@ -661,24 +707,26 @@ html, body {
   cursor: grab;
   transform: translate(-50%, -50%);
   user-select: none;
-  z-index: 15;
+  z-index: 50;
+  pointer-events: auto;
   filter: drop-shadow(0 3px 7px rgba(0,0,0,.75));
   transition: filter .15s, transform .12s;
 }
 .ball-token:hover {
   filter: drop-shadow(0 5px 12px rgba(0,0,0,.85));
   transform: translate(-50%, -50%) scale(1.13);
-  z-index: 25;
+  z-index: 50;
 }
 .ball-token.dragging {
   cursor: grabbing;
   transform: translate(-50%, -50%) scale(1.2);
-  z-index: 35;
+  z-index: 50;
   filter: drop-shadow(0 8px 18px rgba(0,0,0,.95));
 }
 
 /* ─── PLAYER TOKENS ────────────────────────── */
 .player-token {
+  pointer-events: auto;
   position: absolute;
   width: 42px;
   height: 42px;
