@@ -430,39 +430,9 @@ function renderPlayers() {
 
 // ─── DRAG ────────────────────────────────────
 
-// Calcula los límites en Y para un jugador según su posición relativa al resto.
-// Ningún jugador (salvo GK) puede cruzar a un compañero que esté actualmente detrás de él.
-// Esto garantiza que los delanteros NUNCA puedan quedar detrás de los defensas,
-// independientemente de la posición actual del token.
+// Sin restricciones de orden: cada jugador puede moverse libremente por el campo.
 function computeYLimits(playerData) {
-  const isGK = playerData.jersey === 1;
-  if (isGK) return { yMin: 1, yMax: 99 };
-
-  const team = playerData.team;
-  // Todos los compañeros de campo (sin GK, sin el propio jugador)
-  const teammates = state.players.filter(p => p.team === team && p.jersey !== 1 && p.id !== playerData.id);
-
-  if (team === 'my') {
-    // Mi equipo ataca hacia arriba: menor y = más adelantado.
-    // Este jugador no puede superar (hacia atrás = mayor y) a ningún compañero
-    // que esté actualmente detrás de él.
-    const behind = teammates.filter(p => p.y >= playerData.y + 3);
-    let yMax = 95;
-    if (behind.length > 0) {
-      yMax = Math.min(yMax, Math.min(...behind.map(p => p.y)) - 3);
-    }
-    return { yMin: 1, yMax };
-  } else {
-    // Rival ataca hacia abajo: mayor y = más adelantado.
-    // Este jugador no puede superar (hacia atrás = menor y) a ningún compañero
-    // que esté actualmente por delante de él.
-    const ahead = teammates.filter(p => p.y <= playerData.y - 3);
-    let yMin = 5;
-    if (ahead.length > 0) {
-      yMin = Math.max(yMin, Math.max(...ahead.map(p => p.y)) + 3);
-    }
-    return { yMin, yMax: 99 };
-  }
+  return { yMin: 1, yMax: 99 };
 }
 
 function makeDraggable(el, playerData) {
