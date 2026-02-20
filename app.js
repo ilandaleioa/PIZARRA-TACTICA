@@ -152,12 +152,12 @@ const FORMATIONS = {
       [8,   74],  // 3 Lat Izq
       [36,  74],  // 4 Central Izq
       [60,  74],  // 5 Central Der
-      [50,  60],  // 6 Medio pivote
-      [68,  46],  // 7 Interior Der
-      [27,  46],  // 8 Interior Izq
-      [83,  26],  // 9 Extremo Der
-      [50,  26],  // 10 Delantero Centro
-      [8,   26],  // 11 Extremo Izq
+      [50,  62],  // 6 Medio pivote
+      [68,  50],  // 7 Interior Der
+      [27,  50],  // 8 Interior Izq
+      [83,  34],  // 9 Extremo Der
+      [50,  34],  // 10 Delantero Centro
+      [8,   34],  // 11 Extremo Izq
     ],
     rival: [
       [50,  10],  // 1 GK
@@ -165,12 +165,12 @@ const FORMATIONS = {
       [8,   26],  // 3 Lat Izq
       [36,  26],  // 4 Central Izq
       [60,  26],  // 5 Central Der
-      [50,  40],  // 6 Medio pivote
-      [68,  54],  // 7 Interior Der
-      [27,  54],  // 8 Interior Izq
-      [83,  74],  // 9 Extremo Der
-      [50,  74],  // 10 Delantero Centro
-      [8,   74],  // 11 Extremo Izq
+      [50,  38],  // 6 Medio pivote
+      [68,  50],  // 7 Interior Der
+      [27,  50],  // 8 Interior Izq
+      [83,  66],  // 9 Extremo Der
+      [50,  66],  // 10 Delantero Centro
+      [8,   66],  // 11 Extremo Izq
     ]
   },
   '1-4-2-3-1': {
