@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AC Center – Pizarra Táctica</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="styles.css?v=5" />
+</head>
+<body>
+
+<!-- ═══════════════════════  TOP NAV  ═══════════════════════ -->
+<header class="topnav">
+  <div class="topnav-logo">
+    <span class="logo-title">AC CENTER</span>
+    <span class="logo-sub">PIZARRA TÁCTICA</span>
+  </div>
+  <div class="topnav-right">
+    <div class="lang-switcher">
+      <button class="lang active" onclick="setLang('es')">ES</button>
+      <button class="lang" onclick="setLang('eu')">EU</button>
+      <button class="lang" onclick="setLang('fr')">FR</button>
+      <button class="lang" onclick="setLang('en')">EN</button>
+    </div>
+    <button id="fullscreen-btn" class="icon-btn" title="Pantalla completa" onclick="toggleFullscreen()">&#x26F6;</button>
+    <button class="icon-btn" title="Ajustes">&#9881;</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════  MAIN LAYOUT  ═══════════════════════ -->
+<div class="main-layout">
+
+  <!-- ──────────── LEFT SIDEBAR ──────────── -->
+  <aside class="sidebar-left">
+    <button class="sidebar-tab" id="tab-plantilla" onclick="switchTab('plantilla')">
+      <span class="tab-icon">&#9776;</span>
+      <span data-i18n="plantilla">PLANTILLA</span>
+    </button>
+    <button class="sidebar-tab active" id="tab-pizarra" onclick="switchTab('pizarra')">
+      <span class="tab-icon">&#9633;</span>
+      <span data-i18n="pizarra">PIZARRA TÁCTICA</span>
+    </button>
+
+    <!-- MI EQUIPO -->
+    <div class="sidebar-section" id="section-pizarra">
+      <div class="section-header">
+        <span class="dot red"></span>
+        <span data-i18n="mi_equipo">MI EQUIPO</span>
+        <button class="icon-btn small eye-btn" id="eye-my" onclick="toggleTeamVisibility('my')" title="Mostrar/Ocultar">&#128065;</button>
+      </div>
+      <div id="my-team">
+        <select class="formation-select" id="my-formation" onchange="applyFormation('my')">
+          <option>4-4-2</option>
+          <option>4-3-3</option>
+          <option>4-2-3-1</option>
+          <option>3-5-2</option>
+          <option>3-4-3</option>
+          <option>5-3-2</option>
+          <option>5-4-1</option>
+        </select>
+        <div class="color-palette" id="my-colors">
+          <span class="color-swatch" style="background:#1565C0" onclick="setTeamColor('my','#1565C0')"></span>
+          <span class="color-swatch" style="background:#2E7D32" onclick="setTeamColor('my','#2E7D32')"></span>
+          <span class="color-swatch selected" style="background:#C62828" onclick="setTeamColor('my','#C62828')"></span>
+          <span class="color-swatch" style="background:#f5f5f5" onclick="setTeamColor('my','#f5f5f5')"></span>
+          <span class="color-swatch" style="background:#111111" onclick="setTeamColor('my','#111111')"></span>
+        </div>
+      </div>
+
+      <!-- EQUIPO RIVAL -->
+      <div class="section-header" style="margin-top:14px">
+        <span class="dot blue"></span>
+        <span data-i18n="equipo_rival">EQUIPO RIVAL</span>
+        <button class="icon-btn small eye-btn" id="eye-rival" onclick="toggleTeamVisibility('rival')" title="Mostrar/Ocultar">&#128065;</button>
+      </div>
+      <div id="rival-team">
+        <select class="formation-select" id="rival-formation" onchange="applyFormation('rival')">
+          <option>4-4-2</option>
+          <option>4-3-3</option>
+          <option>4-2-3-1</option>
+          <option>3-5-2</option>
+          <option>3-4-3</option>
+          <option>5-3-2</option>
+          <option>5-4-1</option>
+        </select>
+        <div class="color-palette" id="rival-colors">
+          <span class="color-swatch selected" style="background:#1565C0" onclick="setTeamColor('rival','#1565C0')"></span>
+          <span class="color-swatch" style="background:#2E7D32" onclick="setTeamColor('rival','#2E7D32')"></span>
+          <span class="color-swatch" style="background:#C62828" onclick="setTeamColor('rival','#C62828')"></span>
+          <span class="color-swatch" style="background:#f5f5f5" onclick="setTeamColor('rival','#f5f5f5')"></span>
+          <span class="color-swatch" style="background:#111111" onclick="setTeamColor('rival','#111111')"></span>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="action-row">
+        <button class="action-btn" onclick="exportImage()">&#128247; <span data-i18n="imagen">IMAGEN</span></button>
+        <button class="action-btn" onclick="alert('Video export')">&#127909; <span data-i18n="video">VIDEO</span></button>
+      </div>
+      <div class="action-row">
+        <button class="action-btn secondary" onclick="undo()">&#8617; <span data-i18n="deshacer">DESHACER</span></button>
+        <button class="action-btn secondary" onclick="share()">&#10143; <span data-i18n="compartir">COMPARTIR</span></button>
+      </div>
+      <div class="action-row">
+        <button class="action-btn danger full" onclick="resetBoard()">&#9632; <span data-i18n="resetear">RESETEAR</span></button>
+      </div>
+    </div>
+
+    <!-- PLANTILLA TAB CONTENT (hidden by default) -->
+    <div class="sidebar-section hidden" id="section-plantilla">
+      <p class="placeholder-text" data-i18n="plantilla_desc">Gestiona tu plantilla de jugadores.</p>
+    </div>
+  </aside>
+
+  <!-- ──────────── CENTER AREA ──────────── -->
+  <main class="center-area">
+
+    <!-- Slide controls -->
+    <div class="slide-controls">
+      <button class="slide-btn play" onclick="playAnimation()" title="Play">&#9654;</button>
+      <button class="slide-btn add"  onclick="addSlide()"      title="Añadir fotograma">&#43;</button>
+      <div class="slide-chips" id="slide-chips">
+        <div class="slide-chip active" data-slide="0" onclick="goToSlide(0)">1</div>
+      </div>
+    </div>
+
+    <!-- Pitch wrapper -->
+    <div class="pitch-wrapper">
+      <div class="pitch" id="pitch">
+
+        <!-- Pitch markings (SVG overlay) -->
+        <svg class="pitch-lines" viewBox="0 0 760 520" preserveAspectRatio="none">
+          <!-- Outer border -->
+          <rect x="30" y="18" width="700" height="484" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <!-- Halfway line -->
+          <line x1="30" y1="260" x2="730" y2="260" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <!-- Centre circle (dot only – real circle drawn via CSS overlay) -->
+          <circle cx="380" cy="260" r="4" fill="rgba(255,255,255,0.92)"/>
+          <!-- Top penalty area -->
+          <rect x="175" y="18" width="410" height="85" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <!-- Top 6-yard box -->
+          <rect x="268" y="18" width="224" height="38" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <!-- Top goal -->
+          <rect x="308" y="5" width="144" height="18" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <!-- Top penalty spot -->
+          <circle cx="380" cy="85" r="3" fill="rgba(255,255,255,0.92)"/>
+          <!-- Bottom penalty area -->
+          <rect x="175" y="417" width="410" height="85" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <!-- Bottom 6-yard box -->
+          <rect x="268" y="464" width="224" height="38" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <!-- Bottom goal -->
+          <rect x="308" y="497" width="144" height="18" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <!-- Bottom penalty spot -->
+          <circle cx="380" cy="435" r="3" fill="rgba(255,255,255,0.92)"/>
+          <!-- Balón en el centro -->
+          <circle cx="380" cy="260" r="11" fill="white" stroke="#333" stroke-width="1.2"/>
+          <!-- manchas negras del balón -->
+          <polygon points="380,251 384,255 382,260 378,260 376,255" fill="#222"/>
+          <polygon points="370,258 374,256 376,260 373,264 369,263" fill="#222"/>
+          <polygon points="390,258 386,256 384,260 387,264 391,263" fill="#222"/>
+          <!-- Corner arcs -->
+          <path d="M 30 34 A 14 14 0 0 1 44 18"   fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M 716 18 A 14 14 0 0 1 730 34"  fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M 730 486 A 14 14 0 0 1 716 502" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+          <path d="M 44 502 A 14 14 0 0 1 30 486"  fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
+        </svg>
+
+        <!-- Centre circle overlay – always a perfect circle -->
+        <div class="center-circle-overlay"></div>
+
+        <!-- Player tokens rendered by JS -->
+        <div id="players-container"></div>
+
+        <!-- Drawing canvas overlay -->
+        <canvas id="draw-canvas"></canvas>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ──────────── RIGHT SIDEBAR ──────────── -->
+  <aside class="sidebar-right">
+    <h3 class="assign-title" data-i18n="asignar">ASIGNAR JUGADORES A PIZARRA</h3>
+    <div id="player-list"></div>
+  </aside>
+
+  <!-- ──────────── PLANTILLA VIEW (full area) ──────────── -->
+  <div id="plantilla-view" class="plantilla-view hidden">
+    <div class="plantilla-header">
+      <h2>GESTIÓN DE PLANTILLA</h2>
+    </div>
+    <div id="plantilla-content"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════  PLAYER MODAL  ═══════════════════ -->
+<div id="player-modal-overlay" class="modal-overlay hidden" onclick="handleModalOverlayClick(event)">
+  <div class="player-modal">
+    <h3>PERFIL DEL JUGADOR</h3>
+
+    <div class="modal-fields">
+      <div class="modal-field" style="width:80px">
+        <label>DORSAL</label>
+        <input type="number" id="modal-dorsal" min="1" max="99" />
+      </div>
+      <div class="modal-field" style="flex:1">
+        <label>NOMBRE COMPLETO</label>
+        <input type="text" id="modal-nombre" />
+      </div>
+      <div class="modal-field" style="width:72px">
+        <label>EDAD</label>
+        <input type="number" id="modal-edad" min="14" max="50" />
+      </div>
+    </div>
+
+    <div class="modal-fields">
+      <div class="modal-field" style="flex:1">
+        <label>APODO</label>
+        <input type="text" id="modal-apodo" placeholder="Apodo o nombre corto" />
+      </div>
+    </div>
+
+    <div class="modal-section-label">POSICIÓN PRINCIPAL</div>
+    <div class="modal-pos-grid">
+      <button class="modal-pos-btn" data-pos="portero"   onclick="setModalPos('portero')">PORTERO</button>
+      <button class="modal-pos-btn" data-pos="defensa"   onclick="setModalPos('defensa')">DEFENSA</button>
+      <button class="modal-pos-btn" data-pos="medio"     onclick="setModalPos('medio')">MEDIO</button>
+      <button class="modal-pos-btn" data-pos="delantero" onclick="setModalPos('delantero')">DELANTERO</button>
+    </div>
+
+    <div class="modal-photo-section">
+      <label>SUBIR FOTO</label>
+      <img id="modal-photo-preview" src="" alt="Foto jugador" />
+      <input type="file" id="modal-photo-input" accept="image/*" onchange="previewModalPhoto(event)" />
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closePlayerModal()">CANCELAR</button>
+      <button class="modal-btn save"   onclick="savePlayerModal()">GUARDAR</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js?v=6"></script>
+</body>
+</html>
