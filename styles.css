@@ -761,25 +761,26 @@ html, body {
 /* ─── BALL TOKEN ───────────────────────────── */
 .ball-token {
   position: absolute;
-  width: clamp(24px, 2.4vw, 52px);
-  height: clamp(24px, 2.4vw, 52px);
-  font-size: clamp(24px, 2.4vw, 52px);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.8);
   cursor: grab;
   transform: translate(-50%, -50%);
   user-select: none;
   z-index: 50;
   pointer-events: auto;
-  filter: drop-shadow(0 3px 8px rgba(0,0,0,.8));
-  transition: filter .12s, transform .12s;
+  transition: transform .12s, box-shadow .12s;
 }
 .ball-token:hover {
-  filter: drop-shadow(0 5px 14px rgba(0,0,0,.9));
   transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 4px 14px rgba(0,0,0,.9);
 }
 .ball-token.dragging {
   cursor: grabbing;
   transform: translate(-50%, -50%) scale(1.25);
-  filter: drop-shadow(0 8px 20px rgba(0,0,0,1));
+  box-shadow: 0 6px 18px rgba(0,0,0,1);
 }
 
 /* ─── PLAYER TOKENS ────────────────────────── */

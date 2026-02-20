@@ -116,8 +116,8 @@ const SQUAD = {
 // "My team" plays bottom half (top ~50%–95%), rival top half (~5%–50%).
 const FORMATIONS = {
   // Área grande superior: 0–20% | Área grande inferior: 80–100%
-  // mi equipo: GK=90%, DEF=76%, MED=62%, FWD=20%
-  // rival:     GK=10%, DEF=20%, MED=38%, FWD=76%  → gap medio = 24%
+  // mi equipo: GK=90%, DEF=76%, MED=38%, FWD=20%
+  // rival:     GK=10%, DEF=20%, MED=62%, FWD=76%  → medios cerca de delanteros
   '1-4-4-2': {
     my: [
       [50,  90],  // 1 GK
@@ -125,12 +125,12 @@ const FORMATIONS = {
       [13,  76],  // 3 Lat Izq
       [35,  76],  // 4 Central Izq
       [60,  76],  // 5 Central Der
-      [34,  62],  // 6 Medio centro
-      [82,  62],  // 7 Extremo Der
-      [58,  62],  // 8 Medio centro
+      [34,  38],  // 6 Medio centro
+      [82,  38],  // 7 Extremo Der
+      [58,  38],  // 8 Medio centro
       [37,  20],  // 9 Delantero Izq
       [58,  20],  // 10 Delantero Der
-      [10,  62],  // 11 Extremo Izq
+      [10,  38],  // 11 Extremo Izq
     ],
     rival: [
       [50,  10],  // 1 GK
@@ -138,12 +138,12 @@ const FORMATIONS = {
       [13,  20],  // 3 Lat Izq
       [35,  20],  // 4 Central Izq
       [60,  20],  // 5 Central Der
-      [34,  38],  // 6 Medio centro
-      [82,  38],  // 7 Extremo Der
-      [58,  38],  // 8 Medio centro
+      [34,  62],  // 6 Medio centro
+      [82,  62],  // 7 Extremo Der
+      [58,  62],  // 8 Medio centro
       [37,  76],  // 9 Delantero Izq
       [58,  76],  // 10 Delantero Der
-      [10,  38],  // 11 Extremo Izq
+      [10,  62],  // 11 Extremo Izq
     ]
   },
   '1-4-3-3': {
@@ -153,9 +153,9 @@ const FORMATIONS = {
       [8,   76],  // 3 Lat Izq
       [36,  76],  // 4 Central Izq
       [60,  76],  // 5 Central Der
-      [50,  62],  // 6 Medio pivote
-      [68,  54],  // 7 Interior Der
-      [27,  54],  // 8 Interior Izq
+      [50,  46],  // 6 Medio pivote
+      [68,  34],  // 7 Interior Der
+      [27,  34],  // 8 Interior Izq
       [83,  20],  // 9 Extremo Der
       [50,  20],  // 10 Delantero Centro
       [8,   20],  // 11 Extremo Izq
@@ -166,9 +166,9 @@ const FORMATIONS = {
       [8,   20],  // 3 Lat Izq
       [36,  20],  // 4 Central Izq
       [60,  20],  // 5 Central Der
-      [50,  38],  // 6 Medio pivote
-      [68,  46],  // 7 Interior Der
-      [27,  46],  // 8 Interior Izq
+      [50,  54],  // 6 Medio pivote
+      [68,  66],  // 7 Interior Der
+      [27,  66],  // 8 Interior Izq
       [83,  76],  // 9 Extremo Der
       [50,  76],  // 10 Delantero Centro
       [8,   76],  // 11 Extremo Izq
@@ -178,15 +178,15 @@ const FORMATIONS = {
     my: [
       [50,  90],  // 1 GK
       [18,  76], [38, 76], [62, 76], [82, 76],  // DEF
-      [36,  62], [64, 62],                       // doble pivote
-      [15,  46], [50, 46], [85, 46],             // mediapuntas
+      [36,  50], [64, 50],                       // doble pivote
+      [15,  34], [50, 34], [85, 34],             // mediapuntas
       [50,  20],                                 // delantero
     ],
     rival: [
       [50,  10],  // 1 GK
       [18,  20], [38, 20], [62, 20], [82, 20],  // DEF
-      [36,  38], [64, 38],                       // doble pivote
-      [15,  54], [50, 54], [85, 54],             // mediapuntas
+      [36,  50], [64, 50],                       // doble pivote
+      [15,  66], [50, 66], [85, 66],             // mediapuntas
       [50,  76],                                 // delantero
     ]
   },
@@ -194,13 +194,13 @@ const FORMATIONS = {
     my: [
       [50,  90],  // 1 GK
       [25,  76], [50, 76], [75, 76],             // 3 DEF
-      [8,   62], [28, 62], [50, 62], [72, 62], [92, 62],  // 5 MED
+      [8,   38], [28, 38], [50, 38], [72, 38], [92, 38],  // 5 MED
       [34,  20], [66, 20],                       // 2 DEL
     ],
     rival: [
       [50,  10],  // 1 GK
       [25,  20], [50, 20], [75, 20],             // 3 DEF
-      [8,   38], [28, 38], [50, 38], [72, 38], [92, 38],  // 5 MED
+      [8,   62], [28, 62], [50, 62], [72, 62], [92, 62],  // 5 MED
       [34,  76], [66, 76],                       // 2 DEL
     ]
   },
@@ -208,13 +208,13 @@ const FORMATIONS = {
     my: [
       [50,  90],  // 1 GK
       [25,  76], [50, 76], [75, 76],             // 3 DEF
-      [15,  62], [38, 62], [62, 62], [85, 62],   // 4 MED
+      [15,  38], [38, 38], [62, 38], [85, 38],   // 4 MED
       [15,  20], [50, 20], [85, 20],             // 3 DEL
     ],
     rival: [
       [50,  10],  // 1 GK
       [25,  20], [50, 20], [75, 20],             // 3 DEF
-      [15,  38], [38, 38], [62, 38], [85, 38],   // 4 MED
+      [15,  62], [38, 62], [62, 62], [85, 62],   // 4 MED
       [15,  76], [50, 76], [85, 76],             // 3 DEL
     ]
   },
@@ -222,13 +222,13 @@ const FORMATIONS = {
     my: [
       [50,  90],  // 1 GK
       [8,   76], [26, 76], [50, 76], [74, 76], [92, 76],  // 5 DEF
-      [25,  62], [50, 62], [75, 62],             // 3 MED
+      [25,  38], [50, 38], [75, 38],             // 3 MED
       [34,  20], [66, 20],                       // 2 DEL
     ],
     rival: [
       [50,  10],  // 1 GK
       [8,   20], [26, 20], [50, 20], [74, 20], [92, 20],  // 5 DEF
-      [25,  38], [50, 38], [75, 38],             // 3 MED
+      [25,  62], [50, 62], [75, 62],             // 3 MED
       [34,  76], [66, 76],                       // 2 DEL
     ]
   },
@@ -236,13 +236,13 @@ const FORMATIONS = {
     my: [
       [50,  90],  // 1 GK
       [8,   76], [26, 76], [50, 76], [74, 76], [92, 76],  // 5 DEF
-      [15,  62], [38, 62], [62, 62], [85, 62],  // 4 MED
+      [15,  38], [38, 38], [62, 38], [85, 38],  // 4 MED
       [50,  20],                                 // 1 DEL
     ],
     rival: [
       [50,  10],  // 1 GK
       [8,   20], [26, 20], [50, 20], [74, 20], [92, 20],  // 5 DEF
-      [15,  38], [38, 38], [62, 38], [85, 38],  // 4 MED
+      [15,  62], [38, 62], [62, 62], [85, 62],  // 4 MED
       [50,  76],                                 // 1 DEL
     ]
   },
