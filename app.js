@@ -263,6 +263,7 @@ let state = {
   currentSlide: 0,
   players: [],      // { id, team, jersey, x, y, name, abbr }
   assignedPlayers: {},  // jerseyKey -> squad player id
+  ball: { x: 50, y: 50 },     // balón
 };
 
 let history = [];   // undo stack
@@ -892,9 +893,15 @@ function renderSlideChips() {
 function addSlide() {
   saveHistory();
   // Save current slide positions before adding new one
-  state.slides[state.currentSlide] = JSON.parse(JSON.stringify(state.players));
+  state.slides[state.currentSlide] = {
+    players: JSON.parse(JSON.stringify(state.players)),
+    ball: { ...state.ball },
+  };
   // Deep clone current positions for the new slide
-  state.slides.push(JSON.parse(JSON.stringify(state.players)));
+  state.slides.push({
+    players: JSON.parse(JSON.stringify(state.players)),
+    ball: { ...state.ball },
+  });
   state.currentSlide = state.slides.length - 1;
   renderSlideChips();
 }
@@ -907,13 +914,15 @@ function deleteSlide(idx) {
   if (state.currentSlide >= state.slides.length) {
     state.currentSlide = state.slides.length - 1;
   }
-  state.players = JSON.parse(JSON.stringify(state.slides[state.currentSlide]));
+  const sd = state.slides[state.currentSlide];
+  state.players = JSON.parse(JSON.stringify(sd.players || sd));
+  if (sd.ball) { state.ball = { ...sd.ball }; applyBallPosition(); }
   renderPlayers();
   renderSlideChips();
 }
 
 // Update only left/top of existing tokens (enables CSS transitions)
-function updateTokenPositions(players) {
+function updateTokenPositions(players, ball) {
   players.forEach(p => {
     const el = document.getElementById('token-' + p.id);
     if (el) {
@@ -921,21 +930,31 @@ function updateTokenPositions(players) {
       el.style.top  = p.y + '%';
     }
   });
+  if (ball) {
+    state.ball = { ...ball };
+    applyBallPosition();
+  }
 }
 
 function goToSlide(idx, animate) {
   // Save current state before switching
   if (!animate) {
-    state.slides[state.currentSlide] = JSON.parse(JSON.stringify(state.players));
+    state.slides[state.currentSlide] = {
+      players: JSON.parse(JSON.stringify(state.players)),
+      ball: { ...state.ball },
+    };
   }
   state.currentSlide = idx;
   document.querySelectorAll('.slide-chip').forEach(c =>
     c.classList.toggle('active', +c.dataset.slide === idx));
-  if (state.slides[idx]) {
-    state.players = JSON.parse(JSON.stringify(state.slides[idx]));
+  const sd = state.slides[idx];
+  if (sd) {
+    state.players = JSON.parse(JSON.stringify(sd.players || sd));
+    const ballData = sd.ball || null;
     if (animate) {
-      updateTokenPositions(state.players);
+      updateTokenPositions(state.players, ballData);
     } else {
+      if (ballData) { state.ball = { ...ballData }; applyBallPosition(); }
       renderPlayers();
     }
   }
@@ -953,7 +972,10 @@ function playAnimation() {
   const total = state.slides.length;
   if (total < 2) return;
   // Save current slide before playing
-  state.slides[state.currentSlide] = JSON.parse(JSON.stringify(state.players));
+  state.slides[state.currentSlide] = {
+    players: JSON.parse(JSON.stringify(state.players)),
+    ball: { ...state.ball },
+  };
   const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
   // Set transition duration slightly shorter than interval for smooth feel
   const dur = Math.round(speed * 0.75);
@@ -1052,28 +1074,37 @@ function loadFromHash() {
 }
 
 // ─── BALL DRAG ───────────────────────────────
+function applyBallPosition() {
+  const ball = document.getElementById('ball-token');
+  if (!ball) return;
+  ball.style.left = state.ball.x + '%';
+  ball.style.top  = state.ball.y + '%';
+}
+
 function setupBall() {
   const ball = document.getElementById('ball-token');
   if (!ball) return;
 
-  const bData = { x: 50, y: 50 };
+  // Apply initial position from state
+  applyBallPosition();
+
   let offsetX, offsetY, pitchRect;
 
   ball.addEventListener('mousedown', e => {
     e.preventDefault();
     e.stopPropagation();
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
-    offsetX = e.clientX - (bData.x / 100 * pitchRect.width  + pitchRect.left);
-    offsetY = e.clientY - (bData.y / 100 * pitchRect.height + pitchRect.top);
+    offsetX = e.clientX - (state.ball.x / 100 * pitchRect.width  + pitchRect.left);
+    offsetY = e.clientY - (state.ball.y / 100 * pitchRect.height + pitchRect.top);
     ball.classList.add('dragging');
 
     function onMove(mv) {
       const x = ((mv.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
       const y = ((mv.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
-      bData.x = Math.min(Math.max(x, 1), 99);
-      bData.y = Math.min(Math.max(y, 1), 99);
-      ball.style.left = bData.x + '%';
-      ball.style.top  = bData.y + '%';
+      state.ball.x = Math.min(Math.max(x, 1), 99);
+      state.ball.y = Math.min(Math.max(y, 1), 99);
+      ball.style.left = state.ball.x + '%';
+      ball.style.top  = state.ball.y + '%';
     }
     function onUp() {
       ball.classList.remove('dragging');
@@ -1089,8 +1120,8 @@ function setupBall() {
     e.stopPropagation();
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
     const t = e.touches[0];
-    const elLeft = bData.x / 100 * pitchRect.width  + pitchRect.left;
-    const elTop  = bData.y / 100 * pitchRect.height + pitchRect.top;
+    const elLeft = state.ball.x / 100 * pitchRect.width  + pitchRect.left;
+    const elTop  = state.ball.y / 100 * pitchRect.height + pitchRect.top;
     offsetX = t.clientX - elLeft;
     offsetY = t.clientY - elTop;
     ball.classList.add('dragging');
@@ -1100,10 +1131,10 @@ function setupBall() {
       const tc = mv.touches[0];
       const x = ((tc.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
       const y = ((tc.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
-      bData.x = Math.min(Math.max(x, 1), 99);
-      bData.y = Math.min(Math.max(y, 1), 99);
-      ball.style.left = bData.x + '%';
-      ball.style.top  = bData.y + '%';
+      state.ball.x = Math.min(Math.max(x, 1), 99);
+      state.ball.y = Math.min(Math.max(y, 1), 99);
+      ball.style.left = state.ball.x + '%';
+      ball.style.top  = state.ball.y + '%';
     };
     ball.ontouchend = () => {
       ball.classList.remove('dragging');
