@@ -400,7 +400,7 @@ function renderPlayers() {
     const isRivalGK = p.team === 'rival' && p.jersey === 1;
     const color = isMyGK ? GK_COLOR : isRivalGK ? RIVAL_GK_COLOR : (p.team === 'my' ? state.myColor : state.rivalColor);
     el.style.background = usePhoto ? 'transparent' : color;
-    el.style.border = `2px solid ${usePhoto ? lighten(color, 40) : (isMyGK || isRivalGK) ? '#555' : lighten(color, 40)}`;
+    el.style.border = `2px solid ${usePhoto ? lighten(color, 40) : (isMyGK || isRivalGK) ? '#555' : p.name ? '#000' : lighten(color, 40)}`;
     el.style.color = isLight(color) ? '#111' : '#fff';
 
     if (usePhoto) {
@@ -588,7 +588,7 @@ function setTeamColor(team, color) {
     const el = document.getElementById('token-' + p.id);
     if (!el) return;
     el.style.background = color;
-    el.style.border = `2px solid ${lighten(color, 40)}`;
+    el.style.border = `2px solid ${p.name ? '#000' : lighten(color, 40)}`;
     el.style.color = isLight(color) ? '#111' : '#fff';
   });
 }
@@ -686,7 +686,8 @@ function assignPlayer(player, posKey) {
       el.style.background = 'transparent';
       el.innerHTML = `<div class="token-photo-wrap"><img class="token-photo" src="${player.photo}" onerror="this.parentElement.style.display='none'"></div><span class="dorsal-badge">${player.dorsal}</span><span class="token-name-label">${slot.name}</span>`;
     } else {
-      el.style.background = '';
+      el.style.background = state.myColor;
+      el.style.border = '2px solid #000';
       el.innerHTML = `<span class="jersey-num">${player.dorsal}</span><span class="token-initials">${slot.name}</span>`;
     }
     el.style.color = isLight(state.myColor) ? '#111' : '#fff';
