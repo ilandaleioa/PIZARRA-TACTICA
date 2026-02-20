@@ -656,8 +656,8 @@ html, body {
 /* ─── BALL TOKEN ────────────────────────────── */
 .ball-token {
   position: absolute;
-  width: 28px;
-  height: 28px;
+  width: 18px;
+  height: 18px;
   cursor: grab;
   transform: translate(-50%, -50%);
   user-select: none;
