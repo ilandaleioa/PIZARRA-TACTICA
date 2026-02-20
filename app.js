@@ -50,35 +50,33 @@ function setLang(lang) {
 }
 
 // ─── SQUAD DATA ──────────────────────────────
-const SQUAD = {
-  portero: [
-    { id: 'US', name: 'Unai Simón',         abbr: 'U.S', dorsal: 1,  edad: 28, apodo: '' },
-    { id: 'JA', name: 'Julen Agirrezabala', abbr: 'J.A', dorsal: 25, edad: 23, apodo: '' },
-  ],
-  defensa: [
-    { id: 'AR', name: 'Areso',   abbr: 'ARE', dorsal: 12, edad: 25, apodo: '' },
-    { id: 'VI', name: 'Vivian',  abbr: 'VIV', dorsal: 3,  edad: 26, apodo: '' },
-    { id: 'YE', name: 'Yeray',   abbr: 'YER', dorsal: 4,  edad: 29, apodo: '' },
-    { id: 'YU', name: 'Yuri B.', abbr: 'YUR', dorsal: 17, edad: 28, apodo: '' },
-    { id: 'LI', name: 'Lekue',   abbr: 'LEK', dorsal: 22, edad: 33, apodo: '' },
-    { id: 'OI', name: 'Oier',    abbr: 'OIE', dorsal: 15, edad: 27, apodo: '' },
-  ],
-  medio: [
-    { id: 'VE', name: 'Vesga',      abbr: 'VEG', dorsal: 6,  edad: 30, apodo: '' },
-    { id: 'SA', name: 'Sancet',     abbr: 'SAN', dorsal: 8,  edad: 25, apodo: '' },
-    { id: 'BE', name: 'Berenguer',  abbr: 'BER', dorsal: 7,  edad: 32, apodo: '' },
-    { id: 'DV', name: 'De Marcos',  abbr: 'D.M', dorsal: 19, edad: 35, apodo: '' },
-    { id: 'UC', name: 'Unai López', abbr: 'U.L', dorsal: 16, edad: 30, apodo: '' },
-    { id: 'ZU', name: 'Zarraga',    abbr: 'ZAR', dorsal: 14, edad: 25, apodo: '' },
-    { id: 'MU', name: 'Muniain',    abbr: 'MUN', dorsal: 10, edad: 33, apodo: '' },
-  ],
-  delantero: [
-    { id: 'NW', name: 'Nico Williams', abbr: 'N.W', dorsal: 11, edad: 22, apodo: '' },
-    { id: 'IW', name: 'I. Williams',   abbr: 'I.W', dorsal: 9,  edad: 26, apodo: '' },
-    { id: 'GU', name: 'Guruzeta',      abbr: 'GUR', dorsal: 21, edad: 27, apodo: '' },
-    { id: 'RD', name: 'Raúl García',   abbr: 'R.G', dorsal: 5,  edad: 38, apodo: '' },
-  ],
+// Starts empty – each user builds their own squad (persisted in localStorage)
+let SQUAD = {
+  portero:   [],
+  defensa:   [],
+  medio:     [],
+  delantero: [],
 };
+
+function generatePlayerId() {
+  return 'P' + Date.now().toString(36).toUpperCase().slice(-5);
+}
+
+function loadSquad() {
+  try {
+    const stored = localStorage.getItem('acSquad');
+    if (stored) {
+      const data = JSON.parse(stored);
+      ['portero','defensa','medio','delantero'].forEach(pos => {
+        if (Array.isArray(data[pos])) SQUAD[pos] = data[pos];
+      });
+    }
+  } catch(e) {}
+}
+
+function saveSquad() {
+  try { localStorage.setItem('acSquad', JSON.stringify(SQUAD)); } catch(e) {}
+}
 
 // ─── FORMATIONS ──────────────────────────────
 // Positions as % [left, top] relative to the pitch.
@@ -100,16 +98,16 @@ const FORMATIONS = {
   },
   '4-3-3': {
     my: [
-      [50,  90],
-      [18,  72], [38, 72], [62, 72], [82, 72],
-      [28,  52], [50, 52], [72, 52],
-      [20,  30], [50, 28], [80, 30],
+      [50,  90],                                          // 1 GK
+      [14,  53], [34, 65], [60, 65], [82, 58],           // 2-5 DEF
+      [27,  38], [48, 47], [65, 35],                     // 6-8 MID
+      [13,  22], [48, 20], [83, 22],                     // 9-11 FWD
     ],
     rival: [
-      [50, 10],
-      [18, 28], [38, 28], [62, 28], [82, 28],
-      [28, 48], [50, 48], [72, 48],
-      [20, 70], [50, 72], [80, 70],
+      [50,  10],
+      [14,  47], [34, 35], [60, 35], [82, 42],
+      [27,  62], [48, 53], [65, 65],
+      [13,  78], [48, 80], [83, 78],
     ]
   },
   '4-2-3-1': {
@@ -222,6 +220,7 @@ function savePhotos() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadPhotos();
+  loadSquad();
   initState();
   renderPlayers();
   renderPlayerList();
@@ -493,11 +492,20 @@ function renderPlantillaView() {
 
     const heading = document.createElement('div');
     heading.className = 'plantilla-pos-label';
-    heading.textContent = pos.label;
+    heading.innerHTML = `${pos.label} <button class="add-player-btn" title="Añadir jugador" onclick="openNewPlayerModal('${pos.key}')">＋</button>`;
     section.appendChild(heading);
 
     const grid = document.createElement('div');
     grid.className = 'player-cards-grid';
+
+    if (SQUAD[pos.key].length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'player-card empty-card';
+      empty.style.cssText = 'color:#666;font-size:0.82rem;grid-column:1/-1;padding:14px;text-align:center;border:1px dashed #444;border-radius:8px;cursor:pointer';
+      empty.textContent = '+ Añadir primer jugador';
+      empty.onclick = () => openNewPlayerModal(pos.key);
+      grid.appendChild(empty);
+    }
 
     SQUAD[pos.key].forEach(player => {
       const photoSrc = playerPhotos[player.id] || null;
@@ -519,6 +527,7 @@ function renderPlantillaView() {
             <span class="pc-edad">${player.edad} años</span>
           </div>
         </div>
+        <button class="delete-player-btn" title="Eliminar jugador" onclick="event.stopPropagation(); deletePlayer('${player.id}','${pos.key}')">✕</button>
       `;
       grid.appendChild(card);
     });
@@ -531,6 +540,25 @@ function renderPlantillaView() {
 // ─── PLAYER MODAL ────────────────────────────
 let _editId  = null;
 let _editPos = null;
+
+function openNewPlayerModal(posKey) {
+  _editId  = '__new__';
+  _editPos = posKey;
+
+  document.getElementById('modal-dorsal').value = '';
+  document.getElementById('modal-nombre').value = '';
+  document.getElementById('modal-apodo').value  = '';
+  document.getElementById('modal-edad').value   = '';
+
+  document.querySelectorAll('.modal-pos-btn').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.pos === posKey)
+  );
+
+  const preview = document.getElementById('modal-photo-preview');
+  preview.src = ''; preview.style.display = 'none';
+  document.getElementById('modal-photo-input').value = '';
+  document.getElementById('player-modal-overlay').classList.remove('hidden');
+}
 
 function openPlayerModal(playerId, posKey) {
   _editId  = playerId;
@@ -585,32 +613,76 @@ function previewModalPhoto(e) {
 
 function savePlayerModal() {
   if (!_editId || !_editPos) return;
-  const player = SQUAD[_editPos].find(p => p.id === _editId);
-  if (!player) return;
 
-  player.dorsal = parseInt(document.getElementById('modal-dorsal').value) || player.dorsal;
-  player.name   = document.getElementById('modal-nombre').value.trim() || player.name;
-  player.apodo  = document.getElementById('modal-apodo').value.trim();
-  player.edad   = parseInt(document.getElementById('modal-edad').value)  || player.edad;
-
-  // Handle position change
+  const dorsal = parseInt(document.getElementById('modal-dorsal').value) || 1;
+  const name   = document.getElementById('modal-nombre').value.trim();
+  const apodo  = document.getElementById('modal-apodo').value.trim();
+  const edad   = parseInt(document.getElementById('modal-edad').value)  || 20;
   const newPosBtn = document.querySelector('.modal-pos-btn.active');
   const newPos = newPosBtn ? newPosBtn.dataset.pos : _editPos;
-  if (newPos !== _editPos) {
-    SQUAD[_editPos] = SQUAD[_editPos].filter(p => p.id !== _editId);
-    SQUAD[newPos].push(player);
-  }
 
-  // Handle photo
+  if (!name) { alert('Por favor introduce un nombre.'); return; }
+
+  const doSave = (photoData) => {
+    if (_editId === '__new__') {
+      // Create new player
+      const id = generatePlayerId();
+      const abbr = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
+      const newPlayer = { id, name, abbr, dorsal, edad, apodo };
+      SQUAD[newPos].push(newPlayer);
+      if (photoData) playerPhotos[id] = photoData;
+    } else {
+      // Edit existing player
+      const player = SQUAD[_editPos].find(p => p.id === _editId);
+      if (!player) return;
+      player.dorsal = dorsal;
+      player.name   = name;
+      player.apodo  = apodo;
+      player.edad   = edad;
+      player.abbr   = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
+      if (photoData) playerPhotos[_editId] = photoData;
+
+      // Handle position change
+      if (newPos !== _editPos) {
+        SQUAD[_editPos] = SQUAD[_editPos].filter(p => p.id !== _editId);
+        SQUAD[newPos].push(player);
+      }
+    }
+
+    saveSquad();
+    savePhotos();
+    closePlayerModal();
+    renderPlantillaView();
+    renderPlayerList();
+  };
+
   const fileInput = document.getElementById('modal-photo-input');
-  const doSave = () => { savePhotos(); closePlayerModal(); renderPlantillaView(); renderPlayerList(); };
   if (fileInput.files[0]) {
     const reader = new FileReader();
-    reader.onload = ev => { playerPhotos[_editId] = ev.target.result; doSave(); };
+    reader.onload = ev => doSave(ev.target.result);
     reader.readAsDataURL(fileInput.files[0]);
   } else {
-    doSave();
+    doSave(null);
   }
+}
+
+function deletePlayer(playerId, posKey) {
+  const name = (SQUAD[posKey].find(p => p.id === playerId) || {}).name || 'jugador';
+  if (!confirm(`¿Eliminar a ${name} de la plantilla?`)) return;
+  SQUAD[posKey] = SQUAD[posKey].filter(p => p.id !== playerId);
+  delete playerPhotos[playerId];
+  // Remove from board if assigned
+  state.players.forEach(p => {
+    if (state.assignedPlayers[p.id] === playerId) {
+      p.name = ''; p.abbr = '';
+      delete state.assignedPlayers[p.id];
+    }
+  });
+  saveSquad();
+  savePhotos();
+  renderPlantillaView();
+  renderPlayerList();
+  renderPlayers();
 }
 
 // ─── TOGGLE VISIBILITY ────────────────────────
@@ -696,33 +768,152 @@ function playAnimation() {
 
 // ─── EXPORT IMAGE ────────────────────────────
 function exportImage() {
-  html2canvasFallback();
-}
-
-function html2canvasFallback() {
-  // Use native browser print-to-PDF or just open in new tab as fallback
   const pitch = document.getElementById('pitch');
-  const dataUrl = canvasSnapshot(pitch);
-  const link = document.createElement('a');
-  link.download = 'pizarra-tactica.png';
-  link.href = dataUrl;
-  link.click();
+  html2canvas(pitch, {
+    useCORS:         true,
+    allowTaint:      true,
+    scale:           2,
+    backgroundColor: '#2e7d32',
+    logging:         false,
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'pizarra-tactica.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }).catch(() => {
+    alert('Error al exportar la imagen. Inténtalo de nuevo.');
+  });
 }
 
-function canvasSnapshot(element) {
-  // Simple SVG → canvas fallback
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${element.offsetWidth}' height='${element.offsetHeight}'>
-    <foreignObject width='100%' height='100%'>
-      <div xmlns='http://www.w3.org/1999/xhtml' style='width:${element.offsetWidth}px;height:${element.offsetHeight}px'>
-      </div>
-    </foreignObject></svg>`;
-  const c = document.createElement('canvas');
-  c.width = element.offsetWidth;
-  c.height = element.offsetHeight;
-  const ctx = c.getContext('2d');
-  ctx.fillStyle = '#2e7d32';
-  ctx.fillRect(0, 0, c.width, c.height);
-  return c.toDataURL();
+// ─── VIDEO MODAL ───────────────────────────────
+function openVideoModal() {
+  document.getElementById('video-modal-overlay').classList.remove('hidden');
+}
+function closeVideoModal() {
+  document.getElementById('video-modal-overlay').classList.add('hidden');
+}
+function handleVideoModalClick(e) {
+  if (e.target === document.getElementById('video-modal-overlay')) closeVideoModal();
+}
+
+// ─── VIDEO EXPORT: ANIMACIÓN DE FOTOGRAMAS ────────────────
+async function exportVideoSlides() {
+  closeVideoModal();
+  const validSlides = state.slides.filter(s => s !== null);
+  if (validSlides.length < 2) {
+    alert('Necesitas al menos 2 fotogramas (slides) para exportar una animación.\nUsa el botón + para añadir fotogramas.');
+    return;
+  }
+
+  const pitch = document.getElementById('pitch');
+  const W = pitch.offsetWidth  * 2;
+  const H = pitch.offsetHeight * 2;
+
+  const offscreen = document.createElement('canvas');
+  offscreen.width  = W;
+  offscreen.height = H;
+  const octx = offscreen.getContext('2d');
+
+  const mimeType = getSupportedVideoMime();
+  const stream   = offscreen.captureStream(30);
+  const recorder = new MediaRecorder(stream, { mimeType });
+  const chunks   = [];
+
+  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: mimeType });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'pizarra-tactica-animacion.webm';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  recorder.start();
+
+  const savedSlide = state.currentSlide;
+  const HOLD_MS    = 1500; // ms por fotograma en el video
+
+  for (let i = 0; i < state.slides.length; i++) {
+    if (!state.slides[i]) continue;
+    goToSlide(i);
+    await new Promise(r => setTimeout(r, 120)); // espera re-render DOM
+    const snap = await html2canvas(pitch, {
+      useCORS: true, allowTaint: true,
+      scale: 2, backgroundColor: '#2e7d32', logging: false,
+    });
+    octx.clearRect(0, 0, W, H);
+    octx.drawImage(snap, 0, 0, W, H);
+    await new Promise(r => setTimeout(r, HOLD_MS));
+  }
+
+  recorder.stop();
+  goToSlide(savedSlide);
+}
+
+// ─── VIDEO EXPORT: GRABACIÓN EN VIVO ──────────────────────
+let _liveRecorder   = null;
+let _liveChunks     = [];
+let _liveInterval   = null;
+let _liveOffscreen  = null;
+
+function getSupportedVideoMime() {
+  const types = [
+    'video/webm;codecs=vp9',
+    'video/webm;codecs=vp8',
+    'video/webm',
+    'video/mp4',
+  ];
+  return types.find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
+}
+
+function startLiveRecording() {
+  closeVideoModal();
+  const pitch = document.getElementById('pitch');
+  const W = pitch.offsetWidth  * 2;
+  const H = pitch.offsetHeight * 2;
+
+  _liveOffscreen        = document.createElement('canvas');
+  _liveOffscreen.width  = W;
+  _liveOffscreen.height = H;
+  const ctx = _liveOffscreen.getContext('2d');
+
+  const mimeType = getSupportedVideoMime();
+  const stream   = _liveOffscreen.captureStream(15);
+  _liveChunks    = [];
+  _liveRecorder  = new MediaRecorder(stream, { mimeType });
+
+  _liveRecorder.ondataavailable = e => { if (e.data.size > 0) _liveChunks.push(e.data); };
+  _liveRecorder.onstop = () => {
+    const blob = new Blob(_liveChunks, { type: mimeType });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'pizarra-tactica-live.webm';
+    a.click();
+    URL.revokeObjectURL(url);
+    document.getElementById('rec-indicator').classList.add('hidden');
+  };
+
+  // Capture pitch at ~10fps
+  _liveInterval = setInterval(() => {
+    html2canvas(pitch, {
+      useCORS: true, allowTaint: true,
+      scale: 2, backgroundColor: '#2e7d32', logging: false,
+    }).then(snap => {
+      ctx.clearRect(0, 0, W, H);
+      ctx.drawImage(snap, 0, 0, W, H);
+    });
+  }, 100);
+
+  _liveRecorder.start(200); // collect data every 200ms
+  document.getElementById('rec-indicator').classList.remove('hidden');
+}
+
+function stopLiveRecording() {
+  if (_liveInterval) { clearInterval(_liveInterval); _liveInterval = null; }
+  if (_liveRecorder && _liveRecorder.state !== 'inactive') _liveRecorder.stop();
 }
 
 // ─── SHARE ───────────────────────────────────
