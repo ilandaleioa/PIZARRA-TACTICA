@@ -38,6 +38,24 @@ const LANGS = {
 
 let currentLang = 'es';
 
+// ─── THEME ───────────────────────────────────
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  const btn = document.getElementById('theme-btn');
+  btn.innerHTML = isLight ? '&#9790;' : '&#9728;';
+  btn.title = isLight ? 'Modo oscuro' : 'Modo claro';
+  localStorage.setItem('ac-theme', isLight ? 'light' : 'dark');
+}
+
+(function applyStoredTheme() {
+  const stored = localStorage.getItem('ac-theme');
+  if (stored === 'light') {
+    document.body.classList.add('light');
+    const btn = document.getElementById('theme-btn');
+    if (btn) { btn.innerHTML = '&#9790;'; btn.title = 'Modo oscuro'; }
+  }
+})();
+
 function setLang(lang) {
   currentLang = lang;
   document.querySelectorAll('.lang').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));

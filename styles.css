@@ -652,6 +652,35 @@ html, body {
   z-index: 30;
   box-shadow: 0 8px 24px rgba(0,0,0,.8);
 }
+.player-token.selected {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(255,255,255,0.35), 0 4px 16px rgba(0,0,0,.7);
+  z-index: 25;
+  animation: pulse-select .8s ease-in-out infinite alternate;
+}
+@keyframes pulse-select {
+  from { box-shadow: 0 0 0 4px rgba(255,255,255,0.3), 0 4px 16px rgba(0,0,0,.6); }
+  to   { box-shadow: 0 0 0 8px rgba(255,255,255,0.55), 0 4px 20px rgba(0,0,0,.8); }
+}
+.assign-hint {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 7px 10px;
+  background: var(--surface2);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  letter-spacing: .3px;
+  border: 1px solid var(--border);
+  transition: background .2s, color .2s;
+}
+.assign-hint.active {
+  background: rgba(198,40,40,.18);
+  color: #ff7070;
+  border-color: rgba(198,40,40,.4);
+}
 .player-token .token-initials {
   position: absolute;
   top: 100%;
@@ -754,6 +783,45 @@ html, body {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #666; }
+
+/* ─── THEME TOGGLE BUTTON ─────────────────── */
+.theme-toggle-btn {
+  font-size: 18px;
+  transition: transform .3s, color .15s;
+}
+.theme-toggle-btn:hover { transform: rotate(20deg); }
+
+/* ─── LIGHT THEME ──────────────────────────── */
+body.light {
+  --bg:        #f0f2f5;
+  --surface:   #ffffff;
+  --surface2:  #e4e7ec;
+  --border:    #c8cdd6;
+  --text:      #1a1a1a;
+  --text-dim:  #5a6172;
+}
+body.light .topnav {
+  background: #1c1c2e;
+}
+body.light .logo-title { color: #fff; }
+body.light .logo-sub   { color: var(--accent); }
+body.light .lang       { color: rgba(255,255,255,.55); }
+body.light .lang:hover { color: #fff; }
+#theme-btn.dark-icon::before { content: ''; }
+body.light .icon-btn:hover { background: var(--surface2); color: var(--text); }
+body.light #theme-btn { color: #f4c542; }
+body.light .sidebar-tab:hover { background: #d6dae3; color: var(--text); }
+body.light .sidebar-tab.active { background: var(--surface); color: var(--text); }
+body.light .action-btn:hover  { background: #d0d4de; }
+body.light .slide-chip:not(.active):hover { background: #d0d4de; }
+body.light .modal-btn.cancel { background: var(--surface); border-color: var(--border); color: var(--text); }
+body.light .modal-btn.cancel:hover { background: #d0d4de; }
+body.light .modal-pos-btn:hover { background: #d0d4de; }
+body.light .player-row:hover { background: var(--surface2); }
+body.light ::-webkit-scrollbar-track { background: var(--bg); }
+body.light ::-webkit-scrollbar-thumb { background: #b0b6c2; }
+body.light ::-webkit-scrollbar-thumb:hover { background: #8e96a4; }
+body.light .modal-overlay { background: rgba(0,0,0,.55); }
 
 /* ─── RESPONSIVE TWEAK ─────────────────────── */
 @media (max-width: 900px) {
