@@ -268,6 +268,40 @@ function initState() {
   saveHistory();
 }
 
+// ─── SELECTED TOKEN ─────────────────────────
+let selectedTokenId = null;
+
+function selectToken(id) {
+  // Deselect previous
+  if (selectedTokenId) {
+    const prev = document.getElementById('token-' + selectedTokenId);
+    if (prev) prev.classList.remove('selected');
+  }
+  if (selectedTokenId === id) {
+    // Second click on same token → deselect
+    selectedTokenId = null;
+    updateAssignHint();
+    return;
+  }
+  selectedTokenId = id;
+  const el = document.getElementById('token-' + id);
+  if (el) el.classList.add('selected');
+  updateAssignHint();
+}
+
+function updateAssignHint() {
+  const hint = document.getElementById('assign-hint');
+  if (!hint) return;
+  if (selectedTokenId) {
+    const p = state.players.find(pl => pl.id === selectedTokenId);
+    hint.textContent = `Círculo ${p ? p.jersey : ''} seleccionado — ahora elige un jugador`;
+    hint.classList.add('active');
+  } else {
+    hint.textContent = 'Pulsa un círculo del campo para asignar jugador';
+    hint.classList.remove('active');
+  }
+}
+
 // ─── RENDER PLAYERS ──────────────────────────
 function renderPlayers() {
   const container = document.getElementById('players-container');
@@ -294,6 +328,15 @@ function renderPlayers() {
 
     // Respect current visibility state
     if (!teamVisible[p.team]) el.style.visibility = 'hidden';
+
+    // Click to select (only my team tokens)
+    if (p.team === 'my') {
+      el.addEventListener('click', e => {
+        if (el.classList.contains('dragging')) return;
+        e.stopPropagation();
+        selectToken(p.id);
+      });
+    }
 
     makeDraggable(el, p);
     container.appendChild(el);
@@ -408,6 +451,14 @@ function renderPlayerList() {
   const container = document.getElementById('player-list');
   container.innerHTML = '';
 
+  // Hint bar
+  const hint = document.createElement('div');
+  hint.id = 'assign-hint';
+  hint.className = 'assign-hint';
+  hint.textContent = 'Pulsa un círculo del campo para asignar jugador';
+  container.appendChild(hint);
+  updateAssignHint();
+
   const positions = [
     { key: 'portero',   label: lang.portero,   cls: 'assigned-gk'  },
     { key: 'defensa',   label: lang.defensa,   cls: 'assigned-def' },
@@ -449,17 +500,24 @@ function renderPlayerList() {
   });
 }
 
-// Assign a squad player to the correct positional slot in "my team"
+// Assign a squad player to a selected token, or next free slot
 function assignPlayer(player, posKey) {
   let slot;
-  if (posKey === 'portero') {
-    // Portero siempre va al slot 1
-    slot = state.players.find(p => p.team === 'my' && p.jersey === 1 && !p.name);
-  } else {
-    // Resto: siguiente slot libre en orden (jerseys 2-11)
-    slot = state.players
-      .filter(p => p.team === 'my' && p.jersey > 1 && !p.name)
-      .sort((a, b) => a.jersey - b.jersey)[0];
+
+  if (selectedTokenId) {
+    // Assign to the specifically selected token
+    slot = state.players.find(p => p.id === selectedTokenId && p.team === 'my');
+  }
+
+  if (!slot) {
+    // Fallback: portero al slot 1, resto al siguiente libre en orden
+    if (posKey === 'portero') {
+      slot = state.players.find(p => p.team === 'my' && p.jersey === 1 && !p.name);
+    } else {
+      slot = state.players
+        .filter(p => p.team === 'my' && p.jersey > 1 && !p.name)
+        .sort((a, b) => a.jersey - b.jersey)[0];
+    }
   }
   if (!slot) return;
 
@@ -471,9 +529,14 @@ function assignPlayer(player, posKey) {
   const el = document.getElementById('token-' + slot.id);
   if (el) {
     el.classList.add('has-player');
+    el.classList.remove('selected');
     el.innerHTML = `<span class="jersey-num">${slot.jersey}</span><span class="token-initials">${slot.name}</span>`;
     el.style.color = isLight(state.myColor) ? '#111' : '#fff';
   }
+
+  // Clear selection
+  selectedTokenId = null;
+  updateAssignHint();
   renderPlayerList();
 }
 
