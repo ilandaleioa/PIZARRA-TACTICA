@@ -101,6 +101,34 @@ html, body {
 .icon-btn.small { font-size: 12px; }
 .eye-btn.hidden-team { opacity: .35; filter: grayscale(1); }
 
+/* ─── VIS TOGGLE BUTTON ────────────────────── */
+.vis-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: background .2s, color .2s, transform .1s;
+  background: var(--surface2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.vis-toggle .vis-icon { font-size: 13px; line-height: 1; filter: grayscale(1); opacity: .5; transition: filter .2s, opacity .2s; }
+.vis-toggle .vis-label { line-height: 1; }
+.vis-toggle.active {
+  background: rgba(46,125,50,.2);
+  color: #66bb6a;
+  border-color: rgba(46,125,50,.5);
+}
+.vis-toggle.active .vis-icon { filter: none; opacity: 1; }
+.vis-toggle:hover { transform: scale(1.05); }
+
 /* ─── MAIN LAYOUT ──────────────────────────── */
 .main-layout {
   display: flex;

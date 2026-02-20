@@ -49,7 +49,9 @@
       <div class="section-header">
         <span class="dot red"></span>
         <span data-i18n="mi_equipo">MI EQUIPO</span>
-        <button class="icon-btn small eye-btn" id="eye-my" onclick="toggleTeamVisibility('my')" title="Mostrar/Ocultar">&#128065;</button>
+        <button class="vis-toggle active" id="eye-my" onclick="toggleTeamVisibility('my')">
+          <span class="vis-icon">&#128065;</span><span class="vis-label">VISIBLE</span>
+        </button>
       </div>
       <div id="my-team">
         <select class="formation-select" id="my-formation" onchange="applyFormation('my')">
@@ -74,7 +76,9 @@
       <div class="section-header" style="margin-top:22px">
         <span class="dot blue"></span>
         <span data-i18n="equipo_rival">EQUIPO RIVAL</span>
-        <button class="icon-btn small eye-btn" id="eye-rival" onclick="toggleTeamVisibility('rival')" title="Mostrar/Ocultar">&#128065;</button>
+        <button class="vis-toggle" id="eye-rival" onclick="toggleTeamVisibility('rival')">
+          <span class="vis-icon">&#128065;</span><span class="vis-label">OCULTO</span>
+        </button>
       </div>
       <div id="rival-team">
         <select class="formation-select" id="rival-formation" onchange="applyFormation('rival')">

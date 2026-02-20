@@ -728,7 +728,7 @@ function savePlayerModal() {
 }
 
 // ─── TOGGLE VISIBILITY ────────────────────────
-const teamVisible = { my: true, rival: true };
+const teamVisible = { my: true, rival: false };
 
 function toggleTeamVisibility(team) {
   teamVisible[team] = !teamVisible[team];
@@ -742,9 +742,12 @@ function toggleTeamVisibility(team) {
       if (el) el.style.visibility = visible ? 'visible' : 'hidden';
     });
 
-  // Update eye button state
+  // Update toggle button
   const btn = document.getElementById('eye-' + team);
-  if (btn) btn.classList.toggle('hidden-team', !visible);
+  if (btn) {
+    btn.classList.toggle('active', visible);
+    btn.querySelector('.vis-label').textContent = visible ? 'VISIBLE' : 'OCULTO';
+  }
 }
 
 // ─── UNDO ────────────────────────────────────
