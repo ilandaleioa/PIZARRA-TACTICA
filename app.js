@@ -331,6 +331,8 @@ function initState() {
     state.players.push({ id: `my-${i}`,    team: 'my',    jersey: i + 1, x: myPos[i][0],    y: myPos[i][1],    name: '', abbr: '' });
     state.players.push({ id: `rival-${i}`, team: 'rival', jersey: i + 1, x: rivalPos[i][0], y: rivalPos[i][1], name: '', abbr: '' });
   }
+  // Populate slide 0 with initial positions
+  state.slides[0] = JSON.parse(JSON.stringify(state.players));
   saveHistory();
 }
 
@@ -820,7 +822,9 @@ function resetBoard() {
 // ─── SLIDES ──────────────────────────────────
 function addSlide() {
   saveHistory();
-  // Deep clone current positions
+  // Save current slide positions before adding new one
+  state.slides[state.currentSlide] = JSON.parse(JSON.stringify(state.players));
+  // Deep clone current positions for the new slide
   state.slides.push(JSON.parse(JSON.stringify(state.players)));
   const idx = state.slides.length - 1;
   const chip = document.createElement('div');
@@ -832,24 +836,45 @@ function addSlide() {
   goToSlide(idx);
 }
 
-function goToSlide(idx) {
+// Update only left/top of existing tokens (enables CSS transitions)
+function updateTokenPositions(players) {
+  players.forEach(p => {
+    const el = document.getElementById('token-' + p.id);
+    if (el) {
+      el.style.left = p.x + '%';
+      el.style.top  = p.y + '%';
+    }
+  });
+}
+
+function goToSlide(idx, animate) {
+  // Save current state before switching
+  if (!animate) {
+    state.slides[state.currentSlide] = JSON.parse(JSON.stringify(state.players));
+  }
   state.currentSlide = idx;
   document.querySelectorAll('.slide-chip').forEach(c =>
     c.classList.toggle('active', +c.dataset.slide === idx));
   if (state.slides[idx]) {
     state.players = JSON.parse(JSON.stringify(state.slides[idx]));
-    renderPlayers();
+    if (animate) {
+      updateTokenPositions(state.players);
+    } else {
+      renderPlayers();
+    }
   }
 }
 
 function playAnimation() {
   const total = state.slides.length;
   if (total < 2) return;
+  // Save current slide before playing
+  state.slides[state.currentSlide] = JSON.parse(JSON.stringify(state.players));
   let i = 0;
   const iv = setInterval(() => {
     if (i >= total) { clearInterval(iv); return; }
-    goToSlide(i++);
-  }, 800);
+    goToSlide(i++, true);
+  }, 1000);
 }
 
 // ─── EXPORT IMAGE ────────────────────────────

@@ -767,7 +767,7 @@ html, body {
   cursor: grab;
   transform: translate(-50%, -50%);
   user-select: none;
-  transition: box-shadow .15s, transform .1s;
+  transition: left .7s ease, top .7s ease, box-shadow .15s, transform .1s;
   z-index: 10;
   box-shadow: 0 3px 10px rgba(0,0,0,.5);
   overflow: visible;
@@ -782,6 +782,7 @@ html, body {
   transform: translate(-50%, -50%) scale(1.15);
   z-index: 30;
   box-shadow: 0 8px 24px rgba(0,0,0,.8);
+  transition: none;
 }
 .player-token.selected {
   outline: 3px solid #fff;
