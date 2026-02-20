@@ -666,9 +666,7 @@ html, body {
   margin-top: 3px;
   z-index: 11;
 }
-.player-token.has-player .token-initials { display: none; }
-
-/* Token: number inside circle, abbr below */
+/* Token: número dentro, nombre debajo */
 .player-token.has-player {
   font-size: 15px;
   font-weight: 900;
@@ -678,19 +676,7 @@ html, body {
   font-weight: 900;
   line-height: 1;
 }
-.player-token .player-abbr {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: 10px;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 1px 4px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,0.9);
-  pointer-events: none;
-  z-index: 11;
-}
+.player-token .player-abbr { display: none; }
 
 /* ─── RIGHT SIDEBAR ────────────────────────── */
 .sidebar-right {

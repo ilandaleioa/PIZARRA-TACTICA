@@ -259,7 +259,7 @@ function renderPlayers() {
     el.style.color = isLight(color) ? '#111' : '#fff';
 
     if (p.name) {
-      el.innerHTML = `<span class="jersey-num">${p.jersey}</span><span class="player-abbr">${p.abbr}</span>`;
+      el.innerHTML = `<span class="jersey-num">${p.jersey}</span><span class="token-initials">${p.name}</span>`;
     } else {
       el.textContent = p.jersey;
     }
@@ -449,7 +449,7 @@ function assignPlayer(player, posClass) {
   const el = document.getElementById('token-' + slot.id);
   if (el) {
     el.classList.add('has-player');
-    el.innerHTML = `<span class="jersey-num">${slot.jersey}</span><span class="player-abbr">${slot.abbr}</span><span class="token-initials">${slot.name}</span>`;
+    el.innerHTML = `<span class="jersey-num">${slot.jersey}</span><span class="token-initials">${slot.name}</span>`;
     el.style.color = isLight(state.myColor) ? '#111' : '#fff';
   }
   renderPlayerList();
