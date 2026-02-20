@@ -414,12 +414,47 @@ function renderPlayers() {
 }
 
 // ─── DRAG ────────────────────────────────────
+
+// Calcula los límites en Y para un jugador según su posición en el campo.
+// Los jugadores en zona atacante no pueden atravesar la línea defensiva propia.
+function computeYLimits(playerData) {
+  const isGK = playerData.jersey === 1;
+  if (isGK) return { yMin: 1, yMax: 99 };
+
+  const team = playerData.team;
+  const teammates = state.players.filter(p => p.team === team && p.jersey !== 1 && p.id !== playerData.id);
+
+  if (team === 'my') {
+    // Mi equipo ataca hacia arriba (y pequeño). Atacantes tienen y < 50.
+    if (playerData.y <= 52) {
+      const defenders = teammates.filter(p => p.y > 52);
+      if (defenders.length > 0) {
+        const defLine = Math.min(...defenders.map(p => p.y));
+        return { yMin: 1, yMax: defLine - 3 };
+      }
+    }
+  } else {
+    // Rival ataca hacia abajo (y grande). Atacantes tienen y > 50.
+    if (playerData.y >= 48) {
+      const defenders = teammates.filter(p => p.y < 48);
+      if (defenders.length > 0) {
+        const defLine = Math.max(...defenders.map(p => p.y));
+        return { yMin: defLine + 3, yMax: 99 };
+      }
+    }
+  }
+  return { yMin: 1, yMax: 99 };
+}
+
 function makeDraggable(el, playerData) {
-  let offsetX, offsetY, pitchRect;
+  let offsetX, offsetY, pitchRect, yMin, yMax;
 
   el.addEventListener('mousedown', e => {
     e.preventDefault();
     saveHistory();
+    const limits = computeYLimits(playerData);
+    yMin = limits.yMin;
+    yMax = limits.yMax;
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
     const elLeft  = playerData.x / 100 * pitchRect.width  + pitchRect.left;
     const elTop   = playerData.y / 100 * pitchRect.height + pitchRect.top;
@@ -431,7 +466,7 @@ function makeDraggable(el, playerData) {
       const x = ((mv.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
       const y = ((mv.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
       playerData.x = Math.min(Math.max(x, 1), 99);
-      playerData.y = Math.min(Math.max(y, 1), 99);
+      playerData.y = Math.min(Math.max(y, yMin), yMax);
       el.style.left = playerData.x + '%';
       el.style.top  = playerData.y + '%';
     };
@@ -447,6 +482,9 @@ function makeDraggable(el, playerData) {
   el.addEventListener('touchstart', e => {
     e.preventDefault();
     saveHistory();
+    const limits = computeYLimits(playerData);
+    yMin = limits.yMin;
+    yMax = limits.yMax;
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
     const t = e.touches[0];
     const elLeft = playerData.x / 100 * pitchRect.width  + pitchRect.left;
@@ -461,7 +499,7 @@ function makeDraggable(el, playerData) {
       const x = ((tc.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
       const y = ((tc.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
       playerData.x = Math.min(Math.max(x, 1), 99);
-      playerData.y = Math.min(Math.max(y, 1), 99);
+      playerData.y = Math.min(Math.max(y, yMin), yMax);
       el.style.left = playerData.x + '%';
       el.style.top  = playerData.y + '%';
     };
