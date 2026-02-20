@@ -115,136 +115,135 @@ const SQUAD = {
 // Positions as % [left, top] relative to the pitch.
 // "My team" plays bottom half (top ~50%–95%), rival top half (~5%–50%).
 const FORMATIONS = {
-  // Áreas del campo: superior 0–20%, inferior 80–100%
-  // Jugadores de campo siempre entre 22% y 78%
-  // Líneas (mi equipo): DEF=76, MID2=63, MID1=50, FWD=24
-  // Líneas (rival):     DEF=24, MID1=37, MID2=50, FWD=76
+  // GK dentro del área. Todos los jugadores de campo: entre 22% y 78%
+  // Mi equipo (ataca arriba): DEF=78, MID=58-65, FWD=22
+  // Rival   (ataca abajo):   DEF=22, MID=35-42, FWD=78
   '1-4-4-2': {
     my: [
       [50,  90],  // 1 GK
-      [82,  76],  // 2 Lat Der
-      [13,  76],  // 3 Lat Izq
-      [35,  76],  // 4 Central Izq
-      [60,  76],  // 5 Central Der
-      [34,  63],  // 6 Medio centro
-      [82,  50],  // 7 Extremo Der
-      [58,  63],  // 8 Medio centro
-      [37,  24],  // 9 Delantero Izq
-      [58,  24],  // 10 Delantero Der
-      [10,  50],  // 11 Extremo Izq
+      [82,  78],  // 2 Lat Der
+      [13,  78],  // 3 Lat Izq
+      [35,  78],  // 4 Central Izq
+      [60,  78],  // 5 Central Der
+      [34,  62],  // 6 Medio centro
+      [82,  48],  // 7 Extremo Der
+      [58,  62],  // 8 Medio centro
+      [37,  22],  // 9 Delantero Izq
+      [58,  22],  // 10 Delantero Der
+      [10,  48],  // 11 Extremo Izq
     ],
     rival: [
       [50,  10],  // 1 GK
-      [82,  24],  // 2 Lat Der
-      [13,  24],  // 3 Lat Izq
-      [35,  24],  // 4 Central Izq
-      [60,  24],  // 5 Central Der
-      [34,  37],  // 6 Medio centro
-      [82,  50],  // 7 Extremo Der
-      [58,  37],  // 8 Medio centro
-      [37,  76],  // 9 Delantero Izq
-      [58,  76],  // 10 Delantero Der
-      [10,  50],  // 11 Extremo Izq
+      [82,  22],  // 2 Lat Der
+      [13,  22],  // 3 Lat Izq
+      [35,  22],  // 4 Central Izq
+      [60,  22],  // 5 Central Der
+      [34,  38],  // 6 Medio centro
+      [82,  52],  // 7 Extremo Der
+      [58,  38],  // 8 Medio centro
+      [37,  78],  // 9 Delantero Izq
+      [58,  78],  // 10 Delantero Der
+      [10,  52],  // 11 Extremo Izq
     ]
   },
   '1-4-3-3': {
     my: [
       [50,  90],  // 1 GK
-      [83,  76],  // 2 Lat Der
-      [8,   76],  // 3 Lat Izq
-      [36,  76],  // 4 Central Izq
-      [60,  76],  // 5 Central Der
-      [48,  56],  // 6 Medio centro
-      [83,  24],  // 7 Extremo Der
-      [68,  40],  // 8 Interior Der
-      [48,  24],  // 9 Delantero Centro
-      [27,  40],  // 10 Interior Izq
-      [8,   24],  // 11 Extremo Izq
+      [83,  78],  // 2 Lat Der
+      [8,   78],  // 3 Lat Izq
+      [36,  78],  // 4 Central Izq
+      [60,  78],  // 5 Central Der
+      [50,  62],  // 6 Medio pivote
+      [68,  48],  // 7 Interior Der
+      [27,  48],  // 8 Interior Izq
+      [83,  22],  // 9 Extremo Der
+      [50,  22],  // 10 Delantero Centro
+      [8,   22],  // 11 Extremo Izq
     ],
     rival: [
       [50,  10],  // 1 GK
-      [83,  24],  // 2 Lat Der
-      [8,   24],  // 3 Lat Izq
-      [36,  24],  // 4 Central Izq
-      [60,  24],  // 5 Central Der
-      [48,  44],  // 6 Medio centro
-      [83,  76],  // 7 Extremo Der
-      [68,  60],  // 8 Interior Der
-      [48,  76],  // 9 Delantero Centro
-      [27,  60],  // 10 Interior Izq
-      [8,   76],  // 11 Extremo Izq
+      [83,  22],  // 2 Lat Der
+      [8,   22],  // 3 Lat Izq
+      [36,  22],  // 4 Central Izq
+      [60,  22],  // 5 Central Der
+      [50,  38],  // 6 Medio pivote
+      [68,  52],  // 7 Interior Der
+      [27,  52],  // 8 Interior Izq
+      [83,  78],  // 9 Extremo Der
+      [50,  78],  // 10 Delantero Centro
+      [8,   78],  // 11 Extremo Izq
     ]
   },
   '1-4-2-3-1': {
     my: [
-      [50, 90],   // 1 GK
-      [18, 76], [38, 76], [62, 76], [82, 76],  // 2-5 DEF
-      [36, 63], [64, 63],                       // 6-7 2 medios
-      [20, 50], [50, 50], [80, 50],             // 8-10 mediapunta + ext
-      [50, 24],                                 // 11 delantero
+      [50,  90],  // 1 GK
+      [18,  78], [38, 78], [62, 78], [82, 78],  // DEF
+      [36,  65], [64, 65],                       // doble pivote
+      [15,  50], [50, 50], [85, 50],             // mediapuntas
+      [50,  22],                                 // delantero
     ],
     rival: [
-      [50, 10],   // 1 GK
-      [18, 24], [38, 24], [62, 24], [82, 24],  // 2-5 DEF
-      [36, 37], [64, 37],                       // 6-7 2 medios
-      [20, 50], [50, 50], [80, 50],             // 8-10 mediapunta + ext
-      [50, 76],                                 // 11 delantero
+      [50,  10],  // 1 GK
+      [18,  22], [38, 22], [62, 22], [82, 22],  // DEF
+      [36,  35], [64, 35],                       // doble pivote
+      [15,  50], [50, 50], [85, 50],             // mediapuntas
+      [50,  78],                                 // delantero
     ]
   },
   '1-3-5-2': {
     my: [
-      [50, 90],   // 1 GK
-      [28, 76], [50, 76], [72, 76],             // 2-4 DEF
-      [8,  58], [28, 58], [50, 58], [72, 58], [92, 58],  // 5-9 5 medios
-      [34, 24], [66, 24],                       // 10-11 delanteros
+      [50,  90],  // 1 GK
+      [25,  78], [50, 78], [75, 78],             // 3 DEF
+      [8,   57], [28, 57], [50, 57], [72, 57], [92, 57],  // 5 MED
+      [34,  22], [66, 22],                       // 2 DEL
     ],
     rival: [
-      [50, 10],   // 1 GK
-      [28, 24], [50, 24], [72, 24],             // 2-4 DEF
-      [8,  42], [28, 42], [50, 42], [72, 42], [92, 42],  // 5-9 5 medios
-      [34, 76], [66, 76],                       // 10-11 delanteros
+      [50,  10],  // 1 GK
+      [25,  22], [50, 22], [75, 22],             // 3 DEF
+      [8,   43], [28, 43], [50, 43], [72, 43], [92, 43],  // 5 MED
+      [34,  78], [66, 78],                       // 2 DEL
     ]
   },
   '1-3-4-3': {
     my: [
-      [50, 90],   // 1 GK
-      [28, 76], [50, 76], [72, 76],             // 2-4 DEF
-      [18, 58], [40, 58], [60, 58], [82, 58],   // 5-8 4 medios
-      [20, 24], [50, 24], [80, 24],             // 9-11 delanteros
+      [50,  90],  // 1 GK
+      [25,  78], [50, 78], [75, 78],             // 3 DEF
+      [15,  58], [38, 58], [62, 58], [85, 58],   // 4 MED
+      [15,  22], [50, 22], [85, 22],             // 3 DEL
     ],
     rival: [
-      [50, 10],   // 1 GK
-      [28, 24], [50, 24], [72, 24],             // 2-4 DEF
-      [18, 42], [40, 42], [60, 42], [82, 42],   // 5-8 4 medios
-      [20, 76], [50, 76], [80, 76],             // 9-11 delanteros
+      [50,  10],  // 1 GK
+      [25,  22], [50, 22], [75, 22],             // 3 DEF
+      [15,  42], [38, 42], [62, 42], [85, 42],   // 4 MED
+      [15,  78], [50, 78], [85, 78],             // 3 DEL
     ]
   },
   '1-5-3-2': {
     my: [
-      [50, 90],   // 1 GK
-      [8,  76], [26, 76], [50, 76], [74, 76], [92, 76],  // 2-6 DEF
-      [28, 58], [50, 58], [72, 58],             // 7-9 3 medios
-      [34, 24], [66, 24],                       // 10-11 delanteros
+      [50,  90],  // 1 GK
+      [8,   78], [26, 78], [50, 78], [74, 78], [92, 78],  // 5 DEF
+      [25,  57], [50, 57], [75, 57],             // 3 MED
+      [34,  22], [66, 22],                       // 2 DEL
     ],
     rival: [
-      [50, 10],   // 1 GK
-      [8,  24], [26, 24], [50, 24], [74, 24], [92, 24],  // 2-6 DEF
-      [28, 42], [50, 42], [72, 42],             // 7-9 3 medios
-      [34, 76], [66, 76],                       // 10-11 delanteros
+      [50,  10],  // 1 GK
+      [8,   22], [26, 22], [50, 22], [74, 22], [92, 22],  // 5 DEF
+      [25,  43], [50, 43], [75, 43],             // 3 MED
+      [34,  78], [66, 78],                       // 2 DEL
     ]
   },
   '1-5-4-1': {
     my: [
-      [50, 90],   // 1 GK
-      [8,  76], [26, 76], [50, 76], [74, 76], [92, 76],  // 2-6 DEF
-      [18, 58], [40, 58], [60, 58], [82, 58],   // 7-10 4 medios
-      [50, 24],                                 // 11 delantero
+      [50,  90],  // 1 GK
+      [8,   78], [26, 78], [50, 78], [74, 78], [92, 78],  // 5 DEF
+      [15,  57], [38, 57], [62, 57], [85, 57],  // 4 MED
+      [50,  22],                                 // 1 DEL
     ],
     rival: [
-      [50, 10],   // 1 GK
-      [8,  24], [26, 24], [50, 24], [74, 24], [92, 24],  // 2-6 DEF
-      [18, 42], [40, 42], [60, 42], [82, 42],   // 7-10 4 medios
-      [50, 76],                                 // 11 delantero
+      [50,  10],  // 1 GK
+      [8,   22], [26, 22], [50, 22], [74, 22], [92, 22],  // 5 DEF
+      [15,  43], [38, 43], [62, 43], [85, 43],  // 4 MED
+      [50,  78],                                 // 1 DEL
     ]
   },
 };
