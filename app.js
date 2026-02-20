@@ -116,135 +116,134 @@ const SQUAD = {
 // "My team" plays bottom half (top ~50%–95%), rival top half (~5%–50%).
 const FORMATIONS = {
   // Área grande superior: 0–20% | Área grande inferior: 80–100%
-  // Separación de 6% entre filas que se solapan:
-  //   mi equipo: DEF=77%, MID=53%, FWD=23%
-  //   rival:     DEF=23%, MID=47%, FWD=77%
+  // mi equipo: GK=90%, DEF=76%, MED=62%, FWD=20%
+  // rival:     GK=10%, DEF=20%, MED=38%, FWD=76%  → gap medio = 24%
   '1-4-4-2': {
     my: [
       [50,  90],  // 1 GK
-      [82,  77],  // 2 Lat Der
-      [13,  77],  // 3 Lat Izq
-      [35,  77],  // 4 Central Izq
-      [60,  77],  // 5 Central Der
-      [34,  53],  // 6 Medio centro
-      [82,  53],  // 7 Extremo Der
-      [58,  53],  // 8 Medio centro
-      [37,  23],  // 9 Delantero Izq
-      [58,  23],  // 10 Delantero Der
-      [10,  53],  // 11 Extremo Izq
+      [82,  76],  // 2 Lat Der
+      [13,  76],  // 3 Lat Izq
+      [35,  76],  // 4 Central Izq
+      [60,  76],  // 5 Central Der
+      [34,  62],  // 6 Medio centro
+      [82,  62],  // 7 Extremo Der
+      [58,  62],  // 8 Medio centro
+      [37,  20],  // 9 Delantero Izq
+      [58,  20],  // 10 Delantero Der
+      [10,  62],  // 11 Extremo Izq
     ],
     rival: [
       [50,  10],  // 1 GK
-      [82,  23],  // 2 Lat Der
-      [13,  23],  // 3 Lat Izq
-      [35,  23],  // 4 Central Izq
-      [60,  23],  // 5 Central Der
-      [34,  47],  // 6 Medio centro
-      [82,  47],  // 7 Extremo Der
-      [58,  47],  // 8 Medio centro
-      [37,  77],  // 9 Delantero Izq
-      [58,  77],  // 10 Delantero Der
-      [10,  47],  // 11 Extremo Izq
+      [82,  20],  // 2 Lat Der
+      [13,  20],  // 3 Lat Izq
+      [35,  20],  // 4 Central Izq
+      [60,  20],  // 5 Central Der
+      [34,  38],  // 6 Medio centro
+      [82,  38],  // 7 Extremo Der
+      [58,  38],  // 8 Medio centro
+      [37,  76],  // 9 Delantero Izq
+      [58,  76],  // 10 Delantero Der
+      [10,  38],  // 11 Extremo Izq
     ]
   },
   '1-4-3-3': {
     my: [
       [50,  90],  // 1 GK
-      [83,  77],  // 2 Lat Der
-      [8,   77],  // 3 Lat Izq
-      [36,  77],  // 4 Central Izq
-      [60,  77],  // 5 Central Der
-      [50,  55],  // 6 Medio pivote
-      [68,  47],  // 7 Interior Der
-      [27,  47],  // 8 Interior Izq
-      [83,  23],  // 9 Extremo Der
-      [50,  23],  // 10 Delantero Centro
-      [8,   23],  // 11 Extremo Izq
+      [83,  76],  // 2 Lat Der
+      [8,   76],  // 3 Lat Izq
+      [36,  76],  // 4 Central Izq
+      [60,  76],  // 5 Central Der
+      [50,  62],  // 6 Medio pivote
+      [68,  54],  // 7 Interior Der
+      [27,  54],  // 8 Interior Izq
+      [83,  20],  // 9 Extremo Der
+      [50,  20],  // 10 Delantero Centro
+      [8,   20],  // 11 Extremo Izq
     ],
     rival: [
       [50,  10],  // 1 GK
-      [83,  23],  // 2 Lat Der
-      [8,   23],  // 3 Lat Izq
-      [36,  23],  // 4 Central Izq
-      [60,  23],  // 5 Central Der
-      [50,  45],  // 6 Medio pivote
-      [68,  53],  // 7 Interior Der
-      [27,  53],  // 8 Interior Izq
-      [83,  77],  // 9 Extremo Der
-      [50,  77],  // 10 Delantero Centro
-      [8,   77],  // 11 Extremo Izq
+      [83,  20],  // 2 Lat Der
+      [8,   20],  // 3 Lat Izq
+      [36,  20],  // 4 Central Izq
+      [60,  20],  // 5 Central Der
+      [50,  38],  // 6 Medio pivote
+      [68,  46],  // 7 Interior Der
+      [27,  46],  // 8 Interior Izq
+      [83,  76],  // 9 Extremo Der
+      [50,  76],  // 10 Delantero Centro
+      [8,   76],  // 11 Extremo Izq
     ]
   },
   '1-4-2-3-1': {
     my: [
       [50,  90],  // 1 GK
-      [18,  77], [38, 77], [62, 77], [82, 77],  // DEF
-      [36,  60], [64, 60],                       // doble pivote
-      [15,  43], [50, 43], [85, 43],             // mediapuntas
-      [50,  23],                                 // delantero
+      [18,  76], [38, 76], [62, 76], [82, 76],  // DEF
+      [36,  62], [64, 62],                       // doble pivote
+      [15,  46], [50, 46], [85, 46],             // mediapuntas
+      [50,  20],                                 // delantero
     ],
     rival: [
       [50,  10],  // 1 GK
-      [18,  23], [38, 23], [62, 23], [82, 23],  // DEF
-      [36,  40], [64, 40],                       // doble pivote
-      [15,  57], [50, 57], [85, 57],             // mediapuntas
-      [50,  77],                                 // delantero
+      [18,  20], [38, 20], [62, 20], [82, 20],  // DEF
+      [36,  38], [64, 38],                       // doble pivote
+      [15,  54], [50, 54], [85, 54],             // mediapuntas
+      [50,  76],                                 // delantero
     ]
   },
   '1-3-5-2': {
     my: [
       [50,  90],  // 1 GK
-      [25,  77], [50, 77], [75, 77],             // 3 DEF
-      [8,   53], [28, 53], [50, 53], [72, 53], [92, 53],  // 5 MED
-      [34,  23], [66, 23],                       // 2 DEL
+      [25,  76], [50, 76], [75, 76],             // 3 DEF
+      [8,   62], [28, 62], [50, 62], [72, 62], [92, 62],  // 5 MED
+      [34,  20], [66, 20],                       // 2 DEL
     ],
     rival: [
       [50,  10],  // 1 GK
-      [25,  23], [50, 23], [75, 23],             // 3 DEF
-      [8,   47], [28, 47], [50, 47], [72, 47], [92, 47],  // 5 MED
-      [34,  77], [66, 77],                       // 2 DEL
+      [25,  20], [50, 20], [75, 20],             // 3 DEF
+      [8,   38], [28, 38], [50, 38], [72, 38], [92, 38],  // 5 MED
+      [34,  76], [66, 76],                       // 2 DEL
     ]
   },
   '1-3-4-3': {
     my: [
       [50,  90],  // 1 GK
-      [25,  77], [50, 77], [75, 77],             // 3 DEF
-      [15,  53], [38, 53], [62, 53], [85, 53],   // 4 MED
-      [15,  23], [50, 23], [85, 23],             // 3 DEL
+      [25,  76], [50, 76], [75, 76],             // 3 DEF
+      [15,  62], [38, 62], [62, 62], [85, 62],   // 4 MED
+      [15,  20], [50, 20], [85, 20],             // 3 DEL
     ],
     rival: [
       [50,  10],  // 1 GK
-      [25,  23], [50, 23], [75, 23],             // 3 DEF
-      [15,  47], [38, 47], [62, 47], [85, 47],   // 4 MED
-      [15,  77], [50, 77], [85, 77],             // 3 DEL
+      [25,  20], [50, 20], [75, 20],             // 3 DEF
+      [15,  38], [38, 38], [62, 38], [85, 38],   // 4 MED
+      [15,  76], [50, 76], [85, 76],             // 3 DEL
     ]
   },
   '1-5-3-2': {
     my: [
       [50,  90],  // 1 GK
-      [8,   77], [26, 77], [50, 77], [74, 77], [92, 77],  // 5 DEF
-      [25,  53], [50, 53], [75, 53],             // 3 MED
-      [34,  23], [66, 23],                       // 2 DEL
+      [8,   76], [26, 76], [50, 76], [74, 76], [92, 76],  // 5 DEF
+      [25,  62], [50, 62], [75, 62],             // 3 MED
+      [34,  20], [66, 20],                       // 2 DEL
     ],
     rival: [
       [50,  10],  // 1 GK
-      [8,   23], [26, 23], [50, 23], [74, 23], [92, 23],  // 5 DEF
-      [25,  47], [50, 47], [75, 47],             // 3 MED
-      [34,  77], [66, 77],                       // 2 DEL
+      [8,   20], [26, 20], [50, 20], [74, 20], [92, 20],  // 5 DEF
+      [25,  38], [50, 38], [75, 38],             // 3 MED
+      [34,  76], [66, 76],                       // 2 DEL
     ]
   },
   '1-5-4-1': {
     my: [
       [50,  90],  // 1 GK
-      [8,   77], [26, 77], [50, 77], [74, 77], [92, 77],  // 5 DEF
-      [15,  53], [38, 53], [62, 53], [85, 53],  // 4 MED
-      [50,  23],                                 // 1 DEL
+      [8,   76], [26, 76], [50, 76], [74, 76], [92, 76],  // 5 DEF
+      [15,  62], [38, 62], [62, 62], [85, 62],  // 4 MED
+      [50,  20],                                 // 1 DEL
     ],
     rival: [
       [50,  10],  // 1 GK
-      [8,   23], [26, 23], [50, 23], [74, 23], [92, 23],  // 5 DEF
-      [15,  47], [38, 47], [62, 47], [85, 47],  // 4 MED
-      [50,  77],                                 // 1 DEL
+      [8,   20], [26, 20], [50, 20], [74, 20], [92, 20],  // 5 DEF
+      [15,  38], [38, 38], [62, 38], [85, 38],  // 4 MED
+      [50,  76],                                 // 1 DEL
     ]
   },
 };
@@ -294,18 +293,18 @@ document.addEventListener('DOMContentLoaded', () => {
   setupBall();
 });
 
+const DEFAULT_LOGO = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Athletic_Club_crest.svg/100px-Athletic_Club_crest.svg.png';
+
 function initNavLogo() {
   const img         = document.getElementById('nav-logo-img');
   const placeholder = document.getElementById('nav-logo-placeholder');
   const wrap        = img ? img.closest('.nav-logo-wrap') : null;
   if (!img || !wrap) return;
-  const saved = localStorage.getItem('ac-nav-logo');
-  if (saved) {
-    img.src = saved;
-    img.style.display = 'block';
-    if (placeholder) placeholder.style.display = 'none';
-    wrap.classList.add('has-logo');
-  }
+  const saved = localStorage.getItem('ac-nav-logo') || DEFAULT_LOGO;
+  img.src = saved;
+  img.style.display = 'block';
+  if (placeholder) placeholder.style.display = 'none';
+  wrap.classList.add('has-logo');
 }
 
 function loadNavLogo(event) {
