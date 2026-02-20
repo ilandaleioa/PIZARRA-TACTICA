@@ -923,7 +923,9 @@ function playAnimation() {
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
-  let i = state.currentSlide;
+  // Snap instantly to slide 0 so transitions start from a known position
+  goToSlide(0, false);
+  let i = 1;
   animInterval = setInterval(() => {
     if (i >= total) {
       clearInterval(animInterval);

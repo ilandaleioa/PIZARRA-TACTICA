@@ -761,10 +761,10 @@ html, body {
 /* ─── BALL TOKEN ───────────────────────────── */
 .ball-token {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: #ffffff;
+  background: #111111;
   box-shadow: 0 2px 8px rgba(0,0,0,.8);
   cursor: grab;
   transform: translate(-50%, -50%);
