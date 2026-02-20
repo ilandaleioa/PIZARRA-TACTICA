@@ -788,13 +788,13 @@ html, body {
 .player-token {
   position: absolute;
   pointer-events: auto;
-  width: clamp(36px, 3.2vw, 72px) !important;
-  height: clamp(36px, 3.2vw, 72px) !important;
+  width: clamp(26px, 2.2vw, 50px) !important;
+  height: clamp(26px, 2.2vw, 50px) !important;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(12px, 1.15vw, 23px) !important;
+  font-size: clamp(9px, 0.85vw, 17px) !important;
   font-weight: 800;
   color: #fff;
   cursor: grab;
