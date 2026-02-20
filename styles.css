@@ -16,8 +16,8 @@
   --green-dark:#1b5e20;
   --green:     #2e7d32;
   --radius:    6px;
-  --sidebar-w: 175px;
-  --right-w:   220px;
+  --sidebar-w: 220px;
+  --right-w:   275px;
 }
 
 html, body {
@@ -25,7 +25,7 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Segoe UI', Arial, sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   overflow: hidden;
 }
 
@@ -35,8 +35,8 @@ html, body {
   align-items: center;
   justify-content: space-between;
   background: #000;
-  height: 46px;
-  padding: 0 16px;
+  height: 62px;
+  padding: 0 20px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   z-index: 100;
@@ -48,13 +48,13 @@ html, body {
   line-height: 1.1;
 }
 .logo-title {
-  font-size: 15px;
+  font-size: 19px;
   font-weight: 700;
   letter-spacing: 2px;
   color: #fff;
 }
 .logo-sub {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 2px;
   color: var(--accent);
@@ -74,10 +74,10 @@ html, body {
   background: none;
   border: none;
   color: var(--text-dim);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  padding: 3px 5px;
+  padding: 4px 7px;
   border-radius: 3px;
   transition: color .15s;
 }
@@ -92,8 +92,8 @@ html, body {
   border: none;
   color: var(--text-dim);
   cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
+  font-size: 20px;
+  padding: 5px;
   border-radius: 4px;
   transition: color .15s, background .15s;
 }
@@ -132,7 +132,7 @@ html, body {
 /* ─── MAIN LAYOUT ──────────────────────────── */
 .main-layout {
   display: flex;
-  height: calc(100vh - 46px);
+  height: calc(100vh - 62px);
   overflow: hidden;
 }
 
@@ -150,15 +150,15 @@ html, body {
 .sidebar-tab {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   width: 100%;
   background: var(--surface2);
   border: none;
   border-bottom: 1px solid var(--border);
   color: var(--text-dim);
   cursor: pointer;
-  padding: 11px 12px;
-  font-size: 11px;
+  padding: 14px 14px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: .5px;
   text-align: left;
@@ -166,9 +166,9 @@ html, body {
 }
 .sidebar-tab:hover { background: #2a2a2a; color: var(--text); }
 .sidebar-tab.active { background: var(--surface); color: var(--text); border-left: 3px solid var(--accent); }
-.tab-icon { font-size: 13px; }
+.tab-icon { font-size: 15px; }
 
-.sidebar-section { padding: 16px 10px; flex: 1; }
+.sidebar-section { padding: 20px 12px; flex: 1; }
 .sidebar-section.hidden { display: none; }
 .hidden { display: none !important; }
 
@@ -653,6 +653,30 @@ html, body {
   pointer-events: none;
 }
 
+/* ─── BALL TOKEN ────────────────────────────── */
+.ball-token {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  cursor: grab;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  z-index: 15;
+  filter: drop-shadow(0 3px 7px rgba(0,0,0,.75));
+  transition: filter .15s, transform .12s;
+}
+.ball-token:hover {
+  filter: drop-shadow(0 5px 12px rgba(0,0,0,.85));
+  transform: translate(-50%, -50%) scale(1.13);
+  z-index: 25;
+}
+.ball-token.dragging {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.2);
+  z-index: 35;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.95));
+}
+
 /* ─── PLAYER TOKENS ────────────────────────── */
 .player-token {
   position: absolute;
@@ -748,15 +772,15 @@ html, body {
   flex-direction: column;
   overflow-y: auto;
   flex-shrink: 0;
-  padding: 14px 10px;
+  padding: 18px 13px;
 }
 
 .assign-title {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-dim);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   text-transform: uppercase;
 }
 
@@ -764,21 +788,21 @@ html, body {
   margin-bottom: 12px;
 }
 .position-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--text-dim);
   text-transform: uppercase;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 4px;
-  margin-bottom: 6px;
+  padding-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .player-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 6px;
+  gap: 9px;
+  padding: 7px 8px;
   border-radius: var(--radius);
   cursor: pointer;
   transition: background .15s;
@@ -787,13 +811,13 @@ html, body {
 .player-row.assigned { opacity: .45; cursor: default; }
 
 .player-avatar {
-  width: 30px; height: 30px;
+  width: 36px; height: 36px;
   border-radius: 50%;
   background: #444;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   color: #fff;
   flex-shrink: 0;
@@ -805,7 +829,7 @@ html, body {
 .player-avatar.assigned-fwd  { background: var(--accent); }
 
 .player-name {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text);
   font-weight: 500;
 }
@@ -857,7 +881,7 @@ body.light .modal-overlay { background: rgba(0,0,0,.55); }
 
 /* ─── RESPONSIVE TWEAK ─────────────────────── */
 @media (max-width: 900px) {
-  :root { --sidebar-w: 150px; --right-w: 180px; }
+  :root { --sidebar-w: 190px; --right-w: 230px; }
   .player-token { width: 34px; height: 34px; font-size: 12px; }
 }
 @media (max-width: 680px) {

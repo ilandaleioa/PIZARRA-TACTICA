@@ -285,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPlayers();
   renderPlayerList();
   setupCanvas();
+  setupBall();
 });
 
 function initState() {
@@ -885,6 +886,68 @@ function loadFromHash() {
     renderPlayers();
     renderPlayerList();
   } catch(e) { /* ignore bad hash */ }
+}
+
+// ─── BALL DRAG ───────────────────────────────
+function setupBall() {
+  const ball = document.getElementById('ball-token');
+  if (!ball) return;
+
+  const bData = { x: 50, y: 50 };
+  let offsetX, offsetY, pitchRect;
+
+  ball.addEventListener('mousedown', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    pitchRect = document.getElementById('pitch').getBoundingClientRect();
+    const elLeft = bData.x / 100 * pitchRect.width  + pitchRect.left;
+    const elTop  = bData.y / 100 * pitchRect.height + pitchRect.top;
+    offsetX = e.clientX - elLeft;
+    offsetY = e.clientY - elTop;
+    ball.classList.add('dragging');
+
+    document.onmousemove = mv => {
+      const x = ((mv.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
+      const y = ((mv.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
+      bData.x = Math.min(Math.max(x, 1), 99);
+      bData.y = Math.min(Math.max(y, 1), 99);
+      ball.style.left = bData.x + '%';
+      ball.style.top  = bData.y + '%';
+    };
+    document.onmouseup = () => {
+      ball.classList.remove('dragging');
+      document.onmousemove = null;
+      document.onmouseup   = null;
+    };
+  });
+
+  ball.addEventListener('touchstart', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    pitchRect = document.getElementById('pitch').getBoundingClientRect();
+    const t = e.touches[0];
+    const elLeft = bData.x / 100 * pitchRect.width  + pitchRect.left;
+    const elTop  = bData.y / 100 * pitchRect.height + pitchRect.top;
+    offsetX = t.clientX - elLeft;
+    offsetY = t.clientY - elTop;
+    ball.classList.add('dragging');
+
+    ball.ontouchmove = mv => {
+      mv.preventDefault();
+      const tc = mv.touches[0];
+      const x = ((tc.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
+      const y = ((tc.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
+      bData.x = Math.min(Math.max(x, 1), 99);
+      bData.y = Math.min(Math.max(y, 1), 99);
+      ball.style.left = bData.x + '%';
+      ball.style.top  = bData.y + '%';
+    };
+    ball.ontouchend = () => {
+      ball.classList.remove('dragging');
+      ball.ontouchmove = null;
+      ball.ontouchend  = null;
+    };
+  }, { passive: false });
 }
 
 // ─── CANVAS DRAWING ──────────────────────────
