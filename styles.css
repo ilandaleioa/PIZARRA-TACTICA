@@ -15,9 +15,21 @@
   --text-dim:  #888888;
   --green-dark:#1b5e20;
   --green:     #2e7d32;
-  --radius:    6px;
-  --sidebar-w: 215px;
-  --right-w:   265px;
+  --radius:    clamp(4px, 0.5vmin, 8px);
+  /* Sidebar widths escalan con viewport */
+  --sidebar-w: clamp(160px, 16vw, 230px);
+  --right-w:   clamp(190px, 18vw, 280px);
+  /* Token size: usa vmin para escalar igual en portrait y landscape */
+  --token-size:  clamp(26px, 5.5vmin, 58px);
+  --token-font:  clamp(10px, 1.9vmin, 22px);
+  --ball-size:   clamp(20px, 4vmin, 42px);
+  /* Nav height fluido */
+  --nav-h:       clamp(46px, 6.5vh, 64px);
+}
+
+/* ── FUENTE BASE FLUIDA: escala lineal con el viewport ── */
+html {
+  font-size: clamp(11px, 0.9vw + 0.4vh, 16px);
 }
 
 html, body {
@@ -25,7 +37,6 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Segoe UI', Arial, sans-serif;
-  font-size: 15px;
   overflow: hidden;
 }
 
@@ -35,8 +46,8 @@ html, body {
   align-items: center;
   justify-content: space-between;
   background: #000;
-  height: 58px;
-  padding: 0 20px;
+  height: var(--nav-h);
+  padding: 0 clamp(10px, 2vw, 28px);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   z-index: 100;
@@ -51,8 +62,8 @@ html, body {
 }
 
 .nav-logo-wrap {
-  width: 42px;
-  height: 42px;
+  width: clamp(30px, 4vmin, 48px);
+  height: clamp(30px, 4vmin, 48px);
   flex-shrink: 0;
   cursor: pointer;
   display: flex;
@@ -77,22 +88,22 @@ html, body {
   line-height: 1.2;
 }
 .logo-title {
-  font-size: 18px;
+  font-size: clamp(12px, 1.4vw + 0.2vh, 20px);
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: clamp(1px, 0.15vw, 3px);
   color: #fff;
 }
 .logo-sub {
-  font-size: 11px;
+  font-size: clamp(8px, 0.8vw + 0.1vh, 12px);
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: clamp(1px, 0.15vw, 2.5px);
   color: var(--accent);
 }
 
 .topnav-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: clamp(6px, 1.2vw, 18px);
 }
 
 .lang-switcher {
@@ -103,10 +114,10 @@ html, body {
   background: none;
   border: none;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: clamp(10px, 0.9vw, 14px);
   font-weight: 600;
   cursor: pointer;
-  padding: 5px 8px;
+  padding: clamp(3px, 0.4vh, 6px) clamp(5px, 0.6vw, 10px);
   border-radius: 3px;
   transition: color .15s;
 }
@@ -121,13 +132,13 @@ html, body {
   border: none;
   color: var(--text-dim);
   cursor: pointer;
-  font-size: 20px;
-  padding: 6px;
+  font-size: clamp(15px, 1.7vw, 22px);
+  padding: clamp(4px, 0.5vh, 8px);
   border-radius: 4px;
   transition: color .15s, background .15s;
 }
 .icon-btn:hover { color: var(--text); background: var(--surface2); }
-.icon-btn.small { font-size: 12px; }
+.icon-btn.small { font-size: clamp(10px, 1vw, 14px); }
 .eye-btn.hidden-team { opacity: .35; filter: grayscale(1); }
 
 /* ─── VIS TOGGLE BUTTON ────────────────────── */
@@ -161,7 +172,7 @@ html, body {
 /* ─── MAIN LAYOUT ──────────────────────────── */
 .main-layout {
   display: flex;
-  height: calc(100vh - 58px);
+  height: calc(100dvh - var(--nav-h));
   overflow: hidden;
 }
 
@@ -179,15 +190,15 @@ html, body {
 .sidebar-tab {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(6px, 0.8vw, 12px);
   width: 100%;
   background: var(--surface2);
   border: none;
   border-bottom: 1px solid var(--border);
   color: var(--text-dim);
   cursor: pointer;
-  padding: 16px 16px;
-  font-size: 13px;
+  padding: clamp(10px, 1.5vh, 18px) clamp(10px, 1.2vw, 18px);
+  font-size: clamp(10px, 0.9vw, 14px);
   font-weight: 600;
   letter-spacing: .5px;
   text-align: left;
@@ -195,9 +206,9 @@ html, body {
 }
 .sidebar-tab:hover { background: #2a2a2a; color: var(--text); }
 .sidebar-tab.active { background: var(--surface); color: var(--text); border-left: 3px solid var(--accent); }
-.tab-icon { font-size: 16px; }
+.tab-icon { font-size: clamp(13px, 1.4vw, 18px); }
 
-.sidebar-section { padding: 20px 14px; flex: 1; }
+.sidebar-section { padding: clamp(12px, 2vh, 24px) clamp(10px, 1.2vw, 18px); flex: 1; }
 .sidebar-section.hidden { display: none; }
 .hidden { display: none !important; }
 
@@ -526,12 +537,12 @@ html, body {
 .section-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: clamp(5px, 0.6vw, 10px);
+  font-size: clamp(10px, 0.85vw, 13px);
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-dim);
-  margin-bottom: 16px;
+  margin-bottom: clamp(10px, 1.5vh, 20px);
 }
 .dot {
   width: 8px; height: 8px;
@@ -546,11 +557,11 @@ html, body {
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 12px;
+  padding: clamp(7px, 1vh, 12px) clamp(8px, 1vw, 14px);
   border-radius: var(--radius);
-  font-size: 14px;
+  font-size: clamp(12px, 1.1vw, 15px);
   cursor: pointer;
-  margin-bottom: 18px;
+  margin-bottom: clamp(12px, 1.8vh, 22px);
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -586,10 +597,10 @@ html, body {
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 8px 6px;
+  padding: clamp(6px, 1vh, 10px) clamp(4px, 0.5vw, 8px);
   border-radius: var(--radius);
   cursor: pointer;
-  font-size: 12px;
+  font-size: clamp(10px, 0.85vw, 13px);
   font-weight: 600;
   letter-spacing: .4px;
   display: flex;
@@ -622,15 +633,16 @@ html, body {
 .slide-controls {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: clamp(4px, 0.5vw, 8px);
   align-self: flex-start;
 }
 .slide-btn {
-  width: 30px; height: 30px;
+  width: clamp(28px, 3vmin, 40px);
+  height: clamp(28px, 3vmin, 40px);
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: clamp(12px, 1.6vmin, 18px);
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -642,22 +654,23 @@ html, body {
 .slide-btn.add  { background: var(--accent2); color: #fff; }
 
 .speed-select {
-  height: 30px;
-  padding: 0 6px;
+  height: clamp(28px, 3vmin, 40px);
+  padding: 0 clamp(4px, 0.5vw, 8px);
   border-radius: 5px;
   border: 1px solid var(--border);
   background: var(--surface2);
   color: var(--text);
-  font-size: 12px;
+  font-size: clamp(10px, 0.95vw, 13px);
   font-weight: 600;
   cursor: pointer;
   outline: none;
 }
 .speed-select:hover { border-color: var(--accent); }
 
-.slide-chips { display: flex; gap: 5px; }
+.slide-chips { display: flex; gap: clamp(3px, 0.4vw, 7px); }
 .slide-chip {
-  min-width: 30px; height: 30px;
+  min-width: clamp(28px, 3vmin, 40px);
+  height: clamp(28px, 3vmin, 40px);
   background: var(--accent);
   color: #fff;
   border-radius: 5px;
@@ -665,9 +678,9 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: clamp(11px, 1.3vmin, 16px);
   font-weight: 700;
-  padding: 0 8px;
+  padding: 0 clamp(5px, 0.6vw, 10px);
   transition: background .15s;
 }
 .slide-chip:not(.active) { background: var(--surface2); border: 1px solid var(--border); }
@@ -761,8 +774,8 @@ html, body {
 /* ─── BALL TOKEN ───────────────────────────── */
 .ball-token {
   position: absolute;
-  width: 26px;
-  height: 26px;
+  width: var(--ball-size);
+  height: var(--ball-size);
   border-radius: 50%;
   background: #111111;
   box-shadow: 0 2px 8px rgba(0,0,0,.8);
@@ -788,13 +801,14 @@ html, body {
 .player-token {
   position: absolute;
   pointer-events: auto;
-  width: clamp(26px, 2.2vw, 50px) !important;
-  height: clamp(26px, 2.2vw, 50px) !important;
+  /* vmin escala igual en portrait y landscape en cualquier dispositivo */
+  width: var(--token-size) !important;
+  height: var(--token-size) !important;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(9px, 0.85vw, 17px) !important;
+  font-size: var(--token-font) !important;
   font-weight: 800;
   color: #fff;
   cursor: grab;
@@ -852,21 +866,21 @@ html, body {
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-size: clamp(9px, 0.75vw, 14px);
+  font-size: clamp(8px, 1.4vmin, 14px);
   font-weight: 700;
   color: #fff;
   text-shadow: 0 1px 4px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,0.9);
   pointer-events: none;
-  margin-top: 3px;
+  margin-top: clamp(2px, 0.3vmin, 5px);
   z-index: 11;
 }
 /* Token: número dentro, nombre debajo */
 .player-token.has-player {
-  font-size: clamp(12px, 1.1vw, 22px);
+  font-size: clamp(11px, 2vmin, 24px);
   font-weight: 900;
 }
 .player-token.has-player .jersey-num {
-  font-size: clamp(12px, 1.1vw, 22px);
+  font-size: clamp(11px, 2vmin, 24px);
   font-weight: 900;
   line-height: 1;
 }
@@ -895,14 +909,14 @@ html, body {
 }
 .dorsal-badge {
   position: absolute;
-  bottom: -3px;
-  right: -4px;
+  bottom: clamp(-4px, -0.5vmin, -2px);
+  right: clamp(-5px, -0.6vmin, -3px);
   background: rgba(10,10,10,0.88);
   color: #fff;
-  font-size: clamp(7px, 0.58vw, 11px);
+  font-size: clamp(7px, 1.1vmin, 12px);
   font-weight: 800;
-  min-width: clamp(13px, 1vw, 18px);
-  height: clamp(13px, 1vw, 18px);
+  min-width: clamp(14px, 2vmin, 22px);
+  height: clamp(14px, 2vmin, 22px);
   border-radius: 999px;
   padding: 0 2px;
   display: flex;
@@ -915,11 +929,11 @@ html, body {
 }
 .token-name-label {
   position: absolute;
-  top: calc(100% + 2px);
+  top: calc(100% + clamp(2px, 0.3vmin, 4px));
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-size: clamp(8px, 0.72vw, 13px);
+  font-size: clamp(8px, 1.4vmin, 14px);
   font-weight: 700;
   color: #fff;
   text-shadow: 0 1px 4px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,0.9);
@@ -947,11 +961,11 @@ html, body {
 }
 
 .assign-title {
-  font-size: 11px;
+  font-size: clamp(9px, 0.8vw, 12px);
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-dim);
-  margin-bottom: 20px;
+  margin-bottom: clamp(12px, 1.8vh, 24px);
   text-transform: uppercase;
 }
 
@@ -982,13 +996,14 @@ html, body {
 .player-row.assigned { opacity: .45; cursor: default; }
 
 .player-avatar {
-  width: 36px; height: 36px;
+  width: clamp(28px, 3.2vmin, 44px);
+  height: clamp(28px, 3.2vmin, 44px);
   border-radius: 50%;
   background: #444;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: clamp(10px, 1.2vmin, 14px);
   font-weight: 700;
   color: #fff;
   flex-shrink: 0;
@@ -1000,7 +1015,7 @@ html, body {
 .player-avatar.assigned-fwd  { background: var(--accent); }
 
 .player-name {
-  font-size: 14px;
+  font-size: clamp(11px, 1vw, 15px);
   color: var(--text);
   font-weight: 500;
 }
@@ -1094,10 +1109,16 @@ body.light .mobile-bottom-nav { background: #1c1c2e; border-top-color: #333; }
 body.light .mbn-btn { color: rgba(255,255,255,.45); }
 body.light .mbn-btn.active { color: var(--accent); }
 
-/* ─── RESPONSIVE TWEAK (tablet) ─────────────── */
+/* ─── RESPONSIVE TWEAK (tablet 900px) ──────── */
 @media (max-width: 900px) {
-  :root { --sidebar-w: 180px; --right-w: 220px; }
-  .player-token { width: 46px !important; height: 46px !important; font-size: 16px !important; }
+  :root {
+    --sidebar-w: clamp(150px, 20vw, 195px);
+    --right-w:   clamp(170px, 22vw, 230px);
+    /* tokens ligeramente mayores para pantalla táctil */
+    --token-size: clamp(30px, 6vmin, 52px);
+    --token-font: clamp(11px, 2.2vmin, 20px);
+    --ball-size:  clamp(24px, 4.5vmin, 40px);
+  }
 }
 
 /* ─── RESPONSIVE MOBILE (≤ 768px) ──────────── */
@@ -1105,21 +1126,28 @@ body.light .mbn-btn.active { color: var(--accent); }
 
   html, body { overflow: hidden; }
 
+  :root {
+    --nav-h:      clamp(44px, 7vh, 54px);
+    --token-size: clamp(32px, 8.5vmin, 54px);
+    --token-font: clamp(12px, 3vmin, 21px);
+    --ball-size:  clamp(24px, 6vmin, 38px);
+  }
+
   /* ── TOP NAV ────────────────────────────── */
   .topnav {
-    height: 50px;
-    padding: 0 10px;
+    height: var(--nav-h);
+    padding: 0 clamp(8px, 2vw, 14px);
   }
   .lang-switcher { display: none; }
-  .logo-title { font-size: 13px; letter-spacing: 1.5px; }
-  .logo-sub   { font-size: 9px;  letter-spacing: 1.5px; }
-  .nav-logo-wrap { width: 34px; height: 34px; }
-  .topnav-right { gap: 6px; }
-  .icon-btn { font-size: 17px; padding: 5px; }
+  .logo-title { font-size: clamp(11px, 3.5vw, 16px); letter-spacing: 1.5px; }
+  .logo-sub   { font-size: clamp(8px, 2.2vw, 11px); letter-spacing: 1.5px; }
+  .nav-logo-wrap { width: clamp(28px, 8vw, 40px); height: clamp(28px, 8vw, 40px); }
+  .topnav-right { gap: clamp(4px, 1.5vw, 10px); }
+  .icon-btn { font-size: clamp(14px, 4.5vw, 20px); padding: clamp(3px, 1vw, 7px); }
 
   /* ── MAIN LAYOUT ────────────────────────── */
   .main-layout {
-    height: calc(100dvh - 50px - 56px);
+    height: calc(100dvh - var(--nav-h) - clamp(50px, 7vh, 62px));
     flex-direction: row;
     overflow: hidden;
     position: relative;
@@ -1183,45 +1211,36 @@ body.light .mbn-btn.active { color: var(--accent); }
     scrollbar-width: none;
   }
   .slide-controls::-webkit-scrollbar { display: none; }
-  .slide-btn  { width: 36px; height: 36px; font-size: 16px; }
-  .speed-select { height: 36px; font-size: 13px; }
-  .slide-chip { height: 36px; font-size: 14px; }
+  .slide-btn  { width: clamp(34px, 9vw, 46px); height: clamp(34px, 9vw, 46px); font-size: clamp(14px, 4vw, 19px); min-width: 44px; min-height: 44px; }
+  .speed-select { height: clamp(34px, 9vw, 46px); font-size: clamp(11px, 3.2vw, 15px); }
+  .slide-chip { height: clamp(34px, 9vw, 46px); font-size: clamp(12px, 3.5vw, 17px); min-height: 44px; }
 
   /* ── PITCH TOUCH ─────────────────────────── */
   .pitch { touch-action: none; }
 
   /* ── PLAYER TOKENS ──────────────────────── */
-  .player-token {
-    width: 44px !important;
-    height: 44px !important;
-    font-size: 16px !important;
-  }
-  .player-token .token-initials { font-size: 10px; margin-top: 2px; }
-  .player-token.has-player .jersey-num { font-size: 16px !important; }
+  .player-token .token-initials { font-size: clamp(9px, 2.5vw, 13px); margin-top: 2px; }
   .player-token.selected { outline-width: 2px; outline-offset: 2px; }
-
-  /* ── BALL TOKEN ─────────────────────────── */
-  .ball-token { width: 30px; height: 30px; }
 
   /* ── MOBILE BOTTOM NAV ──────────────────── */
   .mobile-bottom-nav {
     display: grid;
-    height: 58px;
+    height: clamp(50px, 7vh, 62px);
   }
   .mbn-btn {
-    padding: 10px 4px;
+    padding: clamp(6px, 1.5vh, 12px) 4px;
     min-height: 44px;
   }
-  .mbn-icon { font-size: 22px; }
-  .mbn-label { font-size: 9px; }
+  .mbn-icon { font-size: clamp(18px, 5.5vw, 26px); }
+  .mbn-label { font-size: clamp(8px, 2.2vw, 11px); }
 
   /* ── VIS TOGGLE ─────────────────────────── */
-  .vis-toggle { padding: 5px 10px; font-size: 10px; }
+  .vis-toggle { padding: clamp(4px, 1.2vw, 8px) clamp(8px, 2.5vw, 14px); font-size: clamp(9px, 2.5vw, 12px); }
 
   /* ── ACTION BUTTONS (touch targets) ─────── */
   .action-btn {
-    font-size: 11px;
-    padding: 10px 4px;
+    font-size: clamp(9px, 2.5vw, 13px);
+    padding: clamp(8px, 2.2vw, 13px) clamp(3px, 1vw, 6px);
     min-height: 44px;
   }
 
@@ -1229,18 +1248,18 @@ body.light .mbn-btn.active { color: var(--accent); }
   .sidebar-section { padding: 14px 12px; }
 
   /* ── PLAYER ROWS (enlarge touch) ────────── */
-  .player-row { padding: 11px 10px; }
-  .player-avatar { width: 40px; height: 40px; }
+  .player-row { padding: clamp(9px, 2.5vw, 14px) clamp(8px, 2vw, 14px); }
+  .player-avatar { width: clamp(34px, 9vw, 46px); height: clamp(34px, 9vw, 46px); }
 
   /* ── MODAL ──────────────────────────────── */
   .player-modal {
-    padding: 18px 14px 16px;
+    padding: clamp(14px, 4vw, 22px) clamp(12px, 3.5vw, 20px) clamp(12px, 3vw, 18px);
     width: 96vw;
     max-height: 88dvh;
     overflow-y: auto;
     border-radius: 16px;
   }
-  .modal-photo-hero { width: 110px; height: 110px; }
+  .modal-photo-hero { width: clamp(90px, 25vw, 130px); height: clamp(90px, 25vw, 130px); }
   .modal-fields { flex-wrap: wrap; }
   .modal-field[style*="width:80px"] { width: 70px !important; }
   .modal-field[style*="width:72px"] { width: 64px !important; }
@@ -1253,7 +1272,7 @@ body.light .mbn-btn.active { color: var(--accent); }
   .modal-pos-btn { min-height: 44px; }
 
   /* ── FORMATION SELECT ───────────────────── */
-  .formation-select { font-size: 16px; padding: 12px; }
+  .formation-select { font-size: clamp(14px, 4vw, 17px); padding: clamp(10px, 2.8vw, 14px); }
 
   /* ── DRAWER DRAG HANDLE ─────────────────── */
   .sidebar-left::before,
@@ -1275,24 +1294,15 @@ body.light .mbn-btn.active { color: var(--accent); }
 
 /* ─── EXTRA SMALL (≤ 480px) ─────────────────── */
 @media (max-width: 480px) {
-  .topnav { padding: 0 8px; }
-  .logo-title { font-size: 11px; letter-spacing: 1px; }
-  .logo-sub   { font-size: 8px;  letter-spacing: 1px; }
-  .nav-logo-wrap { width: 30px; height: 30px; }
-  .topnav-right { gap: 4px; }
-  .icon-btn { font-size: 15px; padding: 4px; }
-
-  .player-token {
-    width: 38px !important;
-    height: 38px !important;
-    font-size: 14px !important;
+  :root {
+    --nav-h:      clamp(42px, 6.5vh, 50px);
+    /* tokens basados en vmin para ajuste fino en pantallas pequeñas */
+    --token-size: clamp(28px, 9vmin, 46px);
+    --token-font: clamp(11px, 3.2vmin, 18px);
+    --ball-size:  clamp(22px, 6.5vmin, 34px);
   }
-  .player-token.has-player .jersey-num { font-size: 14px !important; }
-  .player-token .token-initials { font-size: 9px; }
-  .ball-token { width: 26px; height: 26px; }
 
-  .action-row { gap: 6px; }
-  .action-btn { font-size: 10px; }
+  .action-row { gap: clamp(4px, 1.5vw, 8px); }
 }
 
 /* ─── MOBILE ASSIGN BOTTOM SHEET ──────────────────────────── */
@@ -1543,16 +1553,14 @@ body.light .mbn-btn.active { color: var(--accent); }
 
   .center-area { padding: 4px; gap: 4px; }
 
-  .player-token {
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 13px !important;
+  :root {
+    --token-size: clamp(26px, 9vmin, 42px);
+    --token-font: clamp(10px, 3vmin, 17px);
+    --ball-size:  clamp(20px, 6vmin, 32px);
   }
-  .player-token.has-player .jersey-num { font-size: 13px !important; }
-  .ball-token { width: 24px; height: 24px; }
 
-  .slide-btn   { width: 30px; height: 30px; font-size: 13px; }
-  .speed-select { height: 30px; font-size: 12px; }
-  .slide-chip  { height: 30px; font-size: 12px; }
+  .slide-btn   { width: clamp(28px, 5vmin, 36px); height: clamp(28px, 5vmin, 36px); font-size: clamp(12px, 2.2vmin, 16px); }
+  .speed-select { height: clamp(28px, 5vmin, 36px); font-size: clamp(10px, 2vmin, 14px); }
+  .slide-chip  { height: clamp(28px, 5vmin, 36px); min-height: unset; font-size: clamp(11px, 2.2vmin, 15px); }
 }
 
