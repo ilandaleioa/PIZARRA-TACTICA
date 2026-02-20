@@ -427,24 +427,47 @@ function computeYLimits(playerData) {
 
   const team = playerData.team;
   const teammates = state.players.filter(p => p.team === team && p.jersey !== 1 && p.id !== playerData.id);
+  const rivals    = state.players.filter(p => p.team !== team && p.jersey !== 1);
 
   if (team === 'my') {
-    // Mi equipo ataca hacia arriba (y pequeño). Atacantes tienen y < 50.
+    // Mi equipo ataca hacia arriba (y pequeño). Delanteros/atacantes tienen y < 50.
     if (playerData.y <= 52) {
-      const defenders = teammates.filter(p => p.y > 52);
-      if (defenders.length > 0) {
-        const defLine = Math.min(...defenders.map(p => p.y));
-        return { yMin: 1, yMax: defLine - 3 };
+      let yMax = 99;
+
+      // Restricción 1: no puede pasar la línea defensiva PROPIA
+      const ownDefs = teammates.filter(p => p.y > 52);
+      if (ownDefs.length > 0) {
+        yMax = Math.min(yMax, Math.min(...ownDefs.map(p => p.y)) - 3);
       }
+
+      // Restricción 2: no puede quedar por detrás de la línea defensiva RIVAL
+      const rivalDefPlayers = rivals.filter(p => p.y < 50);
+      if (rivalDefPlayers.length > 0) {
+        const rivalDefLine = Math.max(...rivalDefPlayers.map(p => p.y));
+        yMax = Math.min(yMax, rivalDefLine - 3);
+      }
+
+      return { yMin: 1, yMax };
     }
   } else {
-    // Rival ataca hacia abajo (y grande). Atacantes tienen y > 50.
+    // Rival ataca hacia abajo (y grande). Delanteros/atacantes tienen y > 50.
     if (playerData.y >= 48) {
-      const defenders = teammates.filter(p => p.y < 48);
-      if (defenders.length > 0) {
-        const defLine = Math.max(...defenders.map(p => p.y));
-        return { yMin: defLine + 3, yMax: 99 };
+      let yMin = 1;
+
+      // Restricción 1: no puede pasar la línea defensiva PROPIA
+      const ownDefs = teammates.filter(p => p.y < 48);
+      if (ownDefs.length > 0) {
+        yMin = Math.max(yMin, Math.max(...ownDefs.map(p => p.y)) + 3);
       }
+
+      // Restricción 2: no puede quedar por detrás de la línea defensiva RIVAL
+      const myDefPlayers = rivals.filter(p => p.y > 50);
+      if (myDefPlayers.length > 0) {
+        const myDefLine = Math.min(...myDefPlayers.map(p => p.y));
+        yMin = Math.max(yMin, myDefLine + 3);
+      }
+
+      return { yMin, yMax: 99 };
     }
   }
   return { yMin: 1, yMax: 99 };
