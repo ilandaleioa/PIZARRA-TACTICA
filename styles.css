@@ -16,8 +16,8 @@
   --green-dark:#1b5e20;
   --green:     #2e7d32;
   --radius:    6px;
-  --sidebar-w: 175px;
-  --right-w:   220px;
+  --sidebar-w: 215px;
+  --right-w:   265px;
 }
 
 html, body {
@@ -25,7 +25,7 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Segoe UI', Arial, sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   overflow: hidden;
 }
 
@@ -35,8 +35,8 @@ html, body {
   align-items: center;
   justify-content: space-between;
   background: #000;
-  height: 46px;
-  padding: 0 16px;
+  height: 58px;
+  padding: 0 20px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   z-index: 100;
@@ -48,13 +48,13 @@ html, body {
   line-height: 1.1;
 }
 .logo-title {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 2px;
   color: #fff;
 }
 .logo-sub {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 2px;
   color: var(--accent);
@@ -74,7 +74,7 @@ html, body {
   background: none;
   border: none;
   color: var(--text-dim);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   padding: 3px 5px;
@@ -92,7 +92,7 @@ html, body {
   border: none;
   color: var(--text-dim);
   cursor: pointer;
-  font-size: 16px;
+  font-size: 20px;
   padding: 4px;
   border-radius: 4px;
   transition: color .15s, background .15s;
@@ -106,11 +106,11 @@ html, body {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 9px;
+  padding: 5px 10px;
   border-radius: 20px;
   border: none;
   cursor: pointer;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -132,7 +132,7 @@ html, body {
 /* ─── MAIN LAYOUT ──────────────────────────── */
 .main-layout {
   display: flex;
-  height: calc(100vh - 46px);
+  height: calc(100vh - 58px);
   overflow: hidden;
 }
 
@@ -157,8 +157,8 @@ html, body {
   border-bottom: 1px solid var(--border);
   color: var(--text-dim);
   cursor: pointer;
-  padding: 11px 12px;
-  font-size: 11px;
+  padding: 14px 14px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: .5px;
   text-align: left;
@@ -166,7 +166,7 @@ html, body {
 }
 .sidebar-tab:hover { background: #2a2a2a; color: var(--text); }
 .sidebar-tab.active { background: var(--surface); color: var(--text); border-left: 3px solid var(--accent); }
-.tab-icon { font-size: 13px; }
+.tab-icon { font-size: 16px; }
 
 .sidebar-section { padding: 16px 10px; flex: 1; }
 .sidebar-section.hidden { display: none; }
@@ -498,7 +498,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-dim);
@@ -517,9 +517,9 @@ html, body {
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 6px 8px;
+  padding: 8px 10px;
   border-radius: var(--radius);
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
   margin-bottom: 14px;
   appearance: none;
@@ -557,10 +557,10 @@ html, body {
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 6px 4px;
+  padding: 8px 6px;
   border-radius: var(--radius);
   cursor: pointer;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: .4px;
   display: flex;
@@ -821,11 +821,11 @@ html, body {
 }
 
 .assign-title {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-dim);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   text-transform: uppercase;
 }
 
@@ -833,21 +833,21 @@ html, body {
   margin-bottom: 12px;
 }
 .position-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--text-dim);
   text-transform: uppercase;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 4px;
-  margin-bottom: 6px;
+  padding-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .player-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 6px;
+  gap: 10px;
+  padding: 7px 8px;
   border-radius: var(--radius);
   cursor: pointer;
   transition: background .15s;
@@ -856,13 +856,13 @@ html, body {
 .player-row.assigned { opacity: .45; cursor: default; }
 
 .player-avatar {
-  width: 30px; height: 30px;
+  width: 36px; height: 36px;
   border-radius: 50%;
   background: #444;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   color: #fff;
   flex-shrink: 0;
@@ -874,7 +874,7 @@ html, body {
 .player-avatar.assigned-fwd  { background: var(--accent); }
 
 .player-name {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text);
   font-weight: 500;
 }
@@ -926,7 +926,7 @@ body.light .modal-overlay { background: rgba(0,0,0,.55); }
 
 /* ─── RESPONSIVE TWEAK ─────────────────────── */
 @media (max-width: 900px) {
-  :root { --sidebar-w: 150px; --right-w: 180px; }
+  :root { --sidebar-w: 180px; --right-w: 220px; }
   .player-token { width: 34px; height: 34px; font-size: 12px; }
 }
 @media (max-width: 680px) {
