@@ -290,14 +290,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initNavLogo() {
+  const img  = document.getElementById('nav-logo-img');
+  const wrap = img ? img.closest('.nav-logo-wrap') : null;
+  if (!img || !wrap) return;
   const saved = localStorage.getItem('ac-nav-logo');
-  if (saved) {
-    const img = document.getElementById('nav-logo-img');
-    const wrap = img.closest('.nav-logo-wrap');
-    img.src = saved;
-    img.classList.add('loaded');
-    wrap.classList.add('has-logo');
-  }
+  const src = saved || 'escudo.png';
+  img.src = src;
+  img.classList.add('loaded');
+  wrap.classList.add('has-logo');
 }
 
 function loadNavLogo(event) {
@@ -305,7 +305,7 @@ function loadNavLogo(event) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    const img = document.getElementById('nav-logo-img');
+    const img  = document.getElementById('nav-logo-img');
     const wrap = img.closest('.nav-logo-wrap');
     img.src = e.target.result;
     img.classList.add('loaded');

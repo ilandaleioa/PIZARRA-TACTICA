@@ -16,8 +16,8 @@
   --green-dark:#1b5e20;
   --green:     #2e7d32;
   --radius:    6px;
-  --sidebar-w: 220px;
-  --right-w:   275px;
+  --sidebar-w: 175px;
+  --right-w:   220px;
 }
 
 html, body {
@@ -25,7 +25,7 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Segoe UI', Arial, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   overflow: hidden;
 }
 
@@ -35,8 +35,8 @@ html, body {
   align-items: center;
   justify-content: space-between;
   background: #000;
-  height: 62px;
-  padding: 0 20px;
+  height: 46px;
+  padding: 0 16px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   z-index: 100;
@@ -44,62 +44,17 @@ html, body {
 
 .topnav-logo {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  line-height: 1.1;
-}
-.logo-texts {
-  display: flex;
   flex-direction: column;
   line-height: 1.1;
 }
-.nav-logo-wrap {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
-  overflow: hidden;
-  cursor: pointer;
-  border: 2px dashed rgba(255,255,255,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: border-color 0.2s;
-}
-.nav-logo-wrap:hover {
-  border-color: var(--accent);
-}
-.nav-logo-wrap #nav-logo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: none;
-}
-.nav-logo-wrap #nav-logo-img.loaded {
-  display: block;
-}
-.nav-logo-placeholder {
-  font-size: 22px;
-  color: rgba(255,255,255,0.35);
-  user-select: none;
-  transition: color 0.2s;
-}
-.nav-logo-wrap:hover .nav-logo-placeholder {
-  color: var(--accent);
-}
-.nav-logo-wrap.has-logo .nav-logo-placeholder {
-  display: none;
-}
 .logo-title {
-  font-size: 19px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 2px;
   color: #fff;
 }
 .logo-sub {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 2px;
   color: var(--accent);
@@ -119,10 +74,10 @@ html, body {
   background: none;
   border: none;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  padding: 4px 7px;
+  padding: 3px 5px;
   border-radius: 3px;
   transition: color .15s;
 }
@@ -137,8 +92,8 @@ html, body {
   border: none;
   color: var(--text-dim);
   cursor: pointer;
-  font-size: 20px;
-  padding: 5px;
+  font-size: 16px;
+  padding: 4px;
   border-radius: 4px;
   transition: color .15s, background .15s;
 }
@@ -177,7 +132,7 @@ html, body {
 /* ─── MAIN LAYOUT ──────────────────────────── */
 .main-layout {
   display: flex;
-  height: calc(100vh - 62px);
+  height: calc(100vh - 46px);
   overflow: hidden;
 }
 
@@ -195,15 +150,15 @@ html, body {
 .sidebar-tab {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   width: 100%;
   background: var(--surface2);
   border: none;
   border-bottom: 1px solid var(--border);
   color: var(--text-dim);
   cursor: pointer;
-  padding: 14px 14px;
-  font-size: 13px;
+  padding: 11px 12px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: .5px;
   text-align: left;
@@ -211,9 +166,9 @@ html, body {
 }
 .sidebar-tab:hover { background: #2a2a2a; color: var(--text); }
 .sidebar-tab.active { background: var(--surface); color: var(--text); border-left: 3px solid var(--accent); }
-.tab-icon { font-size: 15px; }
+.tab-icon { font-size: 13px; }
 
-.sidebar-section { padding: 20px 12px; flex: 1; }
+.sidebar-section { padding: 16px 10px; flex: 1; }
 .sidebar-section.hidden { display: none; }
 .hidden { display: none !important; }
 
@@ -674,7 +629,6 @@ html, body {
   inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
 }
 
 /* Perfect circle overlay for centre circle */
@@ -699,34 +653,8 @@ html, body {
   pointer-events: none;
 }
 
-/* ─── BALL TOKEN ────────────────────────────── */
-.ball-token {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  cursor: grab;
-  transform: translate(-50%, -50%);
-  user-select: none;
-  z-index: 50;
-  pointer-events: auto;
-  filter: drop-shadow(0 3px 7px rgba(0,0,0,.75));
-  transition: filter .15s, transform .12s;
-}
-.ball-token:hover {
-  filter: drop-shadow(0 5px 12px rgba(0,0,0,.85));
-  transform: translate(-50%, -50%) scale(1.13);
-  z-index: 50;
-}
-.ball-token.dragging {
-  cursor: grabbing;
-  transform: translate(-50%, -50%) scale(1.2);
-  z-index: 50;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,.95));
-}
-
 /* ─── PLAYER TOKENS ────────────────────────── */
 .player-token {
-  pointer-events: auto;
   position: absolute;
   width: 42px;
   height: 42px;
@@ -820,15 +748,15 @@ html, body {
   flex-direction: column;
   overflow-y: auto;
   flex-shrink: 0;
-  padding: 18px 13px;
+  padding: 14px 10px;
 }
 
 .assign-title {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-dim);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   text-transform: uppercase;
 }
 
@@ -836,21 +764,21 @@ html, body {
   margin-bottom: 12px;
 }
 .position-label {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--text-dim);
   text-transform: uppercase;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 5px;
-  margin-bottom: 8px;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .player-row {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 7px 8px;
+  gap: 8px;
+  padding: 5px 6px;
   border-radius: var(--radius);
   cursor: pointer;
   transition: background .15s;
@@ -859,13 +787,13 @@ html, body {
 .player-row.assigned { opacity: .45; cursor: default; }
 
 .player-avatar {
-  width: 36px; height: 36px;
+  width: 30px; height: 30px;
   border-radius: 50%;
   background: #444;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   color: #fff;
   flex-shrink: 0;
@@ -877,7 +805,7 @@ html, body {
 .player-avatar.assigned-fwd  { background: var(--accent); }
 
 .player-name {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text);
   font-weight: 500;
 }
@@ -929,7 +857,7 @@ body.light .modal-overlay { background: rgba(0,0,0,.55); }
 
 /* ─── RESPONSIVE TWEAK ─────────────────────── */
 @media (max-width: 900px) {
-  :root { --sidebar-w: 190px; --right-w: 230px; }
+  :root { --sidebar-w: 150px; --right-w: 180px; }
   .player-token { width: 34px; height: 34px; font-size: 12px; }
 }
 @media (max-width: 680px) {
