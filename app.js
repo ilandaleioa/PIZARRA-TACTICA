@@ -289,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initState();
   renderPlayers();
   renderPlayerList();
+  renderSlideChips();
   setupCanvas();
   setupBall();
 });
@@ -822,20 +823,56 @@ function resetBoard() {
 }
 
 // ─── SLIDES ──────────────────────────────────
+let animInterval = null; // reference to current animation interval
+
+function renderSlideChips() {
+  const container = document.getElementById('slide-chips');
+  container.innerHTML = '';
+  state.slides.forEach((_, idx) => {
+    const chip = document.createElement('div');
+    chip.className = 'slide-chip' + (idx === state.currentSlide ? ' active' : '');
+    chip.dataset.slide = idx;
+
+    const num = document.createElement('span');
+    num.className = 'chip-num';
+    num.textContent = idx + 1;
+    num.addEventListener('click', () => goToSlide(idx));
+    chip.appendChild(num);
+
+    if (state.slides.length > 1) {
+      const del = document.createElement('span');
+      del.className = 'chip-del';
+      del.textContent = '\u00D7';
+      del.title = 'Borrar fotograma';
+      del.addEventListener('click', e => { e.stopPropagation(); deleteSlide(idx); });
+      chip.appendChild(del);
+    }
+
+    container.appendChild(chip);
+  });
+}
+
 function addSlide() {
   saveHistory();
   // Save current slide positions before adding new one
   state.slides[state.currentSlide] = JSON.parse(JSON.stringify(state.players));
   // Deep clone current positions for the new slide
   state.slides.push(JSON.parse(JSON.stringify(state.players)));
-  const idx = state.slides.length - 1;
-  const chip = document.createElement('div');
-  chip.className = 'slide-chip';
-  chip.textContent = idx + 1;
-  chip.dataset.slide = idx;
-  chip.addEventListener('click', () => goToSlide(idx));
-  document.getElementById('slide-chips').appendChild(chip);
-  goToSlide(idx);
+  state.currentSlide = state.slides.length - 1;
+  renderSlideChips();
+}
+
+function deleteSlide(idx) {
+  if (state.slides.length <= 1) return;
+  saveHistory();
+  state.slides.splice(idx, 1);
+  // Adjust current index
+  if (state.currentSlide >= state.slides.length) {
+    state.currentSlide = state.slides.length - 1;
+  }
+  state.players = JSON.parse(JSON.stringify(state.slides[state.currentSlide]));
+  renderPlayers();
+  renderSlideChips();
 }
 
 // Update only left/top of existing tokens (enables CSS transitions)
@@ -868,15 +905,35 @@ function goToSlide(idx, animate) {
 }
 
 function playAnimation() {
+  // If already playing, stop
+  if (animInterval) {
+    clearInterval(animInterval);
+    animInterval = null;
+    const btn = document.getElementById('btn-play');
+    if (btn) { btn.innerHTML = '&#9654;'; btn.title = 'Reproducir'; btn.style.background = '#2e7d32'; }
+    return;
+  }
   const total = state.slides.length;
   if (total < 2) return;
   // Save current slide before playing
   state.slides[state.currentSlide] = JSON.parse(JSON.stringify(state.players));
+  const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
+  // Set transition duration slightly shorter than interval for smooth feel
+  const dur = Math.round(speed * 0.75);
+  document.documentElement.style.setProperty('--anim-dur', dur + 'ms');
+  const btn = document.getElementById('btn-play');
+  if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
+
   let i = 0;
-  const iv = setInterval(() => {
-    if (i >= total) { clearInterval(iv); return; }
+  animInterval = setInterval(() => {
+    if (i >= total) {
+      clearInterval(animInterval);
+      animInterval = null;
+      if (btn) { btn.innerHTML = '&#9654;'; btn.title = 'Reproducir'; btn.style.background = '#2e7d32'; }
+      return;
+    }
     goToSlide(i++, true);
-  }, 1000);
+  }, speed);
 }
 
 // ─── EXPORT IMAGE ────────────────────────────

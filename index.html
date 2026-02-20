@@ -131,11 +131,15 @@
 
     <!-- Slide controls -->
     <div class="slide-controls">
-      <button class="slide-btn play" onclick="playAnimation()" title="Play">&#9654;</button>
-      <button class="slide-btn add"  onclick="addSlide()"      title="Añadir fotograma">&#43;</button>
-      <div class="slide-chips" id="slide-chips">
-        <div class="slide-chip active" data-slide="0" onclick="goToSlide(0)">1</div>
-      </div>
+      <button class="slide-btn play" id="btn-play" onclick="playAnimation()" title="Reproducir">&#9654;</button>
+      <button class="slide-btn add"  onclick="addSlide()" title="Añadir fotograma">&#43;</button>
+      <select class="speed-select" id="anim-speed" title="Velocidad de animación">
+        <option value="2000">&#x1F422; Lenta</option>
+        <option value="1000" selected>Normal</option>
+        <option value="500">&#9889; Rápida</option>
+        <option value="250">&#9889;&#9889; Muy rápida</option>
+      </select>
+      <div class="slide-chips" id="slide-chips"></div>
     </div>
 
     <!-- Pitch wrapper -->

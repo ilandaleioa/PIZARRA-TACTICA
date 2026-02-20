@@ -641,6 +641,20 @@ html, body {
 .slide-btn.play { background: #2e7d32; color: #fff; }
 .slide-btn.add  { background: var(--accent2); color: #fff; }
 
+.speed-select {
+  height: 30px;
+  padding: 0 6px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+.speed-select:hover { border-color: var(--accent); }
+
 .slide-chips { display: flex; gap: 5px; }
 .slide-chip {
   min-width: 30px; height: 30px;
@@ -658,6 +672,23 @@ html, body {
 }
 .slide-chip:not(.active) { background: var(--surface2); border: 1px solid var(--border); }
 .slide-chip:not(.active):hover { background: #333; }
+
+.chip-num {
+  cursor: pointer;
+  padding: 0 2px;
+}
+.chip-del {
+  margin-left: 4px;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  transition: color .1s;
+}
+.chip-del:hover { color: #ff5252; }
+.slide-chip:not(.active) .chip-del { color: rgba(255,255,255,0.4); }
+.slide-chip:not(.active) .chip-del:hover { color: #ff5252; }
 
 /* Pitch wrapper */
 .pitch-wrapper {
@@ -767,7 +798,7 @@ html, body {
   cursor: grab;
   transform: translate(-50%, -50%);
   user-select: none;
-  transition: left .7s ease, top .7s ease, box-shadow .15s, transform .1s;
+  transition: left var(--anim-dur, .7s) ease, top var(--anim-dur, .7s) ease, box-shadow .15s, transform .1s;
   z-index: 10;
   box-shadow: 0 3px 10px rgba(0,0,0,.5);
   overflow: visible;
