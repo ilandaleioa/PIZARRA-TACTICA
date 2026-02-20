@@ -352,7 +352,7 @@ function renderPlayers() {
     el.style.color = isLight(color) ? '#111' : '#fff';
 
     if (p.name) {
-      el.innerHTML = `<span class="jersey-num">${p.jersey}</span><span class="token-initials">${p.name}</span>`;
+      el.innerHTML = `<span class="jersey-num">${p.dorsal || p.jersey}</span><span class="token-initials">${p.name}</span>`;
     } else {
       el.textContent = p.jersey;
     }
@@ -553,15 +553,16 @@ function assignPlayer(player, posKey) {
   if (!slot) return;
 
   saveHistory();
-  slot.name = player.name;
-  slot.abbr = player.abbr;
+  slot.name   = player.name;
+  slot.abbr   = player.abbr;
+  slot.dorsal = player.dorsal;
   state.assignedPlayers[slot.id] = player.id;
 
   const el = document.getElementById('token-' + slot.id);
   if (el) {
     el.classList.add('has-player');
     el.classList.remove('selected');
-    el.innerHTML = `<span class="jersey-num">${slot.jersey}</span><span class="token-initials">${slot.name}</span>`;
+    el.innerHTML = `<span class="jersey-num">${player.dorsal}</span><span class="token-initials">${slot.name}</span>`;
     el.style.color = isLight(state.myColor) ? '#111' : '#fff';
   }
 
