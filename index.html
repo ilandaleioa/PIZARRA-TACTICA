@@ -156,11 +156,32 @@
           <!-- Bottom penalty spot -->
           <circle cx="380" cy="435" r="3" fill="rgba(255,255,255,0.92)"/>
           <!-- Balón en el centro -->
-          <circle cx="380" cy="260" r="11" fill="white" stroke="#333" stroke-width="1.2"/>
-          <!-- manchas negras del balón -->
-          <polygon points="380,251 384,255 382,260 378,260 376,255" fill="#222"/>
-          <polygon points="370,258 374,256 376,260 373,264 369,263" fill="#222"/>
-          <polygon points="390,258 386,256 384,260 387,264 391,263" fill="#222"/>
+          <defs>
+            <clipPath id="ballClip">
+              <circle cx="380" cy="260" r="13"/>
+            </clipPath>
+            <radialGradient id="ballShine" cx="38%" cy="32%" r="60%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="100%" stop-color="#d8d8d8"/>
+            </radialGradient>
+          </defs>
+          <!-- Cuerpo del balón -->
+          <circle cx="380" cy="260" r="13" fill="url(#ballShine)" stroke="#111" stroke-width="1.6"/>
+          <!-- Pentágonos negros (clásico Telstar) recortados al círculo -->
+          <g clip-path="url(#ballClip)" fill="#111" stroke="#111" stroke-width="0.3">
+            <!-- Pentágono central -->
+            <polygon points="380,253.5 386.2,257.9 383.8,265.2 376.2,265.2 373.8,257.9"/>
+            <!-- Pentágono arriba -->
+            <polygon points="380,247 385,250.5 383.2,253.5 376.8,253.5 375,250.5"/>
+            <!-- Pentágono arriba-derecha -->
+            <polygon points="389,252.5 393,258.5 390,262 386.2,257.9 387,253.5"/>
+            <!-- Pentágono abajo-derecha -->
+            <polygon points="387.5,266.5 392,271 389.5,275.5 385,274 383.8,265.2"/>
+            <!-- Pentágono abajo-izquierda -->
+            <polygon points="376.2,265.2 375,274 370.5,275.5 368,271 372.5,266.5"/>
+            <!-- Pentágono arriba-izquierda -->
+            <polygon points="373,253.5 373.8,257.9 370,262 367,258.5 371,252.5"/>
+          </g>
           <!-- Corner arcs -->
           <path d="M 30 34 A 14 14 0 0 1 44 18"   fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
           <path d="M 716 18 A 14 14 0 0 1 730 34"  fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
