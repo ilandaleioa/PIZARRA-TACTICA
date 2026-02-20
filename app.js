@@ -1299,6 +1299,16 @@ document.addEventListener('fullscreenchange', () => {
 window.addEventListener('load', loadFromHash);
 
 // ── MOBILE ASSIGN MODAL ─────────────────────────────────────
+let mobileAssignTab = 'portero';
+
+function setMobileAssignTab(pos) {
+  mobileAssignTab = pos;
+  document.querySelectorAll('.mas-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.pos === pos);
+  });
+  renderMobileAssignList();
+}
+
 function openMobileAssignModal() {
   const p = state.players.find(pl => pl.id === selectedTokenId);
   const title = document.getElementById('mobile-assign-title');
@@ -1307,11 +1317,22 @@ function openMobileAssignModal() {
       ? `Asignar al círculo ${p.jersey}`
       : 'Selecciona un jugador';
   }
+
+  // Preseleccionar tab según número de camiseta del círculo
+  if (p) {
+    if (p.jersey === 1)          mobileAssignTab = 'portero';
+    else if (p.jersey <= 5)      mobileAssignTab = 'defensa';
+    else if (p.jersey <= 8)      mobileAssignTab = 'medio';
+    else                         mobileAssignTab = 'delantero';
+  }
+  document.querySelectorAll('.mas-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.pos === mobileAssignTab);
+  });
+
   renderMobileAssignList();
   const overlay = document.getElementById('mobile-assign-overlay');
   if (overlay) {
     overlay.classList.remove('hidden');
-    // Forzar reflow para que la animación se dispare
     void overlay.offsetWidth;
     overlay.classList.add('active');
   }
@@ -1335,54 +1356,64 @@ function closeMobileAssignModal() {
 }
 
 function renderMobileAssignList() {
-  const lang = LANGS[currentLang];
   const container = document.getElementById('mobile-assign-list');
   if (!container) return;
   container.innerHTML = '';
 
-  const positions = [
-    { key: 'portero',   label: lang.portero,   cls: 'assigned-gk'  },
-    { key: 'defensa',   label: lang.defensa,   cls: 'assigned-def' },
-    { key: 'medio',     label: lang.medio,     cls: 'assigned-mid' },
-    { key: 'delantero', label: lang.delantero, cls: 'assigned-fwd' },
-  ];
+  const grid = document.createElement('div');
+  grid.className = 'mas-player-grid';
 
-  positions.forEach(pos => {
-    const group = document.createElement('div');
-    group.className = 'position-group';
-    const lbl = document.createElement('div');
-    lbl.className = 'position-label';
-    lbl.textContent = pos.label;
-    group.appendChild(lbl);
+  SQUAD[mobileAssignTab].forEach(player => {
+    const isAssigned = Object.values(state.assignedPlayers).includes(player.id);
 
-    SQUAD[pos.key].forEach(player => {
-      const isAssigned = Object.values(state.assignedPlayers).includes(player.id);
-      const row = document.createElement('div');
-      row.className = 'player-row' + (isAssigned ? ' assigned' : '');
+    const card = document.createElement('div');
+    card.className = 'mas-player-card' + (isAssigned ? ' assigned' : '');
 
-      const avatar = document.createElement('div');
-      avatar.className = 'player-avatar' + (isAssigned ? ` ${pos.cls}` : '');
-      avatar.textContent = player.dorsal;
+    // Círculo con foto
+    const photoWrap = document.createElement('div');
+    photoWrap.className = 'mas-photo-wrap';
 
-      const name = document.createElement('div');
-      name.className = 'player-name';
-      name.textContent = player.name;
+    if (player.photo) {
+      const img = document.createElement('img');
+      img.className = 'mas-photo';
+      img.src = player.photo;
+      img.onerror = () => { img.style.display = 'none'; };
+      photoWrap.appendChild(img);
+    }
 
-      row.appendChild(avatar);
-      row.appendChild(name);
+    // Badge dorsal
+    const badge = document.createElement('span');
+    badge.className = 'mas-dorsal';
+    badge.textContent = player.dorsal;
+    photoWrap.appendChild(badge);
 
-      if (!isAssigned) {
-        row.addEventListener('click', () => {
-          // Cerrar modal ANTES de asignar para no interferir con la deselección
-          const overlay = document.getElementById('mobile-assign-overlay');
-          if (overlay) { overlay.classList.remove('active'); overlay.classList.add('hidden'); }
-          assignPlayer(player, pos.key);
-        });
-      }
-      group.appendChild(row);
-    });
-    container.appendChild(group);
+    // Check si ya asignado
+    if (isAssigned) {
+      const chk = document.createElement('div');
+      chk.className = 'mas-check';
+      chk.textContent = '✓';
+      photoWrap.appendChild(chk);
+    }
+
+    const name = document.createElement('div');
+    name.className = 'mas-player-name';
+    name.textContent = player.name;
+
+    card.appendChild(photoWrap);
+    card.appendChild(name);
+
+    if (!isAssigned) {
+      card.addEventListener('click', () => {
+        const overlay = document.getElementById('mobile-assign-overlay');
+        if (overlay) { overlay.classList.remove('active'); overlay.classList.add('hidden'); }
+        assignPlayer(player, mobileAssignTab);
+      });
+    }
+
+    grid.appendChild(card);
   });
+
+  container.appendChild(grid);
 }
 
 // ── MOBILE PANEL TOGGLE ──────────────────────────────────────

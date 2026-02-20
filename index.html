@@ -7,7 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="styles.css?v=20" />
+  <link rel="stylesheet" href="styles.css?v=21" />
 </head>
 <body>
 
@@ -226,6 +226,12 @@
       <span id="mobile-assign-title">Selecciona un jugador</span>
       <button class="mobile-assign-close" onclick="closeMobileAssignModal()">&#10005;</button>
     </div>
+    <div class="mobile-assign-tabs" id="mobile-assign-tabs">
+      <button class="mas-tab" data-pos="portero"   onclick="setMobileAssignTab('portero')">POR</button>
+      <button class="mas-tab" data-pos="defensa"   onclick="setMobileAssignTab('defensa')">DEF</button>
+      <button class="mas-tab" data-pos="medio"     onclick="setMobileAssignTab('medio')">MED</button>
+      <button class="mas-tab" data-pos="delantero" onclick="setMobileAssignTab('delantero')">DEL</button>
+    </div>
     <div id="mobile-assign-list"></div>
   </div>
 </div>
@@ -278,7 +284,7 @@
   </div>
 </div>
 
-<script src="app.js?v=102"></script><script>
+<script src="app.js?v=103"></script><script>
 (function() {
   function initBall() {
     var ball = document.getElementById('ball-token');
