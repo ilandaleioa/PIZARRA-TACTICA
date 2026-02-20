@@ -793,10 +793,6 @@ function undo() {
 
 // ─── RESET ───────────────────────────────────
 function resetBoard() {
-  if (!confirm(currentLang === 'es' ? '¿Resetear la pizarra?' :
-               currentLang === 'eu' ? 'Arbela berrezarri?' :
-               currentLang === 'fr' ? 'Réinitialiser le tableau ?' :
-               'Reset the board?')) return;
   state.assignedPlayers = {};
   history = [];
   initState();
