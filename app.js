@@ -335,7 +335,10 @@ function initState() {
     state.players.push({ id: `rival-${i}`, team: 'rival', jersey: i + 1, x: rivalPos[i][0], y: rivalPos[i][1], name: '', abbr: '' });
   }
   // Populate slide 0 with initial positions
-  state.slides[0] = JSON.parse(JSON.stringify(state.players));
+  state.slides[0] = {
+    players: JSON.parse(JSON.stringify(state.players)),
+    ball: { ...state.ball },
+  };
   saveHistory();
 }
 
