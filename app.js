@@ -89,8 +89,8 @@ const FORMATIONS = {
       [50,  90],  // 1 GK
       [82,  67],  // 2 Lat Der
       [13,  67],  // 3 Lat Izq
-      [35,  79],  // 4 Central Izq
-      [60,  79],  // 5 Central Der
+      [35,  77],  // 4 Central Izq
+      [60,  77],  // 5 Central Der
       [34,  60],  // 6 Medio centro
       [82,  45],  // 7 Extremo Der
       [58,  60],  // 8 Medio centro
@@ -102,8 +102,8 @@ const FORMATIONS = {
       [50,  10],  // 1 GK
       [82,  33],  // 2 Lat Der
       [13,  33],  // 3 Lat Izq
-      [35,  21],  // 4 Central Izq
-      [60,  21],  // 5 Central Der
+      [35,  23],  // 4 Central Izq
+      [60,  23],  // 5 Central Der
       [34,  40],  // 6 Medio centro
       [82,  55],  // 7 Extremo Der
       [58,  40],  // 8 Medio centro
@@ -143,14 +143,14 @@ const FORMATIONS = {
   '1-4-2-3-1': {
     my: [
       [50, 90],
-      [18, 81], [38, 81], [62, 81], [82, 81],
+      [18, 78], [38, 78], [62, 78], [82, 78],
       [36, 67], [64, 67],
       [20, 53], [50, 51], [80, 53],
       [50, 37],
     ],
     rival: [
       [50, 10],
-      [18, 19], [38, 19], [62, 19], [82, 19],
+      [18, 22], [38, 22], [62, 22], [82, 22],
       [36, 33], [64, 33],
       [20, 47], [50, 49], [80, 47],
       [50, 63],
@@ -159,13 +159,13 @@ const FORMATIONS = {
   '1-3-5-2': {
     my: [
       [50, 90],
-      [28, 81], [50, 81], [72, 81],
+      [28, 78], [50, 78], [72, 78],
       [10, 62], [30, 62], [50, 63], [70, 62], [90, 62],
       [34, 39], [66, 39],
     ],
     rival: [
       [50, 10],
-      [28, 19], [50, 19], [72, 19],
+      [28, 22], [50, 22], [72, 22],
       [10, 38], [30, 38], [50, 37], [70, 38], [90, 38],
       [34, 61], [66, 61],
     ]
@@ -173,13 +173,13 @@ const FORMATIONS = {
   '1-3-4-3': {
     my: [
       [50, 90],
-      [28, 81], [50, 81], [72, 81],
+      [28, 78], [50, 78], [72, 78],
       [18, 61], [40, 61], [60, 61], [82, 61],
       [20, 39], [50, 37], [80, 39],
     ],
     rival: [
       [50, 10],
-      [28, 19], [50, 19], [72, 19],
+      [28, 22], [50, 22], [72, 22],
       [18, 39], [40, 39], [60, 39], [82, 39],
       [20, 61], [50, 63], [80, 61],
     ]
@@ -187,13 +187,13 @@ const FORMATIONS = {
   '1-5-3-2': {
     my: [
       [50, 90],
-      [8, 77], [26, 81], [50, 81], [74, 81], [92, 77],
+      [8, 77], [26, 78], [50, 78], [74, 78], [92, 77],
       [28, 59], [50, 59], [72, 59],
       [34, 39], [66, 39],
     ],
     rival: [
       [50, 10],
-      [8, 23], [26, 19], [50, 19], [74, 19], [92, 23],
+      [8, 23], [26, 22], [50, 22], [74, 22], [92, 23],
       [28, 41], [50, 41], [72, 41],
       [34, 61], [66, 61],
     ]
@@ -201,13 +201,13 @@ const FORMATIONS = {
   '1-5-4-1': {
     my: [
       [50, 90],
-      [8, 77], [26, 81], [50, 81], [74, 81], [92, 77],
+      [8, 77], [26, 78], [50, 78], [74, 78], [92, 77],
       [18, 59], [40, 59], [60, 59], [82, 59],
       [50, 39],
     ],
     rival: [
       [50, 10],
-      [8, 23], [26, 19], [50, 19], [74, 19], [92, 23],
+      [8, 23], [26, 22], [50, 22], [74, 22], [92, 23],
       [18, 41], [40, 41], [60, 41], [82, 41],
       [50, 61],
     ]
@@ -441,7 +441,7 @@ function renderPlayerList() {
       row.appendChild(name);
 
       if (!isAssigned) {
-        row.addEventListener('click', () => assignPlayer(player, pos.cls));
+        row.addEventListener('click', () => assignPlayer(player, pos.key));
       }
       group.appendChild(row);
     });
@@ -450,23 +450,17 @@ function renderPlayerList() {
 }
 
 // Assign a squad player to the correct positional slot in "my team"
-function assignPlayer(player, posClass) {
-  // Map position class to jersey ranges (based on standard 11-player layout)
-  const jerseyRanges = {
-    'assigned-gk':  [1, 1],
-    'assigned-def': [2, 5],
-    'assigned-mid': [6, 9],
-    'assigned-fwd': [10, 11],
-  };
-  const range = jerseyRanges[posClass] || [1, 11];
-
-  // Find first unassigned slot within the position range
-  let slot = state.players.find(p =>
-    p.team === 'my' && !p.name &&
-    p.jersey >= range[0] && p.jersey <= range[1]
-  );
-  // Fallback: any unassigned slot
-  if (!slot) slot = state.players.find(p => p.team === 'my' && !p.name);
+function assignPlayer(player, posKey) {
+  let slot;
+  if (posKey === 'portero') {
+    // Portero siempre va al slot 1
+    slot = state.players.find(p => p.team === 'my' && p.jersey === 1 && !p.name);
+  } else {
+    // Resto: siguiente slot libre en orden (jerseys 2-11)
+    slot = state.players
+      .filter(p => p.team === 'my' && p.jersey > 1 && !p.name)
+      .sort((a, b) => a.jersey - b.jersey)[0];
+  }
   if (!slot) return;
 
   saveHistory();
