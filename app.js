@@ -1455,17 +1455,52 @@ function toggleMobilePanel(side) {
   }
 }
 
+function toggleMobilePlantilla() {
+  if (window.innerWidth > 768) return;
+  const pv = document.getElementById('plantilla-view');
+  const isOpen = !pv.classList.contains('hidden');
+  if (isOpen) {
+    closeMobilePanels();
+  } else {
+    // Cerrar drawers laterales
+    document.querySelector('.sidebar-left').classList.remove('mobile-open');
+    document.querySelector('.sidebar-right').classList.remove('mobile-open');
+    document.getElementById('mobile-overlay').classList.remove('active');
+    // Activar botón plantillas
+    const btnLeft       = document.getElementById('mbn-left');
+    const btnRight      = document.getElementById('mbn-right');
+    const btnPitch      = document.getElementById('mbn-pitch');
+    const btnPlantillas = document.getElementById('mbn-plantillas');
+    if (btnLeft)       btnLeft.classList.remove('active');
+    if (btnRight)      btnRight.classList.remove('active');
+    if (btnPitch)      btnPitch.classList.remove('active');
+    if (btnPlantillas) btnPlantillas.classList.add('active');
+    // Mostrar vista plantilla
+    document.querySelector('.center-area').classList.add('hidden');
+    pv.classList.remove('hidden');
+    renderPlantillaView();
+  }
+}
+
 function closeMobilePanels() {
   document.querySelector('.sidebar-left').classList.remove('mobile-open');
   document.querySelector('.sidebar-right').classList.remove('mobile-open');
   const overlay = document.getElementById('mobile-overlay');
   if (overlay) overlay.classList.remove('active');
-  const btnLeft  = document.getElementById('mbn-left');
-  const btnRight = document.getElementById('mbn-right');
-  const btnPitch = document.getElementById('mbn-pitch');
-  if (btnLeft)  btnLeft.classList.remove('active');
-  if (btnRight) btnRight.classList.remove('active');
-  if (btnPitch) btnPitch.classList.add('active');
+  const btnLeft       = document.getElementById('mbn-left');
+  const btnRight      = document.getElementById('mbn-right');
+  const btnPitch      = document.getElementById('mbn-pitch');
+  const btnPlantillas = document.getElementById('mbn-plantillas');
+  if (btnLeft)       btnLeft.classList.remove('active');
+  if (btnRight)      btnRight.classList.remove('active');
+  if (btnPlantillas) btnPlantillas.classList.remove('active');
+  if (btnPitch)      btnPitch.classList.add('active');
+  // Restaurar pizarra si estaba en vista plantilla
+  const pv = document.getElementById('plantilla-view');
+  if (pv && !pv.classList.contains('hidden')) {
+    pv.classList.add('hidden');
+    document.querySelector('.center-area').classList.remove('hidden');
+  }
 }
 
 // Close mobile panels when resizing to desktop
