@@ -249,7 +249,7 @@ const FORMATIONS = {
 };
 
 // ─── STATE ───────────────────────────────────
-const GK_COLOR      = '#111111';   // portero mi equipo siempre negro
+const GK_COLOR      = '#E91E8C';   // portero mi equipo rosa
 const RIVAL_GK_COLOR = '#FDD835';  // portero rival siempre amarillo
 const MY_COLOR    = '#C62828';   // mi equipo rojo por defecto
 const RIVAL_COLOR = '#1565C0';   // rival azul por defecto
