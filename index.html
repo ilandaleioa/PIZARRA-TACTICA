@@ -8,7 +8,6 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <link rel="stylesheet" href="styles.css?v=5" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -98,7 +97,7 @@
       <!-- ACTION BUTTONS -->
       <div class="action-row">
         <button class="action-btn" onclick="exportImage()">&#128247; <span data-i18n="imagen">IMAGEN</span></button>
-        <button class="action-btn" id="btn-video" onclick="openVideoModal()">&#127909; <span data-i18n="video">VIDEO</span></button>
+        <button class="action-btn" onclick="alert('Video export')">&#127909; <span data-i18n="video">VIDEO</span></button>
       </div>
       <div class="action-row">
         <button class="action-btn secondary" onclick="undo()">&#8617; <span data-i18n="deshacer">DESHACER</span></button>
@@ -217,13 +216,6 @@
       </div>
     </div>
 
-    <div class="modal-fields">
-      <div class="modal-field" style="flex:1">
-        <label>APODO</label>
-        <input type="text" id="modal-apodo" placeholder="Apodo o nombre corto" />
-      </div>
-    </div>
-
     <div class="modal-section-label">POSICIÓN PRINCIPAL</div>
     <div class="modal-pos-grid">
       <button class="modal-pos-btn" data-pos="portero"   onclick="setModalPos('portero')">PORTERO</button>
@@ -245,68 +237,6 @@
   </div>
 </div>
 
-<!-- ═══════════════════  VIDEO MODAL  ═══════════════════ -->
-<div id="video-modal-overlay" class="modal-overlay hidden" onclick="handleVideoModalClick(event)">
-  <div class="player-modal" style="max-width:400px;text-align:center">
-    <h3>&#127909; EXPORTAR VIDEO</h3>
-    <p style="color:#aaa;font-size:0.85rem;margin:8px 0 20px">Elige el modo de grabación:</p>
-
-    <button class="action-btn full" style="margin-bottom:10px" onclick="exportVideoSlides()">
-      &#127916; Animación de fotogramas
-      <span style="display:block;font-size:0.75rem;font-weight:400;color:#ccc;margin-top:2px">Convierte tus slides en video WebM</span>
-    </button>
-    <button class="action-btn secondary full" style="margin-bottom:18px" onclick="startLiveRecording()">
-      &#9210; Grabación en vivo
-      <span style="display:block;font-size:0.75rem;font-weight:400;color:#ccc;margin-top:2px">Graba mientras mueves jugadores y dibujas</span>
-    </button>
-    <button class="modal-btn cancel" onclick="closeVideoModal()">CANCELAR</button>
-  </div>
-</div>
-
-<!-- Recording indicator -->
-<div id="rec-indicator" class="hidden" style="position:fixed;bottom:24px;right:24px;background:#c62828;color:#fff;padding:8px 16px;border-radius:8px;font-size:0.85rem;font-weight:700;display:flex;align-items:center;gap:10px;z-index:9999;box-shadow:0 2px 12px rgba(0,0,0,0.5)">
-  <span style="width:10px;height:10px;border-radius:50%;background:#ff6b6b;display:inline-block;animation:blink 1s infinite"></span>
-  GRABANDO...
-  <button onclick="stopLiveRecording()" style="background:#fff;color:#c62828;border:none;border-radius:4px;padding:3px 10px;font-weight:700;cursor:pointer;font-size:0.8rem">DETENER</button>
-</div>
-
-<style>
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.action-btn.full { width:100%; justify-content:center; }
-
-/* Añadir jugador en cabecera de posición */
-.add-player-btn {
-  background: none;
-  border: 1px solid #555;
-  color: #aaa;
-  border-radius: 50%;
-  width: 22px; height: 22px;
-  font-size: 1rem;
-  line-height: 1;
-  cursor: pointer;
-  margin-left: 8px;
-  vertical-align: middle;
-  transition: background 0.15s, color 0.15s;
-}
-.add-player-btn:hover { background: #C62828; color: #fff; border-color: #C62828; }
-
-/* Eliminar jugador en tarjeta */
-.delete-player-btn {
-  position: absolute;
-  top: 4px; right: 4px;
-  background: none;
-  border: none;
-  color: #555;
-  font-size: 0.75rem;
-  cursor: pointer;
-  padding: 2px 5px;
-  border-radius: 4px;
-  transition: background 0.15s, color 0.15s;
-}
-.delete-player-btn:hover { background: #c62828; color: #fff; }
-.player-card { position: relative; }
-</style>
-
-<script src="app.js?v=7"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>
