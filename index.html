@@ -181,17 +181,19 @@
         <div id="players-container"></div>
 
         <!-- Balón arrastrable -->
-        <div id="ball-token" style="
-          position:absolute;
-          left:50%; top:50%;
-          transform:translate(-50%,-50%);
-          font-size:36px;
-          line-height:1;
-          cursor:grab;
-          user-select:none;
-          z-index:50;
-          filter:drop-shadow(0 2px 4px rgba(0,0,0,.8));
-        ">⚽</div>
+        <div id="ball-token" class="ball-token" style="left:50%;top:50%;">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <circle cx="50" cy="50" r="48" fill="white" stroke="#222" stroke-width="3"/>
+            <!-- pentágono central -->
+            <polygon points="50,28 64,38 59,55 41,55 36,38" fill="#111"/>
+            <!-- pétalos alrededor -->
+            <polygon points="50,28 36,38 26,26 34,14 50,16" fill="#111"/>
+            <polygon points="64,38 74,26 86,34 82,50 66,54" fill="#111"/>
+            <polygon points="59,55 66,54 74,68 62,76 50,70" fill="#111"/>
+            <polygon points="41,55 50,70 38,76 26,68 34,54" fill="#111"/>
+            <polygon points="36,38 34,54 18,50 14,34 26,26" fill="#111"/>
+          </svg>
+        </div>
 
         <!-- Drawing canvas overlay -->
         <canvas id="draw-canvas"></canvas>
