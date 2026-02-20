@@ -176,7 +176,7 @@
         <div id="players-container"></div>
 
         <!-- Balón arrastrable -->
-        <div id="ball-token" class="ball-token" style="left:50%;top:82%;"></div>
+        <div id="ball-token" class="ball-token" style="left:50%;top:86%;"></div>
 
         <!-- Drawing canvas overlay -->
         <canvas id="draw-canvas"></canvas>
@@ -290,7 +290,7 @@
     var ball = document.getElementById('ball-token');
     if (!ball) return;
     var pitch = document.getElementById('pitch');
-    var bx = 50, by = 82;
+    var bx = 50, by = 86;
     var ox, oy, pr;
     ball.addEventListener('mousedown', function(e) {
       e.preventDefault(); e.stopPropagation();
