@@ -146,29 +146,29 @@ const FORMATIONS = {
   '1-4-3-3': {
     my: [
       [50,  90],  // 1 GK
-      [83,  62],  // 2 Lat Der
-      [8,   62],  // 3 Lat Izq
-      [36,  75],  // 4 Central Izq
-      [60,  75],  // 5 Central Der
-      [48,  60],  // 6 Medio centro
-      [83,  24],  // 7 Extremo Der
-      [68,  45],  // 8 Medio Der
-      [48,  20],  // 9 Delantero Centro
-      [27,  45],  // 10 Medio Izq
-      [8,   24],  // 11 Extremo Izq
+      [83,  55],  // 2 Lat Der
+      [8,   55],  // 3 Lat Izq
+      [36,  68],  // 4 Central Izq
+      [60,  68],  // 5 Central Der
+      [48,  53],  // 6 Medio centro
+      [83,  18],  // 7 Extremo Der
+      [68,  38],  // 8 Interior Der
+      [48,  14],  // 9 Delantero Centro
+      [27,  38],  // 10 Interior Izq
+      [8,   18],  // 11 Extremo Izq
     ],
     rival: [
       [50,  10],  // 1 GK
-      [83,  38],  // 2 Lat Der
-      [8,   38],  // 3 Lat Izq
-      [36,  25],  // 4 Central Izq
-      [60,  25],  // 5 Central Der
-      [48,  40],  // 6 Medio centro
-      [83,  76],  // 7 Extremo Der
-      [68,  55],  // 8 Medio Der
-      [48,  80],  // 9 Delantero Centro
-      [27,  55],  // 10 Medio Izq
-      [8,   76],  // 11 Extremo Izq
+      [83,  45],  // 2 Lat Der
+      [8,   45],  // 3 Lat Izq
+      [36,  32],  // 4 Central Izq
+      [60,  32],  // 5 Central Der
+      [48,  47],  // 6 Medio centro
+      [83,  82],  // 7 Extremo Der
+      [68,  62],  // 8 Interior Der
+      [48,  86],  // 9 Delantero Centro
+      [27,  62],  // 10 Interior Izq
+      [8,   82],  // 11 Extremo Izq
     ]
   },
   '1-4-2-3-1': {
@@ -662,7 +662,7 @@ function openPlayerModal(playerId, posKey) {
   );
 
   const preview = document.getElementById('modal-photo-preview');
-  const photo   = playerPhotos[playerId];
+  const photo   = playerPhotos[playerId] || player.photo || null;
   if (photo) { preview.src = photo; preview.style.display = 'block'; }
   else        { preview.src = '';    preview.style.display = 'none';  }
 
