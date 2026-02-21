@@ -350,8 +350,8 @@ function initState() {
     // Rival sigue vacío
     state.players.push({ id: `rival-${i}`, team: 'rival', jersey: i + 1, x: rivalPos[i][0], y: rivalPos[i][1], name: '', abbr: '' });
   }
-  // Balón por defecto a los pies del portero de mi equipo
-  state.ball = { x: myPos[0][0], y: myPos[0][1] };
+  // Balón en el centro del campo
+  state.ball = { x: 50, y: 50 };
   // Populate slide 0 with initial positions
   state.slides[0] = {
     players: JSON.parse(JSON.stringify(state.players)),
