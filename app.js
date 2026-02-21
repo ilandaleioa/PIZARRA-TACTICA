@@ -294,6 +294,12 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSlideChips();
   setupCanvas();
   setupBall();
+  // Forzar escudo por defecto si no hay imagen
+  const img = document.getElementById('nav-logo-img');
+  if (img && (!img.src || img.src.endsWith('ACFC Blanco Cuadrado.png'))) {
+    img.src = DEFAULT_LOGO;
+    img.style.display = 'block';
+  }
 });
 
 const DEFAULT_LOGO = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Athletic_Club_crest.svg/100px-Athletic_Club_crest.svg.png';
