@@ -332,8 +332,22 @@ function initState() {
   const rivalPos = FORMATIONS['1-4-4-2'].rival;
 
   state.players = [];
+  // Poblar equipo propio con datos reales
+  const squadList = [].concat(SQUAD.portero, SQUAD.defensa, SQUAD.medio, SQUAD.delantero);
   for (let i = 0; i < 11; i++) {
-    state.players.push({ id: `my-${i}`,    team: 'my',    jersey: i + 1, x: myPos[i][0],    y: myPos[i][1],    name: '', abbr: '' });
+    const jugador = squadList[i] || { name: '', abbr: '', dorsal: i + 1, photo: '', edad: '', id: `my-${i}` };
+    state.players.push({
+      id: `my-${i}`,
+      team: 'my',
+      jersey: jugador.dorsal || i + 1,
+      x: myPos[i][0],
+      y: myPos[i][1],
+      name: jugador.name || '',
+      abbr: jugador.abbr || '',
+      photo: jugador.photo || '',
+      edad: jugador.edad || '',
+    });
+    // Rival sigue vacío
     state.players.push({ id: `rival-${i}`, team: 'rival', jersey: i + 1, x: rivalPos[i][0], y: rivalPos[i][1], name: '', abbr: '' });
   }
   // Balón por defecto a los pies del portero de mi equipo
