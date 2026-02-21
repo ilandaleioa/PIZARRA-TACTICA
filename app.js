@@ -890,6 +890,8 @@ function resetBoard() {
   state.assignedPlayers = {};
   history = [];
   initState();
+  // Siempre colocar el balón en el centro
+  state.ball = { x: 50, y: 50 };
   renderPlayers();
   renderPlayerList();
   applyBallPosition();
@@ -985,13 +987,10 @@ function goToSlide(idx, animate) {
   const sd = state.slides[idx];
   if (sd) {
     state.players = JSON.parse(JSON.stringify(sd.players || sd));
-    const ballData = sd.ball || null;
-    if (animate) {
-      updateTokenPositions(state.players, ballData);
-    } else {
-      if (ballData) { state.ball = { ...ballData }; applyBallPosition(); }
-      renderPlayers();
-    }
+    // Siempre colocar el balón en el centro
+    state.ball = { x: 50, y: 50 };
+    applyBallPosition();
+    renderPlayers();
   }
 }
 
