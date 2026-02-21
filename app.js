@@ -264,7 +264,7 @@ let state = {
   currentSlide: 0,
   players: [],      // { id, team, jersey, x, y, name, abbr, photo }
   assignedPlayers: {},  // jerseyKey -> squad player id
-  ball: { x: 50, y: 50 },     // balón
+    ball: { x: 50, y: 50 },     // balón (centro)
   photoMode: false, // mostrar fotos de jugadores en los tokens
 };
 
@@ -1112,8 +1112,8 @@ function loadFromHash() {
 function applyBallPosition() {
   const ball = document.getElementById('ball-token');
   if (!ball) return;
-  ball.style.left = state.ball.x + '%';
-  ball.style.top  = state.ball.y + '%';
+  ball.style.left = '50%';
+  ball.style.top  = '50%';
 }
 
 function setupBall() {
