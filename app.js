@@ -1339,61 +1339,58 @@ function renderMobileAssignList() {
   const container = document.getElementById('mobile-assign-list');
   if (!container) return;
   container.innerHTML = '';
-
-  const grid = document.createElement('div');
-  grid.className = 'mas-player-grid';
-
-  SQUAD[mobileAssignTab].forEach(player => {
-    const isAssigned = Object.values(state.assignedPlayers).includes(player.id);
-
-    const card = document.createElement('div');
-    card.className = 'mas-player-card' + (isAssigned ? ' assigned' : '');
-
-    // Círculo con foto
-    const photoWrap = document.createElement('div');
-    photoWrap.className = 'mas-photo-wrap';
-
-    if (player.photo) {
-      const img = document.createElement('img');
-      img.className = 'mas-photo';
-      img.src = player.photo;
-      img.onerror = () => { img.style.display = 'none'; };
-      photoWrap.appendChild(img);
-    }
-
-    // Badge dorsal
-    const badge = document.createElement('span');
-    badge.className = 'mas-dorsal';
-    badge.textContent = player.dorsal;
-    photoWrap.appendChild(badge);
-
-    // Check si ya asignado
-    if (isAssigned) {
-      const chk = document.createElement('div');
-      chk.className = 'mas-check';
-      chk.textContent = '✓';
-      photoWrap.appendChild(chk);
-    }
-
-    const name = document.createElement('div');
-    name.className = 'mas-player-name';
-    name.textContent = player.name;
-
-    card.appendChild(photoWrap);
-    card.appendChild(name);
-
-    if (!isAssigned) {
-      card.addEventListener('click', () => {
-        const overlay = document.getElementById('mobile-assign-overlay');
-        if (overlay) { overlay.classList.remove('active'); overlay.classList.add('hidden'); }
-        assignPlayer(player, mobileAssignTab);
-      });
-    }
-
-    grid.appendChild(card);
+  const positions = [
+    { key: 'portero', label: 'Portero' },
+    { key: 'defensa', label: 'Defensa' },
+    { key: 'medio', label: 'Medio' },
+    { key: 'delantero', label: 'Delantero' }
+  ];
+  positions.forEach(pos => {
+    const group = document.createElement('div');
+    group.className = 'mas-player-group';
+    const groupLabel = document.createElement('div');
+    groupLabel.className = 'mas-group-label';
+    groupLabel.textContent = pos.label;
+    group.appendChild(groupLabel);
+    SQUAD[pos.key].forEach(player => {
+      const isAssigned = Object.values(state.assignedPlayers).includes(player.id);
+      const card = document.createElement('div');
+      card.className = 'mas-player-card' + (isAssigned ? ' assigned' : '');
+      const photoWrap = document.createElement('div');
+      photoWrap.className = 'mas-photo-wrap';
+      if (player.photo) {
+        const img = document.createElement('img');
+        img.className = 'mas-photo';
+        img.src = player.photo;
+        img.onerror = () => { img.style.display = 'none'; };
+        photoWrap.appendChild(img);
+      }
+      const badge = document.createElement('span');
+      badge.className = 'mas-dorsal';
+      badge.textContent = player.dorsal;
+      photoWrap.appendChild(badge);
+      if (isAssigned) {
+        const chk = document.createElement('div');
+        chk.className = 'mas-check';
+        chk.textContent = '✓';
+        photoWrap.appendChild(chk);
+      }
+      const name = document.createElement('div');
+      name.className = 'mas-player-name';
+      name.textContent = player.name;
+      card.appendChild(photoWrap);
+      card.appendChild(name);
+      if (!isAssigned) {
+        card.addEventListener('click', () => {
+          const overlay = document.getElementById('mobile-assign-overlay');
+          if (overlay) { overlay.classList.remove('active'); overlay.classList.add('hidden'); }
+          assignPlayer(player, pos.key);
+        });
+      }
+      group.appendChild(card);
+    });
+    container.appendChild(group);
   });
-
-  container.appendChild(grid);
 }
 
 // ── MOBILE PANEL TOGGLE ──────────────────────────────────────
