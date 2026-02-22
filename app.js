@@ -1491,7 +1491,7 @@ window.addEventListener('resize', () => {
     document.querySelector('.sidebar-right')
   ];
   drawers.forEach(drawer => {
-    if (!drawer) return;
+    if (!drawr) return;
     let startX = 0, startY = 0;
     drawer.addEventListener('touchstart', e => {
       startX = e.touches[0].clientX;
