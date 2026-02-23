@@ -1,39 +1,6 @@
-// ...existing code...
-
-// Servir archivos estáticos (index.html, styles.css, etc.)
-app.use(express.static(__dirname));
-
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
-window.exportImage = exportImage;
-window.exportVideo = exportVideo;
-window.toggleFullscreen = toggleFullscreen;
-window.toggleTheme = toggleTheme;
-window.setLang = setLang;
-window.toggleTeamVisibility = toggleTeamVisibility;
-window.loadNavLogo = loadNavLogo;
-window.setModalPos = setModalPos;
-window.savePlayerModal = savePlayerModal;
-// Exponer funciones globales para el HTML (al final del archivo, después de definir switchTab y applyFormation)
-window.switchTab = switchTab;
-window.applyFormation = applyFormation;
-// Quitar todos los jugadores de la pizarra
-function quitarJugadores() {
-  // Borra solo los nombres de los jugadores en el campo, pero mantiene los círculos
-  if (window.state && Array.isArray(window.state.players)) {
-    window.state.players.forEach(p => {
-      p.name = '';
-      p.abbr = '';
-      // Si quieres mantener dorsal y posición, no los toques
-    });
-  }
-  // Actualiza la UI
-  if (typeof renderPlayers === 'function') {
-    renderPlayers();
-  } else if (typeof renderPitchPlayers === 'function') {
-    renderPitchPlayers();
-  }
-}
+// ═══════════════════════════════════════════════
+//   AC CENTER – PIZARRA TÁCTICA  |  app.js
+// ═══════════════════════════════════════════════
 /* ═══════════════════════════════════════════════
    AC CENTER – PIZARRA TÁCTICA  |  app.js
 ═══════════════════════════════════════════════ */
