@@ -1574,9 +1574,7 @@ window.addEventListener('resize', () => {
       }
     }, { passive: true });
   });
-});
 
-})(); // Cierre correcto de la IIFE
 
 // ── ORIENTACIÓN: reajustar paneles al girar ──────────────────
 window.addEventListener('orientationchange', () => {
