@@ -22,57 +22,68 @@ function lighten(color, percent) {
 'use strict';
 
 // Devuelve true si el color es claro, false si es oscuro
-function isLight(color) {
-  // Admite formatos hex (#RRGGBB o #RGB) y rgb()
-  let r, g, b;
-  if (typeof color !== 'string') return false;
-  if (color.startsWith('#')) {
-    let hex = color.slice(1);
-    if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
-    if (hex.length !== 6) return false;
-    r = parseInt(hex.slice(0, 2), 16);
-    g = parseInt(hex.slice(2, 4), 16);
-    b = parseInt(hex.slice(4, 6), 16);
-  } else if (color.startsWith('rgb')) {
-    [r, g, b] = color.match(/\d+/g).map(Number);
-  } else {
-    return false;
+import html2canvas from 'html2canvas';
+
+async function exportVideo() {
+  const pitch = document.getElementById('pitch');
+  if (!pitch) return alert('No se encontró el campo.');
+  const total = state.slides.length;
+  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
+
+  // Comprobar compatibilidad de MediaRecorder y captureStream
+  const isMediaRecorderSupported = typeof window.MediaRecorder !== 'undefined';
+  const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream;
+  if (!isMediaRecorderSupported || !isCaptureStreamSupported) {
+    if (confirm('Tu navegador no soporta la grabación de video. ¿Quieres descargar los fotogramas como imágenes?')) {
+      exportFramesAsImages();
+    } else {
+      alert('La exportación de video solo funciona en Chrome o Edge.');
+    }
+    return;
   }
-  // Luminancia relativa
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-  return luminance > 186;
+
+  // Crear un canvas temporal para capturar cada frame
+  const width = pitch.offsetWidth;
+  const height = pitch.offsetHeight;
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  // Capturar el stream del canvas
+  const stream = canvas.captureStream(30); // 30 fps
+  const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+  let chunks = [];
+  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    // Abrir el video en una nueva pestaña
+    window.open(url, '_blank');
+    // También crear un enlace de descarga en la nueva pestaña
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  };
+
+  recorder.start();
+
+  for (let i = 0; i < total; i++) {
+    // Renderizar el slide actual en el DOM
+    await renderSlide(i);
+    // Capturar el contenido HTML como imagen usando html2canvas
+    const image = await html2canvas(pitch);
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(image, 0, 0, width, height);
+    await new Promise(res => setTimeout(res, 1000 / 30)); // 30 fps
+  }
+
+  recorder.stop();
 }
-
-'use strict';
-
-// ─── I18N ────────────────────────────────────
-const LANGS = {
-  es: {
-    plantilla:'PLANTILLA', pizarra:'PIZARRA TÁCTICA', mi_equipo:'MI EQUIPO',
-    equipo_rival:'EQUIPO RIVAL', imagen:'IMAGEN', video:'VIDEO',
-    deshacer:'DESHACER', compartir:'COMPARTIR', resetear:'RESETEAR',
-    asignar:'ASIGNAR JUGADORES A PIZARRA', plantilla_desc:'Gestiona tu plantilla de jugadores.',
-    portero:'PORTERO', defensa:'DEFENSA', medio:'MEDIO', delantero:'DELANTERO',
-  },
-  eu: {
-    plantilla:'PLANTILA', pizarra:'ARBEL TAKTIKOA', mi_equipo:'NIRE TALDEA',
-    equipo_rival:'AURKARIKO TALDEA', imagen:'IRUDIA', video:'BIDEOA',
-    deshacer:'DESEGIN', compartir:'PARTEKATU', resetear:'BERREZARRI',
-    asignar:'JOKALARIAK ARBELA ESLEITU', plantilla_desc:'Kudeatu zure jokalari-zerrenda.',
-    portero:'ATEZAINA', defensa:'DEFENTSA', medio:'ERDIKO', delantero:'AURRELARIA',
-  },
-  fr: {
-    plantilla:'EFFECTIF', pizarra:'TABLEAU TACTIQUE', mi_equipo:'MON ÉQUIPE',
-    equipo_rival:'ÉQUIPE RIVALE', imagen:'IMAGE', video:'VIDÉO',
-    deshacer:'ANNULER', compartir:'PARTAGER', resetear:'RÉINITIALISER',
-    asignar:'ASSIGNER DES JOUEURS', plantilla_desc:'Gérez votre effectif.',
-    portero:'GARDIEN', defensa:'DÉFENSE', medio:'MILIEU', delantero:'ATTAQUE',
-  },
-  en: {
-    plantilla:'SQUAD', pizarra:'TACTICAL BOARD', mi_equipo:'MY TEAM',
-    equipo_rival:'RIVAL TEAM', imagen:'IMAGE', video:'VIDEO',
     deshacer:'UNDO', compartir:'SHARE', resetear:'RESET',
     asignar:'ASSIGN PLAYERS TO BOARD', plantilla_desc:'Manage your squad.',
+async function renderSlide(index) {
+  // Aquí debes poner la lógica que actualiza el DOM para mostrar el slide 'index'
+  // Por ejemplo: state.currentSlide = index; updateBoard();
+  // Si ya tienes una función para esto, llama a esa función aquí.
+}
     portero:'GOALKEEPER', defensa:'DEFENCE', medio:'MIDFIELD', delantero:'FORWARD',
   },
 };
