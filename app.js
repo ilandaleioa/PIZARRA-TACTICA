@@ -1,3 +1,19 @@
+// Quitar todos los jugadores de la pizarra
+function quitarJugadores() {
+  // Suponiendo que los jugadores están en elementos con clase 'player-token' en el campo
+  const tokens = document.querySelectorAll('.player-token');
+  tokens.forEach(token => token.remove());
+
+  // Si hay que limpiar también el estado JS, buscar el array/objeto de jugadores en campo y vaciarlo
+  if (window.state && window.state.pitchPlayers) {
+    window.state.pitchPlayers = {};
+  }
+
+  // Si hay que actualizar la UI, llamar a la función de renderizado si existe
+  if (typeof renderPitchPlayers === 'function') {
+    renderPitchPlayers();
+  }
+}
 /* ═══════════════════════════════════════════════
    AC CENTER – PIZARRA TÁCTICA  |  app.js
 ═══════════════════════════════════════════════ */
