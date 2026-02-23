@@ -770,6 +770,7 @@ function togglePhotoMode() {
 
 // ─── TAB SWITCH ──────────────────────────────
 function switchTab(tab) {
+
   document.getElementById('tab-plantilla').classList.toggle('active', tab === 'plantilla');
   document.getElementById('tab-pizarra').classList.toggle('active', tab === 'pizarra');
   document.getElementById('section-pizarra').classList.toggle('hidden', tab !== 'pizarra');
@@ -794,6 +795,7 @@ function switchTab(tab) {
     if (typeof renderPlayers === 'function') renderPlayers();
   }
 }
+window.switchTab = switchTab;
 
 // ─── PLANTILLA VIEW ──────────────────────────
 function avatarColor(posKey) {
