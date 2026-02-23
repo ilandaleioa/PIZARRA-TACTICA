@@ -1,3 +1,5 @@
+// ...existing code...
+// Exponer funciones globales para el HTML (al final del archivo)
 window.switchTab = switchTab;
 window.applyFormation = applyFormation;
 window.renderPlantillaView = renderPlantillaView;
