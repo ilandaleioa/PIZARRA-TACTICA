@@ -803,7 +803,10 @@ function renderPlantillaView() {
     { key: 'delantero', label: lang.delantero },
   ];
 
+  // Solo mostrar los jugadores de mi equipo por defecto
+  const posicionesMiEquipo = ['portero', 'defensa', 'medio', 'delantero'];
   positions.forEach(pos => {
+    if (!posicionesMiEquipo.includes(pos.key)) return; // Oculta rivales
     const section = document.createElement('div');
     section.className = 'plantilla-pos-section';
 
