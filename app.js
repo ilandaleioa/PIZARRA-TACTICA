@@ -1620,6 +1620,10 @@ function renderMobileAssignList() {
 // --- exportVideo como función global ---
 function exportVideo() {
   // ...existing code...
+  }
+
+  // Exponer la función globalmente después de su definición
+  window.switchTab = switchTab;
 }
 
 // --- TOGGLE MOBILE PLANTILLA ---
