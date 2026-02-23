@@ -1,6 +1,20 @@
 // Exponer funciones globales para el HTML
+
 window.switchTab = switchTab;
 window.applyFormation = applyFormation;
+
+// --- Servidor Express para servir la app ---
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Servir archivos estáticos (index.html, styles.css, etc.)
+app.use(express.static(__dirname));
+
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+});
 window.exportImage = exportImage;
 window.exportVideo = exportVideo;
 window.toggleFullscreen = toggleFullscreen;
