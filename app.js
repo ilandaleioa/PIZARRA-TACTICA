@@ -1702,6 +1702,7 @@ function applyFormation() {
   // TODO: Implementar aplicación de formación
   alert('Función "Aplicar Formación" no implementada.');
 }
-// Exponer funciones globales para el HTML
+
+// Exponer funciones globales para el HTML (asegúrate de que esto esté al final del archivo, después de definir switchTab y applyFormation)
 window.switchTab = switchTab;
 window.applyFormation = applyFormation;
