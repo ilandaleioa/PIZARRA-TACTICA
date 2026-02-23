@@ -22,7 +22,7 @@ function lighten(color, percent) {
 'use strict';
 
 // Devuelve true si el color es claro, false si es oscuro
-import html2canvas from 'html2canvas';
+// html2canvas debe estar incluido por CDN en index.html si se usa en el navegador
 
 async function exportVideo() {
   const pitch = document.getElementById('pitch');
