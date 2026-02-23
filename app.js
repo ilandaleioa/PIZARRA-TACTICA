@@ -415,12 +415,20 @@ function savePhotos() {
 document.addEventListener('DOMContentLoaded', () => {
   loadPhotos();
   initNavLogo();
+  // Refuerzo: inicializar estado y renderizar jugadores siempre
   initState();
   renderPlayers();
   renderPlayerList();
   renderSlideChips();
   setupCanvas();
   setupBall();
+  // Si por algún motivo los jugadores no se ven, forzar renderizado tras breve retardo
+  setTimeout(() => {
+    if (!document.querySelector('#players-container .player-token')) {
+      initState();
+      renderPlayers();
+    }
+  }, 300);
   // Forzar escudo por defecto si no hay imagen
   const img = document.getElementById('nav-logo-img');
   if (img && (!img.src || img.src.endsWith('ACFC Blanco Cuadrado.png.png'))) {
