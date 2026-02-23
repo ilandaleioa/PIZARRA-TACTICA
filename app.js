@@ -1697,3 +1697,5 @@ window.addEventListener('resize', () => {
 window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
+
+}
