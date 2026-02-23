@@ -19,6 +19,32 @@ function applyFormation(team) {
   });
 }
 window.applyFormation = applyFormation;
+// ...existing code...
+// ...existing code...
+function renderPlantillaView() {
+  console.log('[DEBUG] Ejecutando renderPlantillaView');
+  const lang = LANGS[currentLang];
+  const container = document.getElementById('plantilla-content');
+  if (!container) {
+    alert('No se encontró el contenedor de plantilla (plantilla-content). Revisa el HTML.');
+    return;
+  }
+  container.innerHTML = '';
+
+  const positions = [
+    { key: 'portero',   label: lang.portero },
+    { key: 'defensa',   label: lang.defensa },
+    { key: 'medio',     label: lang.medio },
+    { key: 'delantero', label: lang.delantero },
+  ];
+
+  // Solo mostrar los jugadores de mi equipo por defecto
+  const posicionesMiEquipo = ['portero', 'defensa', 'medio', 'delantero'];
+  positions.forEach(pos => {
+    if (!posicionesMiEquipo.includes(pos.key)) return; // Oculta rivales
+    // ...existing code...
+  });
+}
 window.renderPlantillaView = renderPlantillaView;
 // Exponer funciones globales para el HTML
 window.toggleTeamVisibility = toggleTeamVisibility;
