@@ -1684,28 +1684,3 @@ window.addEventListener('resize', () => {
 window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
-
-// ─── PLACEHOLDERS PARA FUNCIONES FALTANTES ─────────────
-function undo() {
-  // TODO: Implementar función de deshacer
-  alert('Función "Deshacer" no implementada.');
-}
-
-function exportImage() {
-  // TODO: Implementar exportación de imagen
-  alert('Función "Exportar Imagen" no implementada.');
-}
-
-function exportVideo() {
-  // TODO: Implementar exportación de video
-  alert('Función "Exportar Video" no implementada.');
-}
-
-function applyFormation() {
-  // TODO: Implementar aplicación de formación
-  alert('Función "Aplicar Formación" no implementada.');
-}
-
-// Exponer funciones globales para el HTML (asegúrate de que esto esté al final del archivo, después de definir switchTab y applyFormation)
-window.switchTab = switchTab;
-window.applyFormation = applyFormation;
