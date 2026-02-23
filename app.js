@@ -1601,50 +1601,26 @@ function renderMobileAssignList() {
   });
 }
 
+
 // --- exportVideo como función global ---
 function exportVideo() {
-  // Grabar el contenedor principal de la pizarra (incluye campo, jugadores y canvas)
-  const boardContainer = document.getElementById('board-container') || document.getElementById('pitch').parentElement;
-  if (!boardContainer) {
-    alert('No se puede exportar el video: campo no encontrado');
-    return;
-  }
+  // ...existing code...
+}
 
-  // Usar captureStream sobre el contenedor
-  let stream;
-  if (boardContainer.captureStream) {
-    stream = boardContainer.captureStream(30);
+// --- TOGGLE MOBILE PLANTILLA ---
+function toggleMobilePlantilla() {
+  const pv = document.getElementById('plantilla-view');
+  const centerArea = document.querySelector('.center-area');
+  if (!pv) return;
+  const isHidden = pv.classList.contains('hidden');
+  if (isHidden) {
+    pv.classList.remove('hidden');
+    if (centerArea) centerArea.classList.add('hidden');
+    renderPlantillaView();
   } else {
-    alert('Tu navegador no soporta grabación de este contenido. Usa Chrome o Edge.');
-    return;
+    pv.classList.add('hidden');
+    if (centerArea) centerArea.classList.remove('hidden');
   }
-
-  const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-  let chunks = [];
-
-  recorder.ondataavailable = e => {
-    if (e.data.size > 0) chunks.push(e.data);
-  };
-
-  recorder.onstop = () => {
-    const blob = new Blob(chunks, { type: 'video/webm' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'pizarra-tactica.mp4';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
-  };
-
-  // Reproducir animación mientras graba
-  let slideIndex = 0;
-  const totalSlides = state.slides.length;
-  // ... (resto de la función exportVideo)
 }
 
 function closeMobilePanels() {
