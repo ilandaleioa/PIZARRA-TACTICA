@@ -23,7 +23,6 @@ function lighten(color, percent) {
   g = Math.min(255, Math.floor(g + (255 - g) * percent / 100));
   b = Math.min(255, Math.floor(b + (255 - b) * percent / 100));
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-}
 'use strict';
 
 // Devuelve true si el color es claro, false si es oscuro
