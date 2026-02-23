@@ -1,3 +1,4 @@
+window.renderPlantillaView = renderPlantillaView;
 // Exponer funciones globales para el HTML
 window.toggleTeamVisibility = toggleTeamVisibility;
 // Devuelve un color aclarado en formato hex
