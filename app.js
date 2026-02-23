@@ -1322,56 +1322,62 @@ function setupCanvas() {
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
-    ctx.stroke();
-    lastX = x; lastY = y;
-  });
-  document.addEventListener('mouseup', () => {
-    drawing = false;
-    canvas.style.pointerEvents = 'none';
-  });
-}
+    function exportVideo() {
+      // Grabar el contenedor principal de la pizarra (incluye campo, jugadores y canvas)
+      const boardContainer = document.getElementById('board-container') || document.getElementById('pitch').parentElement;
+      if (!boardContainer) {
+        alert('No se puede exportar el video: campo no encontrado');
+        return;
+      }
 
-// ─── UTILS ───────────────────────────────────
-function lighten(hex, amount) {
-  let r = parseInt(hex.slice(1, 3), 16);
-  let g = parseInt(hex.slice(3, 5), 16);
-  let b = parseInt(hex.slice(5, 7), 16);
-  r = Math.min(255, r + amount);
-  g = Math.min(255, g + amount);
-  b = Math.min(255, b + amount);
-  return `rgb(${r},${g},${b})`;
-}
+      // Usar captureStream sobre el contenedor
+      let stream;
+      if (boardContainer.captureStream) {
+        stream = boardContainer.captureStream(30);
+      } else {
+        alert('Tu navegador no soporta grabación de este contenido. Usa Chrome o Edge.');
+        return;
+      }
 
-function isLight(hex) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return (r * 0.299 + g * 0.587 + b * 0.114) > 160;
-}
+      const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      let chunks = [];
 
-function rgbToHex(rgb) {
-  const m = rgb.match(/\d+/g);
-  if (!m || m.length < 3) return '';
-  return '#' + m.slice(0, 3).map(n => (+n).toString(16).padStart(2, '0')).join('');
-}
+      recorder.ondataavailable = e => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
 
-// ── PANTALLA COMPLETA ────────────────────────────────────────
-function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  } else {
-    document.exitFullscreen().catch(() => {});
-  }
-}
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'pizarra-tactica.mp4';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
+      };
 
-document.addEventListener('fullscreenchange', () => {
-  const btn = document.getElementById('fullscreen-btn');
-  if (!btn) return;
-  if (document.fullscreenElement) {
-    btn.innerHTML = '&#x2715;';
-    btn.title = 'Salir de pantalla completa';
-  } else {
-    btn.innerHTML = '&#x26F6;';
+      // Reproducir animación mientras graba
+      let slideIndex = 0;
+      const totalSlides = state.slides.length;
+      const interval = 1000; // 1 segundo por slide
+      function nextSlide() {
+        if (slideIndex < totalSlides) {
+          goToSlide(slideIndex, false);
+          slideIndex++;
+          setTimeout(nextSlide, interval);
+        } else {
+          recorder.stop();
+        }
+      }
+
+      recorder.start();
+      nextSlide();
+    }
     btn.title = 'Pantalla completa';
   }
 });
