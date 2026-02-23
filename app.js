@@ -1,13 +1,4 @@
-// Exponer funciones globales para el HTML
-
-window.switchTab = switchTab;
-window.applyFormation = applyFormation;
-
-// --- Servidor Express para servir la app ---
-const express = require('express');
-const path = require('path');
-const app = express();
-const PORT = process.env.PORT || 3000;
+// ...existing code...
 
 // Servir archivos estáticos (index.html, styles.css, etc.)
 app.use(express.static(__dirname));
@@ -24,7 +15,7 @@ window.toggleTeamVisibility = toggleTeamVisibility;
 window.loadNavLogo = loadNavLogo;
 window.setModalPos = setModalPos;
 window.savePlayerModal = savePlayerModal;
-// Exponer funciones globales para el HTML
+// Exponer funciones globales para el HTML (al final del archivo, después de definir switchTab y applyFormation)
 window.switchTab = switchTab;
 window.applyFormation = applyFormation;
 // Quitar todos los jugadores de la pizarra
