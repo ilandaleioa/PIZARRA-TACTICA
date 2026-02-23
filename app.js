@@ -1,3 +1,24 @@
+// Devuelve un color aclarado en formato hex
+function lighten(color, percent) {
+  let r, g, b;
+  if (typeof color !== 'string') return color;
+  if (color.startsWith('#')) {
+    let hex = color.slice(1);
+    if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+    if (hex.length !== 6) return color;
+    r = parseInt(hex.slice(0, 2), 16);
+    g = parseInt(hex.slice(2, 4), 16);
+    b = parseInt(hex.slice(4, 6), 16);
+  } else if (color.startsWith('rgb')) {
+    [r, g, b] = color.match(/\d+/g).map(Number);
+  } else {
+    return color;
+  }
+  r = Math.min(255, Math.floor(r + (255 - r) * percent / 100));
+  g = Math.min(255, Math.floor(g + (255 - g) * percent / 100));
+  b = Math.min(255, Math.floor(b + (255 - b) * percent / 100));
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
 'use strict';
 
 // Devuelve true si el color es claro, false si es oscuro
