@@ -1582,6 +1582,7 @@ window.addEventListener('resize', () => {
     document.querySelector('.sidebar-left'),
     document.querySelector('.sidebar-right')
   ];
+
   drawers.forEach(drawer => {
     if (!drawer) return;
     let startX = 0, startY = 0;
@@ -1589,7 +1590,6 @@ window.addEventListener('resize', () => {
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
     }, { passive: true });
-
 
     drawer.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - startX;
@@ -1607,6 +1607,7 @@ window.addEventListener('resize', () => {
       }
     }, { passive: true });
   });
+});
 
 })(); // Cierre correcto de la IIFE
 
