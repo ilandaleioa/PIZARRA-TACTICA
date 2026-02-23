@@ -1,4 +1,23 @@
 // ...existing code...
+// ...existing code...
+// ...existing code...
+function applyFormation(team) {
+  const sel = document.getElementById(team === 'my' ? 'my-formation' : 'rival-formation');
+  const name = sel.value;
+  if (team === 'my')    state.myFormation    = name;
+  else                  state.rivalFormation = name;
+
+  const def = FORMATIONS[name];
+  if (!def) return;
+
+  saveHistory();
+  const positions = team === 'my' ? def.my : def.rival;
+  state.players.filter(p => p.team === team).forEach((p, i) => {
+    if (positions[i]) { p.x = positions[i][0]; p.y = positions[i][1]; }
+    const el = document.getElementById('token-' + p.id);
+    if (el) { el.style.left = p.x + '%'; el.style.top = p.y + '%'; }
+  });
+}
 window.applyFormation = applyFormation;
 window.renderPlantillaView = renderPlantillaView;
 // Exponer funciones globales para el HTML
