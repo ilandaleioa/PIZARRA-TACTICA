@@ -1001,7 +1001,7 @@ function goToSlide(idx, animate) {
 }
 
 function playAnimation() {
-  // If already playing, stop
+  // Si ya está reproduciendo, detener
   if (animInterval) {
     clearInterval(animInterval);
     animInterval = null;
@@ -1011,30 +1011,75 @@ function playAnimation() {
   }
   const total = state.slides.length;
   if (total < 2) return;
-  // Save current slide before playing
+  // Guardar el slide actual antes de animar
   state.slides[state.currentSlide] = {
     players: JSON.parse(JSON.stringify(state.players)),
     ball: { ...state.ball },
   };
   const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
-  // Set transition duration slightly shorter than interval for smooth feel
   const dur = Math.round(speed * 0.75);
   document.documentElement.style.setProperty('--anim-dur', dur + 'ms');
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
-  // Snap instantly to slide 0 so transitions start from a known position
+  // Ir al primer slide instantáneamente
   goToSlide(0, false);
   let i = 1;
-  animInterval = setInterval(() => {
+
+  // Nueva animación progresiva
+  function interpolate(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function animateStep(fromSlide, toSlide, duration, onComplete) {
+    const start = performance.now();
+    // Copias profundas para evitar mutaciones
+    const fromPlayers = JSON.parse(JSON.stringify(fromSlide.players));
+    const toPlayers = JSON.parse(JSON.stringify(toSlide.players));
+    const fromBall = { ...fromSlide.ball };
+    const toBall = { ...toSlide.ball };
+
+    function step(now) {
+      let t = (now - start) / duration;
+      if (t > 1) t = 1;
+      // Interpolar posiciones de jugadores
+      const currPlayers = fromPlayers.map((p, idx) => {
+        const dest = toPlayers[idx];
+        return {
+          ...p,
+          x: interpolate(p.x, dest.x, t),
+          y: interpolate(p.y, dest.y, t)
+        };
+      });
+      // Interpolar balón
+      const currBall = {
+        x: interpolate(fromBall.x, toBall.x, t),
+        y: interpolate(fromBall.y, toBall.y, t)
+      };
+      updateTokenPositions(currPlayers, currBall);
+      if (t < 1) {
+        animInterval = requestAnimationFrame(step);
+      } else {
+        if (onComplete) onComplete();
+      }
+    }
+    animInterval = requestAnimationFrame(step);
+  }
+
+  function playNext() {
     if (i >= total) {
-      clearInterval(animInterval);
       animInterval = null;
       if (btn) { btn.innerHTML = '&#9654;'; btn.title = 'Reproducir'; btn.style.background = '#2e7d32'; }
       return;
     }
-    goToSlide(i++, true);
-  }, speed);
+    const fromSlide = state.slides[i - 1];
+    const toSlide = state.slides[i];
+    animateStep(fromSlide, toSlide, speed, () => {
+      i++;
+      playNext();
+    });
+  }
+  playNext();
 }
 
 
