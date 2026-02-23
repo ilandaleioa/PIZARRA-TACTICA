@@ -1637,6 +1637,7 @@ window.addEventListener('resize', () => {
       startY = e.touches[0].clientY;
     }, { passive: true });
 
+
     drawer.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - startX;
       const dy = e.changedTouches[0].clientY - startY;
@@ -1652,10 +1653,6 @@ window.addEventListener('resize', () => {
         if (dy > 80 && Math.abs(dx) < 80) closeMobilePanels();
       }
     }, { passive: true });
-
-
-
-
   });
 })(); // Cierre correcto de la IIFE
 
