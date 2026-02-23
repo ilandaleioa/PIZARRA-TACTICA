@@ -1037,6 +1037,7 @@ function playAnimation() {
   }, speed);
 }
 
+
 // ─── EXPORT IMAGE ────────────────────────────
 function exportImage() {
   html2canvasFallback();
@@ -1050,6 +1051,61 @@ function html2canvasFallback() {
   link.download = 'pizarra-tactica.png';
   link.href = dataUrl;
   link.click();
+}
+
+// ─── EXPORT VIDEO ────────────────────────────
+async function exportVideo() {
+  const pitch = document.getElementById('pitch');
+  if (!pitch) return alert('No se encontró el campo.');
+  // Crear un canvas temporal para capturar cada frame
+  const width = pitch.offsetWidth;
+  const height = pitch.offsetHeight;
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  // Capturar el stream del canvas
+  const stream = canvas.captureStream(30); // 30 fps
+  const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+  let chunks = [];
+  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'pizarra-tactica.webm';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  };
+
+  // Reproducir la animación y capturar cada frame
+  const total = state.slides.length;
+  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
+  // Guardar estado actual
+  const prevSlide = state.currentSlide;
+  const prevPlayers = JSON.parse(JSON.stringify(state.players));
+  const prevBall = { ...state.ball };
+  const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
+  let i = 0;
+  recorder.start();
+  for (; i < total; i++) {
+    goToSlide(i, false);
+    await new Promise(res => setTimeout(res, speed));
+    // Renderizar el pitch en el canvas temporal
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(pitch, 0, 0, width, height);
+  }
+  recorder.stop();
+  // Restaurar estado
+  goToSlide(prevSlide, false);
+  state.players = prevPlayers;
+  state.ball = prevBall;
 }
 
 function canvasSnapshot(element) {
