@@ -1630,7 +1630,7 @@ window.addEventListener('resize', () => {
     document.querySelector('.sidebar-right')
   ];
   drawers.forEach(drawer => {
-    if (!drawr) return;
+    if (!drawer) return;
     let startX = 0, startY = 0;
     drawer.addEventListener('touchstart', e => {
       startX = e.touches[0].clientX;
@@ -1659,3 +1659,6 @@ window.addEventListener('resize', () => {
 window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
+
+// Cierre de bloque para evitar error de sintaxis
+}
