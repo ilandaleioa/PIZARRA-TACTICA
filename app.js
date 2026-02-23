@@ -317,6 +317,10 @@ document.addEventListener('DOMContentLoaded', () => {
     img.src = DEFAULT_LOGO;
     img.style.display = 'block';
   }
+  // Mostrar por defecto la vista de MI EQUIPO (pizarra)
+  if (typeof switchTab === 'function') {
+    switchTab('pizarra');
+  }
 });
 
 const DEFAULT_LOGO = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Athletic_Club_crest.svg/100px-Athletic_Club_crest.svg.png';
