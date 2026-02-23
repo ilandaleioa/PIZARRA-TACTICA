@@ -779,14 +779,16 @@ function switchTab(tab) {
   const sidebarRight = document.querySelector('.sidebar-right');
   const pv = document.getElementById('plantilla-view');
   if (tab === 'plantilla') {
-    centerArea.classList.add('hidden');
-    sidebarRight.classList.add('hidden');
-    pv.classList.remove('hidden');
-    renderPlantillaView();
+    if (centerArea) centerArea.classList.add('hidden');
+    if (sidebarRight) sidebarRight.classList.add('hidden');
+    if (pv) {
+      pv.classList.remove('hidden');
+      renderPlantillaView();
+    }
   } else {
-    centerArea.classList.remove('hidden');
-    sidebarRight.classList.remove('hidden');
-    pv.classList.add('hidden');
+    if (centerArea) centerArea.classList.remove('hidden');
+    if (sidebarRight) sidebarRight.classList.remove('hidden');
+    if (pv) pv.classList.add('hidden');
     // Siempre renderizar jugadores al volver a la pizarra
     if (typeof renderPlayers === 'function') renderPlayers();
   }
