@@ -320,6 +320,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mostrar por defecto la vista de MI EQUIPO (pizarra)
   if (typeof switchTab === 'function') {
     switchTab('pizarra');
+    if (typeof renderPlayers === 'function') {
+      renderPlayers();
+    }
   }
 });
 
