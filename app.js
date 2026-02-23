@@ -80,9 +80,16 @@ async function exportVideo() {
     deshacer:'UNDO', compartir:'SHARE', resetear:'RESET',
     asignar:'ASSIGN PLAYERS TO BOARD', plantilla_desc:'Manage your squad.',
 async function renderSlide(index) {
-  // Aquí debes poner la lógica que actualiza el DOM para mostrar el slide 'index'
-  // Por ejemplo: state.currentSlide = index; updateBoard();
-  // Si ya tienes una función para esto, llama a esa función aquí.
+  // Actualiza el slide actual y refresca la pizarra
+  state.currentSlide = index;
+  if (typeof updateBoard === 'function') {
+    updateBoard();
+  } else if (typeof renderSlideChips === 'function') {
+    renderSlideChips();
+  }
+  // Si tienes otra función para refrescar la vista, agrégala aquí
+  // Puedes añadir un pequeño retardo si la actualización es asíncrona
+  await new Promise(res => setTimeout(res, 50));
 }
     portero:'GOALKEEPER', defensa:'DEFENCE', medio:'MIDFIELD', delantero:'FORWARD',
   },
