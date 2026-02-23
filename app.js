@@ -1412,9 +1412,7 @@ function setupCanvas() {
       recorder.start();
       nextSlide();
     }
-    btn.title = 'Pantalla completa';
-  }
-});
+
 
 // Run on load
 window.addEventListener('load', loadFromHash);
