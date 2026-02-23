@@ -5,7 +5,6 @@ app.use(express.static(__dirname));
 
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
-});
 window.exportImage = exportImage;
 window.exportVideo = exportVideo;
 window.toggleFullscreen = toggleFullscreen;
