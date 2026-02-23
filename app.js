@@ -949,6 +949,22 @@ function undo() {
   renderPlayers();
 }
 
+
+// ─── QUITAR JUGADORES ───────────────────────
+function quitarJugadores() {
+  // Limpiar los nombres y dorsales de los jugadores asignados en la pizarra
+  if (state && state.players) {
+    state.players.forEach(p => {
+      p.name = '';
+      p.abbr = '';
+      p.dorsal = '';
+      // Si hay otros campos de texto visibles, también se pueden limpiar aquí
+    });
+    if (state.assignedPlayers) state.assignedPlayers = {};
+    renderPlayers();
+    renderPlayerList();
+  }
+}
 // ─── RESET ───────────────────────────────────
 function resetBoard() {
   state.assignedPlayers = {};
@@ -1160,6 +1176,21 @@ function html2canvasFallback() {
 async function exportVideo() {
   const pitch = document.getElementById('pitch');
   if (!pitch) return alert('No se encontró el campo.');
+  const total = state.slides.length;
+  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
+
+  // Comprobar compatibilidad de MediaRecorder y captureStream
+  const isMediaRecorderSupported = typeof window.MediaRecorder !== 'undefined';
+  const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream;
+  if (!isMediaRecorderSupported || !isCaptureStreamSupported) {
+    if (confirm('Tu navegador no soporta la grabación de video. ¿Quieres descargar los fotogramas como imágenes?')) {
+      exportFramesAsImages();
+    } else {
+      alert('La exportación de video solo funciona en Chrome o Edge.');
+    }
+    return;
+  }
+
   // Crear un canvas temporal para capturar cada frame
   const width = pitch.offsetWidth;
   const height = pitch.offsetHeight;
@@ -1187,9 +1218,6 @@ async function exportVideo() {
     }, 100);
   };
 
-  // Reproducir la animación y capturar cada frame
-  const total = state.slides.length;
-  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
   // Guardar estado actual
   const prevSlide = state.currentSlide;
   const prevPlayers = JSON.parse(JSON.stringify(state.players));
@@ -1209,6 +1237,44 @@ async function exportVideo() {
   goToSlide(prevSlide, false);
   state.players = prevPlayers;
   state.ball = prevBall;
+}
+
+// Alternativa: exportar los fotogramas como imágenes
+function exportFramesAsImages() {
+  const pitch = document.getElementById('pitch');
+  if (!pitch) return alert('No se encontró el campo.');
+  const total = state.slides.length;
+  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar imágenes.');
+  // Guardar estado actual
+  const prevSlide = state.currentSlide;
+  const prevPlayers = JSON.parse(JSON.stringify(state.players));
+  const prevBall = { ...state.ball };
+  const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
+  const images = [];
+  let i = 0;
+  (async function exportLoop() {
+    for (; i < total; i++) {
+      goToSlide(i, false);
+      await new Promise(res => setTimeout(res, speed));
+      // Capturar imagen del pitch
+      const dataUrl = canvasSnapshot(pitch);
+      images.push(dataUrl);
+    }
+    // Restaurar estado
+    goToSlide(prevSlide, false);
+    state.players = prevPlayers;
+    state.ball = prevBall;
+    // Descargar todas las imágenes
+    images.forEach((img, idx) => {
+      const a = document.createElement('a');
+      a.href = img;
+      a.download = `fotograma_${idx + 1}.png`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => document.body.removeChild(a), 100);
+    });
+    alert('Se han descargado los fotogramas como imágenes PNG.');
+  })();
 }
 
 function canvasSnapshot(element) {
