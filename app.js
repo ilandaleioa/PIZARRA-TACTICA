@@ -1540,59 +1540,62 @@ function renderMobileAssignList() {
       card.appendChild(photoWrap);
       card.appendChild(name);
       if (!isAssigned) {
-        card.addEventListener('click', () => {
-          const overlay = document.getElementById('mobile-assign-overlay');
-          if (overlay) { overlay.classList.remove('active'); overlay.classList.add('hidden'); }
-          assignPlayer(player, pos.key);
+        document.addEventListener('mousemove', e => {
+          if (!drawing) return;
+          const r = canvas.getBoundingClientRect();
+          const x = e.clientX - r.left;
+          const y = e.clientY - r.top;
+          ctx.beginPath();
+          ctx.moveTo(lastX, lastY);
+          ctx.lineTo(x, y);
         });
       }
-      group.appendChild(card);
-    });
-    container.appendChild(group);
-  });
-}
 
-// ── MOBILE PANEL TOGGLE ──────────────────────────────────────
-function toggleMobilePanel(side) {
-  if (window.innerWidth > 768) return;
+      // --- Mover exportVideo fuera de setupCanvas ---
+      function exportVideo() {
+        // Grabar el contenedor principal de la pizarra (incluye campo, jugadores y canvas)
+        const boardContainer = document.getElementById('board-container') || document.getElementById('pitch').parentElement;
+        if (!boardContainer) {
+          alert('No se puede exportar el video: campo no encontrado');
+          return;
+        }
 
-  const leftSidebar  = document.querySelector('.sidebar-left');
-  const rightSidebar = document.querySelector('.sidebar-right');
-  const overlay      = document.getElementById('mobile-overlay');
-  const btnLeft      = document.getElementById('mbn-left');
-  const btnRight     = document.getElementById('mbn-right');
-  const btnPitch     = document.getElementById('mbn-pitch');
+        // Usar captureStream sobre el contenedor
+        let stream;
+        if (boardContainer.captureStream) {
+          stream = boardContainer.captureStream(30);
+        } else {
+          alert('Tu navegador no soporta grabación de este contenido. Usa Chrome o Edge.');
+          return;
+        }
 
-  if (side === 'left') {
-    const isOpen = leftSidebar.classList.contains('mobile-open');
-    if (isOpen) {
-      closeMobilePanels();
-    } else {
-      leftSidebar.classList.add('mobile-open');
-      rightSidebar.classList.remove('mobile-open');
-      overlay.classList.add('active');
-      btnLeft.classList.add('active');
-      btnRight.classList.remove('active');
-      btnPitch.classList.remove('active');
-    }
-  } else if (side === 'right') {
-    const isOpen = rightSidebar.classList.contains('mobile-open');
-    if (isOpen) {
-      closeMobilePanels();
-    } else {
-      rightSidebar.classList.add('mobile-open');
-      leftSidebar.classList.remove('mobile-open');
-      overlay.classList.add('active');
-      btnRight.classList.add('active');
-      btnLeft.classList.remove('active');
-      btnPitch.classList.remove('active');
-    }
-  }
-}
+        const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        let chunks = [];
 
-function toggleMobilePlantilla() {
-  if (window.innerWidth > 768) return;
-  const pv = document.getElementById('plantilla-view');
+        recorder.ondataavailable = e => {
+          if (e.data.size > 0) chunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = 'pizarra-tactica.mp4';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }, 100);
+        };
+
+        // Reproducir animación mientras graba
+        let slideIndex = 0;
+        const totalSlides = state.slides.length;
+        // ... (resto de la función exportVideo)
+      }
   const isOpen = !pv.classList.contains('hidden');
   if (isOpen) {
     closeMobilePanels();
