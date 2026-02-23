@@ -1,6 +1,18 @@
 // Exponer funciones globales para el HTML
 window.switchTab = switchTab;
 window.applyFormation = applyFormation;
+window.exportImage = exportImage;
+window.exportVideo = exportVideo;
+window.toggleFullscreen = toggleFullscreen;
+window.toggleTheme = toggleTheme;
+window.setLang = setLang;
+window.toggleTeamVisibility = toggleTeamVisibility;
+window.loadNavLogo = loadNavLogo;
+window.setModalPos = setModalPos;
+window.savePlayerModal = savePlayerModal;
+// Exponer funciones globales para el HTML
+window.switchTab = switchTab;
+window.applyFormation = applyFormation;
 // Quitar todos los jugadores de la pizarra
 function quitarJugadores() {
   // Borra solo los nombres de los jugadores en el campo, pero mantiene los círculos
