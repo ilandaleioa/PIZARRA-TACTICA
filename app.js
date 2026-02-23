@@ -1,3 +1,26 @@
+'use strict';
+
+// Devuelve true si el color es claro, false si es oscuro
+function isLight(color) {
+  // Admite formatos hex (#RRGGBB o #RGB) y rgb()
+  let r, g, b;
+  if (typeof color !== 'string') return false;
+  if (color.startsWith('#')) {
+    let hex = color.slice(1);
+    if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+    if (hex.length !== 6) return false;
+    r = parseInt(hex.slice(0, 2), 16);
+    g = parseInt(hex.slice(2, 4), 16);
+    b = parseInt(hex.slice(4, 6), 16);
+  } else if (color.startsWith('rgb')) {
+    [r, g, b] = color.match(/\d+/g).map(Number);
+  } else {
+    return false;
+  }
+  // Luminancia relativa
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+  return luminance > 186;
+}
 
 'use strict';
 
