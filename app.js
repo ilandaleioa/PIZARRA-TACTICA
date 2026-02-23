@@ -77,8 +77,19 @@ async function exportVideo() {
 
   recorder.stop();
 }
+const LANGS = {
+  es: {
+    deshacer:'DESHACER', compartir:'COMPARTIR', resetear:'RESETEAR',
+    asignar:'ASIGNAR JUGADORES A PIZARRA', plantilla_desc:'Gestiona tu plantilla de jugadores.',
+    portero:'PORTERO', defensa:'DEFENSA', medio:'CENTROCAMPISTA', delantero:'DELANTERO',
+  },
+  en: {
     deshacer:'UNDO', compartir:'SHARE', resetear:'RESET',
     asignar:'ASSIGN PLAYERS TO BOARD', plantilla_desc:'Manage your squad.',
+    portero:'GOALKEEPER', defensa:'DEFENCE', medio:'MIDFIELD', delantero:'FORWARD',
+  }
+};
+
 async function renderSlide(index) {
   // Actualiza el slide actual y refresca la pizarra
   state.currentSlide = index;
