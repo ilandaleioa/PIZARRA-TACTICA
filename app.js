@@ -721,12 +721,22 @@ function switchTab(tab) {
   document.getElementById('section-pizarra').classList.toggle('hidden', tab !== 'pizarra');
   document.getElementById('section-plantilla').classList.toggle('hidden', tab !== 'plantilla');
 
-  // Show/hide the main-area views
-  document.querySelector('.center-area').classList.toggle('hidden', tab === 'plantilla');
-  document.querySelector('.sidebar-right').classList.toggle('hidden', tab === 'plantilla');
+  // Mostrar/ocultar la pizarra y la plantilla correctamente
+  const centerArea = document.querySelector('.center-area');
+  const sidebarRight = document.querySelector('.sidebar-right');
   const pv = document.getElementById('plantilla-view');
-  pv.classList.toggle('hidden', tab !== 'plantilla');
-  if (tab === 'plantilla') renderPlantillaView();
+  if (tab === 'plantilla') {
+    centerArea.classList.add('hidden');
+    sidebarRight.classList.add('hidden');
+    pv.classList.remove('hidden');
+    renderPlantillaView();
+  } else {
+    centerArea.classList.remove('hidden');
+    sidebarRight.classList.remove('hidden');
+    pv.classList.add('hidden');
+    // Siempre renderizar jugadores al volver a la pizarra
+    if (typeof renderPlayers === 'function') renderPlayers();
+  }
 }
 
 // ─── PLANTILLA VIEW ──────────────────────────
