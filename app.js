@@ -1,3 +1,5 @@
+window.switchTab = switchTab;
+window.applyFormation = applyFormation;
 window.renderPlantillaView = renderPlantillaView;
 // Exponer funciones globales para el HTML
 window.toggleTeamVisibility = toggleTeamVisibility;
