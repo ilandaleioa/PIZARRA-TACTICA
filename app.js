@@ -787,8 +787,13 @@ function avatarColor(posKey) {
 }
 
 function renderPlantillaView() {
+  console.log('[DEBUG] Ejecutando renderPlantillaView');
   const lang = LANGS[currentLang];
   const container = document.getElementById('plantilla-content');
+  if (!container) {
+    alert('No se encontró el contenedor de plantilla (plantilla-content). Revisa el HTML.');
+    return;
+  }
   container.innerHTML = '';
 
   const positions = [
