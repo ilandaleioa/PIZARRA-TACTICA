@@ -1688,4 +1688,3 @@ function applyFormation() {
 // Exponer funciones globales para el HTML
 window.switchTab = switchTab;
 window.applyFormation = applyFormation;
-}
