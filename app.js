@@ -1540,84 +1540,62 @@ function renderMobileAssignList() {
       card.appendChild(photoWrap);
       card.appendChild(name);
       if (!isAssigned) {
-        document.addEventListener('mousemove', e => {
-          if (!drawing) return;
-          const r = canvas.getBoundingClientRect();
-          const x = e.clientX - r.left;
-          const y = e.clientY - r.top;
-          ctx.beginPath();
-          ctx.moveTo(lastX, lastY);
-          ctx.lineTo(x, y);
+        card.addEventListener('click', () => {
+          const overlay = document.getElementById('mobile-assign-overlay');
+          if (overlay) { overlay.classList.remove('active'); overlay.classList.add('hidden'); }
+          assignPlayer(player, pos.key);
         });
       }
+      group.appendChild(card);
+    });
+    container.appendChild(group);
+  });
+}
 
-      // --- Mover exportVideo fuera de setupCanvas ---
-      function exportVideo() {
-        // Grabar el contenedor principal de la pizarra (incluye campo, jugadores y canvas)
-        const boardContainer = document.getElementById('board-container') || document.getElementById('pitch').parentElement;
-        if (!boardContainer) {
-          alert('No se puede exportar el video: campo no encontrado');
-          return;
-        }
-
-        // Usar captureStream sobre el contenedor
-        let stream;
-        if (boardContainer.captureStream) {
-          stream = boardContainer.captureStream(30);
-        } else {
-          alert('Tu navegador no soporta grabación de este contenido. Usa Chrome o Edge.');
-          return;
-        }
-
-        const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-        let chunks = [];
-
-        recorder.ondataavailable = e => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        recorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = url;
-          a.download = 'pizarra-tactica.mp4';
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          }, 100);
-        };
-
-        // Reproducir animación mientras graba
-        let slideIndex = 0;
-        const totalSlides = state.slides.length;
-        // ... (resto de la función exportVideo)
-      }
-  const isOpen = !pv.classList.contains('hidden');
-  if (isOpen) {
-    closeMobilePanels();
-  } else {
-    // Cerrar drawers laterales
-    document.querySelector('.sidebar-left').classList.remove('mobile-open');
-    document.querySelector('.sidebar-right').classList.remove('mobile-open');
-    document.getElementById('mobile-overlay').classList.remove('active');
-    // Activar botón plantillas
-    const btnLeft       = document.getElementById('mbn-left');
-    const btnRight      = document.getElementById('mbn-right');
-    const btnPitch      = document.getElementById('mbn-pitch');
-    const btnPlantillas = document.getElementById('mbn-plantillas');
-    if (btnLeft)       btnLeft.classList.remove('active');
-    if (btnRight)      btnRight.classList.remove('active');
-    if (btnPitch)      btnPitch.classList.remove('active');
-    if (btnPlantillas) btnPlantillas.classList.add('active');
-    // Mostrar vista plantilla
-    document.querySelector('.center-area').classList.add('hidden');
-    pv.classList.remove('hidden');
-    renderPlantillaView();
+// --- exportVideo como función global ---
+function exportVideo() {
+  // Grabar el contenedor principal de la pizarra (incluye campo, jugadores y canvas)
+  const boardContainer = document.getElementById('board-container') || document.getElementById('pitch').parentElement;
+  if (!boardContainer) {
+    alert('No se puede exportar el video: campo no encontrado');
+    return;
   }
+
+  // Usar captureStream sobre el contenedor
+  let stream;
+  if (boardContainer.captureStream) {
+    stream = boardContainer.captureStream(30);
+  } else {
+    alert('Tu navegador no soporta grabación de este contenido. Usa Chrome o Edge.');
+    return;
+  }
+
+  const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+  let chunks = [];
+
+  recorder.ondataavailable = e => {
+    if (e.data.size > 0) chunks.push(e.data);
+  };
+
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'pizarra-tactica.mp4';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  };
+
+  // Reproducir animación mientras graba
+  let slideIndex = 0;
+  const totalSlides = state.slides.length;
+  // ... (resto de la función exportVideo)
 }
 
 function closeMobilePanels() {
