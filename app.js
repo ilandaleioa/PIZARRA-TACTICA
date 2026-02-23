@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupBall();
   // Forzar escudo por defecto si no hay imagen
   const img = document.getElementById('nav-logo-img');
-  if (img && (!img.src || img.src.endsWith('ACFC Blanco Cuadrado.png'))) {
+  if (img && (!img.src || img.src.endsWith('ACFC Blanco Cuadrado.png.png'))) {
     img.src = DEFAULT_LOGO;
     img.style.display = 'block';
   }
@@ -1654,9 +1654,31 @@ window.addEventListener('resize', () => {
       }
     }, { passive: true });
   });
+
 })(); // Cierre correcto de la IIFE
 
 // ── ORIENTACIÓN: reajustar paneles al girar ──────────────────
 window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
+
+// ─── PLACEHOLDERS PARA FUNCIONES FALTANTES ─────────────
+function undo() {
+  // TODO: Implementar función de deshacer
+  alert('Función "Deshacer" no implementada.');
+}
+
+function exportImage() {
+  // TODO: Implementar exportación de imagen
+  alert('Función "Exportar Imagen" no implementada.');
+}
+
+function exportVideo() {
+  // TODO: Implementar exportación de video
+  alert('Función "Exportar Video" no implementada.');
+}
+
+function applyFormation() {
+  // TODO: Implementar aplicación de formación
+  alert('Función "Aplicar Formación" no implementada.');
+}
