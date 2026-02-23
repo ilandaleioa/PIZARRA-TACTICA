@@ -100,6 +100,7 @@ function setLang(lang) {
     const key = el.getAttribute('data-i18n');
     if (LANGS[lang][key]) el.textContent = LANGS[lang][key];
   });
+}); // <- Cierre de la función initDrawerSwipe
   renderPlayerList();
   if (!document.getElementById('plantilla-view').classList.contains('hidden')) renderPlantillaView();
 }
