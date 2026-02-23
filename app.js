@@ -1,16 +1,17 @@
 // Quitar todos los jugadores de la pizarra
 function quitarJugadores() {
-  // Suponiendo que los jugadores están en elementos con clase 'player-token' en el campo
-  const tokens = document.querySelectorAll('.player-token');
-  tokens.forEach(token => token.remove());
-
-  // Si hay que limpiar también el estado JS, buscar el array/objeto de jugadores en campo y vaciarlo
-  if (window.state && window.state.pitchPlayers) {
-    window.state.pitchPlayers = {};
+  // Borra solo los nombres de los jugadores en el campo, pero mantiene los círculos
+  if (window.state && Array.isArray(window.state.players)) {
+    window.state.players.forEach(p => {
+      p.name = '';
+      p.abbr = '';
+      // Si quieres mantener dorsal y posición, no los toques
+    });
   }
-
-  // Si hay que actualizar la UI, llamar a la función de renderizado si existe
-  if (typeof renderPitchPlayers === 'function') {
+  // Actualiza la UI
+  if (typeof renderPlayers === 'function') {
+    renderPlayers();
+  } else if (typeof renderPitchPlayers === 'function') {
     renderPitchPlayers();
   }
 }
