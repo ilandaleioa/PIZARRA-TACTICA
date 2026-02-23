@@ -1375,62 +1375,15 @@ function setupCanvas() {
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
-    function exportVideo() {
-      // Grabar el contenedor principal de la pizarra (incluye campo, jugadores y canvas)
-      const boardContainer = document.getElementById('board-container') || document.getElementById('pitch').parentElement;
-      if (!boardContainer) {
-        alert('No se puede exportar el video: campo no encontrado');
-        return;
-      }
-
-      // Usar captureStream sobre el contenedor
-      let stream;
-      if (boardContainer.captureStream) {
-        stream = boardContainer.captureStream(30);
-      } else {
-        alert('Tu navegador no soporta grabación de este contenido. Usa Chrome o Edge.');
-        return;
-      }
-
-      const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-      let chunks = [];
-
-      recorder.ondataavailable = e => {
-        if (e.data.size > 0) chunks.push(e.data);
-      };
-
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = 'pizarra-tactica.mp4';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, 100);
-      };
-
-      // Reproducir animación mientras graba
-      let slideIndex = 0;
-      const totalSlides = state.slides.length;
-      const interval = 1000; // 1 segundo por slide
-      function nextSlide() {
-        if (slideIndex < totalSlides) {
-          goToSlide(slideIndex, false);
-          slideIndex++;
-          setTimeout(nextSlide, interval);
-        } else {
-          recorder.stop();
-        }
-      }
-
-      recorder.start();
-      nextSlide();
-    }
+    ctx.stroke();
+    lastX = x;
+    lastY = y;
+  });
+  document.addEventListener('mouseup', () => {
+    drawing = false;
+    canvas.style.pointerEvents = 'none';
+  });
+}
 
 
 // Run on load
