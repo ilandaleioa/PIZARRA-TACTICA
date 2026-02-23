@@ -1685,3 +1685,7 @@ function applyFormation() {
   // TODO: Implementar aplicación de formación
   alert('Función "Aplicar Formación" no implementada.');
 }
+// Exponer funciones globales para el HTML
+window.switchTab = switchTab;
+window.applyFormation = applyFormation;
+}
