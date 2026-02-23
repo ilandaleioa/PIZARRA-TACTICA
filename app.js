@@ -1652,7 +1652,9 @@ window.addEventListener('resize', () => {
         if (dy > 80 && Math.abs(dx) < 80) closeMobilePanels();
       }
     }, { passive: true });
+
   });
+})();// Cierre correcto de la IIFE
 
 // ── ORIENTACIÓN: reajustar paneles al girar ──────────────────
 window.addEventListener('orientationchange', () => {
