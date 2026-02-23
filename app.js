@@ -1659,6 +1659,4 @@ window.addEventListener('resize', () => {
 window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
-
-// Cierre de bloque para evitar error de sintaxis
-}
+})();
