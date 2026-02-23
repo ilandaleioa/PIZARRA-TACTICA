@@ -1653,10 +1653,8 @@ window.addEventListener('resize', () => {
       }
     }, { passive: true });
   });
-})();
 
 // ── ORIENTACIÓN: reajustar paneles al girar ──────────────────
 window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
-})();
