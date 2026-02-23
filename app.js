@@ -47,9 +47,20 @@ function renderPlantillaView() {
 }
 window.renderPlantillaView = renderPlantillaView;
 // Exponer funciones globales para el HTML
-window.toggleTeamVisibility = toggleTeamVisibility;
 // Devuelve un color aclarado en formato hex
 function lighten(color, percent) {
+  // ─── TOGGLE VISIBILITY ────────────────────────
+  const teamVisible = { my: true, rival: false };
+
+  function toggleTeamVisibility(team) {
+    teamVisible[team] = !teamVisible[team];
+    const visible = teamVisible[team];
+
+    // Show/hide pitch tokens
+    // ...resto del código...
+  }
+  // Exponer función global después de definirla
+  window.toggleTeamVisibility = toggleTeamVisibility;
   let r, g, b;
   if (typeof color !== 'string') return color;
   if (color.startsWith('#')) {
