@@ -1654,9 +1654,9 @@ window.addEventListener('resize', () => {
     }, { passive: true });
 
 
+
   });
-} // <- Cierre del initDrawerSwipe
-})(); // Cierre correcto de la IIFE
+}); // Cierre correcto de la IIFE
 
 // ── ORIENTACIÓN: reajustar paneles al girar ──────────────────
 window.addEventListener('orientationchange', () => {
