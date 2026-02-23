@@ -101,10 +101,7 @@ async function renderSlide(index) {
   // Si tienes otra función para refrescar la vista, agrégala aquí
   // Puedes añadir un pequeño retardo si la actualización es asíncrona
   await new Promise(res => setTimeout(res, 50));
-}
-    portero:'GOALKEEPER', defensa:'DEFENCE', medio:'MIDFIELD', delantero:'FORWARD',
-  },
-};
+
 
 let currentLang = 'es';
 
