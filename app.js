@@ -872,6 +872,10 @@ function switchTab(tab) {
   }
 }
 window.switchTab = switchTab;
+window.state = state;
+window.undo = undo;
+window.togglePhotoMode = togglePhotoMode;
+window.quitarJugadores = quitarJugadores;
 
 // Eliminar cualquier llave de cierre sobrante al final del archivo
 
