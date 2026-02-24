@@ -254,12 +254,6 @@ const SQUAD = {
     { id: 'HI', name: 'Hierro',       abbr: 'HIE', dorsal: 31, edad: 21, photo: CDN+'asier-hierro-campo.png' },
   ],
 };
-  portero: [
-    { id: 'US', name: 'Unai Simón',  abbr: 'U.S', dorsal: 1,  edad: 27, photo: CDN+'unai-simon-mendibil_L.png' },
-    { id: 'PA', name: 'Padilla',     abbr: 'PAD', dorsal: 27, edad: 23, photo: CDN+'alex-padilla-perez_L.png' },
-  ],
-  defensa: [
-    { id: 'VI', name: 'Vivian',      abbr: 'VIV', dorsal: 3,  edad: 25, photo: CDN+'dani-vivian-moreno_L.png' },
     { id: 'YE', name: 'Yeray',       abbr: 'YER', dorsal: 5,  edad: 27, photo: CDN+'yeray-alvarez-lopez_L.png' },
     { id: 'LE', name: 'Lekue',       abbr: 'LEK', dorsal: 15, edad: 29, photo: CDN+'inigo-lekue-martinez_L.png' },
     { id: 'DE', name: 'De Marcos',   abbr: 'DEM', dorsal: 18, edad: 34, photo: CDN+'oscar-de-marcos-arana_L.png' },
@@ -808,9 +802,7 @@ function renderPlayerList() {
   });
 }
 
-// Assign a squad player to a selected token, or next free slot
-function assignPlayer(player, posKey) {
-  let slot;
+
 
   if (selectedTokenId) {
     // Assign to the specifically selected token
