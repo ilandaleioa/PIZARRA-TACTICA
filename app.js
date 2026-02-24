@@ -1486,8 +1486,8 @@ async function exportVideo() {
   }
 
   // Crear un canvas temporal para capturar cada frame
-  const width = pitch.offsetWidth;
-  const height = pitch.offsetHeight;
+  const width = Math.max(1, Math.round(pitch.clientWidth || pitch.offsetWidth));
+  const height = Math.max(1, Math.round(pitch.clientHeight || pitch.offsetHeight));
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -1535,7 +1535,7 @@ async function exportVideo() {
     const ext = blobType.includes('webm') ? 'webm' : 'mp4';
     const fileName = `pizarra-tactica.${ext}`;
 
-    const previewHtml = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Video exportado</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:16px;justify-items:center}video{max-width:min(100%,1100px);border-radius:10px;border:1px solid #333;background:#000}a{display:inline-block;background:#1f6feb;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:700}</style></head><body><h1>Video exportado</h1><video controls autoplay src="${videoUrl}"></video><a href="${videoUrl}" download="${fileName}">Descargar video</a></body></html>`;
+    const previewHtml = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Video exportado</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:16px;justify-items:center}video{max-width:min(100%,1100px);border-radius:10px;border:1px solid #333;background:#000}a{display:inline-block;background:#1f6feb;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:700}</style></head><body><h1>Video exportado</h1><video controls autoplay playsinline muted src="${videoUrl}"></video><a href="${videoUrl}" download="${fileName}">Descargar video</a></body></html>`;
     if (previewWindow && !previewWindow.closed) {
       previewWindow.document.open();
       previewWindow.document.write(previewHtml);
@@ -1564,16 +1564,34 @@ async function exportVideo() {
   const prevPlayers = JSON.parse(JSON.stringify(state.players));
   const prevBall = { ...state.ball };
   const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
+  const waitPaint = async (n = 2) => {
+    for (let k = 0; k < n; k++) {
+      await new Promise(res => requestAnimationFrame(() => res()));
+    }
+  };
   try {
+    document.body.classList.add('exporting-video');
     let i = 0;
     recorder.start();
     for (; i < total; i++) {
       goToSlide(i, false);
-      await new Promise(res => setTimeout(res, speed));
+      await waitPaint(2);
       // Renderizar el pitch en el canvas temporal
-      const frame = await html2canvas(pitch, { backgroundColor: null, useCORS: true, scale: 1 });
+      const frame = await html2canvas(pitch, {
+        backgroundColor: '#0f3d0f',
+        useCORS: true,
+        scale: 1,
+        width,
+        height,
+        x: 0,
+        y: 0,
+        scrollX: -window.scrollX,
+        scrollY: -window.scrollY,
+        logging: false,
+      });
       ctx.clearRect(0, 0, width, height);
       ctx.drawImage(frame, 0, 0, width, height);
+      await new Promise(res => setTimeout(res, speed));
     }
     recorder.stop();
   } catch (error) {
@@ -1581,6 +1599,7 @@ async function exportVideo() {
     alert('Error al exportar el video. Intentalo de nuevo.');
     console.error(error);
   } finally {
+    document.body.classList.remove('exporting-video');
     // Restaurar estado
     goToSlide(prevSlide, false);
     state.players = prevPlayers;

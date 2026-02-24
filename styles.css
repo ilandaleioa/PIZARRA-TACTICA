@@ -1593,3 +1593,9 @@ body.pseudo-fullscreen .main-layout {
   height: 100dvh !important;
 }
 
+/* Export video: recorte estricto del campo para evitar desbordes */
+body.exporting-video .pitch {
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
