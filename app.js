@@ -18,6 +18,18 @@ function applyFormation(team) {
     if (el) { el.style.left = p.x + '%'; el.style.top = p.y + '%'; }
   });
 }
+// Funciones vacías para evitar errores en los botones
+function switchTab(tabName) {
+  // Función vacía
+}
+
+function exportImage() {
+  // Función vacía
+}
+
+function exportVideo() {
+  // Función vacía
+}
 window.applyFormation = applyFormation;
 // ...existing code...
 // ...existing code...
