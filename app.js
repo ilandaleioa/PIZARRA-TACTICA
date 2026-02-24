@@ -506,6 +506,35 @@ function savePhotos() {
   try { localStorage.setItem('acPlayerPhotos', JSON.stringify(playerPhotos)); } catch(e) {}
 }
 
+function getPlayerPhoto(player) {
+  if (!player) return '';
+  return playerPhotos[player.id] || player.photo || '';
+}
+
+function findSquadPlayerById(playerId) {
+  const groups = ['portero', 'defensa', 'medio', 'delantero'];
+  for (const key of groups) {
+    const found = SQUAD[key].find(p => p.id === playerId);
+    if (found) return found;
+  }
+  return null;
+}
+
+function syncAssignedPlayerData(playerId) {
+  const squadPlayer = findSquadPlayerById(playerId);
+  if (!squadPlayer) return;
+  const photo = getPlayerPhoto(squadPlayer);
+  Object.entries(state.assignedPlayers || {}).forEach(([slotId, assignedId]) => {
+    if (assignedId !== playerId) return;
+    const slot = state.players.find(p => p.id === slotId);
+    if (!slot) return;
+    slot.name = squadPlayer.name;
+    slot.abbr = squadPlayer.abbr;
+    slot.dorsal = squadPlayer.dorsal;
+    slot.photo = photo;
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadPhotos();
   initNavLogo();
@@ -781,16 +810,27 @@ function applyFormation(team) {
 }
 
 // ─── COLORS ──────────────────────────────────
+function rgbToHex(color) {
+  if (!color || typeof color !== 'string') return '';
+  if (color.startsWith('#')) return color.toLowerCase();
+  const parts = color.match(/\d+/g);
+  if (!parts || parts.length < 3) return '';
+  const [r, g, b] = parts.map(Number);
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
 function setTeamColor(team, color) {
   if (team === 'my') state.myColor    = color;
   else               state.rivalColor = color;
 
   // Update swatch selection
   const palette = document.getElementById(team + '-colors');
-  palette.querySelectorAll('.color-swatch').forEach(sw => {
-    sw.classList.toggle('selected', sw.style.background === color ||
-      rgbToHex(sw.style.background) === color.toLowerCase());
-  });
+  if (palette) {
+    palette.querySelectorAll('.color-swatch').forEach(sw => {
+      sw.classList.toggle('selected', sw.style.background === color ||
+        rgbToHex(sw.style.background) === color.toLowerCase());
+    });
+  }
 
   // Re-render tokens for that team (skip GKs – they have fixed colors)
   state.players.filter(p => p.team === team).forEach(p => {
@@ -883,18 +923,18 @@ function assignPlayer(player, posKey) {
   slot.name   = player.name;
   slot.abbr   = player.abbr;
   slot.dorsal = player.dorsal;
-  slot.photo  = player.photo;
+  slot.photo  = getPlayerPhoto(player);
   state.assignedPlayers[slot.id] = player.id;
 
   const el = document.getElementById('token-' + slot.id);
   if (el) {
     el.classList.add('has-player');
     el.classList.remove('selected');
-    const usePhotoNow = state.photoMode && !!player.photo;
+    const usePhotoNow = state.photoMode && !!slot.photo;
     el.classList.toggle('photo-mode', usePhotoNow);
     if (usePhotoNow) {
       el.style.background = 'transparent';
-      el.innerHTML = `<div class="token-photo-wrap"><img class="token-photo" src="${player.photo}" onerror="this.parentElement.style.display='none'"></div><span class="dorsal-badge">${player.dorsal}</span><span class="token-name-label">${slot.name}</span>`;
+      el.innerHTML = `<div class="token-photo-wrap"><img class="token-photo" src="${slot.photo}" onerror="this.parentElement.style.display='none'"></div><span class="dorsal-badge">${player.dorsal}</span><span class="token-name-label">${slot.name}</span>`;
     } else {
       el.style.background = state.myColor;
       el.style.border = '2px solid #000';
@@ -1105,10 +1145,22 @@ function savePlayerModal() {
 
   // Handle photo
   const fileInput = document.getElementById('modal-photo-input');
-  const doSave = () => { savePhotos(); closePlayerModal(); renderPlantillaView(); renderPlayerList(); };
+  const doSave = () => {
+    syncAssignedPlayerData(_editId);
+    savePhotos();
+    renderPlayers();
+    closePlayerModal();
+    renderPlantillaView();
+    renderPlayerList();
+    renderMobileAssignList();
+  };
   if (fileInput.files[0]) {
     const reader = new FileReader();
-    reader.onload = ev => { playerPhotos[_editId] = ev.target.result; doSave(); };
+    reader.onload = ev => {
+      playerPhotos[_editId] = ev.target.result;
+      player.photo = ev.target.result;
+      doSave();
+    };
     reader.readAsDataURL(fileInput.files[0]);
   } else {
     doSave();
@@ -1426,6 +1478,13 @@ async function exportVideo() {
     return;
   }
 
+  // Abrir una pestana de previsualizacion inmediatamente para evitar bloqueos de popup
+  const previewWindow = window.open('', '_blank');
+  if (previewWindow) {
+    previewWindow.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Exportando video...</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:12px;justify-items:center}p{color:#aab3c2;margin:0}</style></head><body><h1>Procesando video</h1><p>Espera unos segundos, se abrira la previsualizacion automaticamente.</p></body></html>`);
+    previewWindow.document.close();
+  }
+
   // Crear un canvas temporal para capturar cada frame
   const width = pitch.offsetWidth;
   const height = pitch.offsetHeight;
@@ -1445,21 +1504,41 @@ async function exportVideo() {
   const stream = canvas.captureStream(30); // 30 fps
   const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
   let chunks = [];
+  let videoUrl = '';
+  let previewUrl = '';
   recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
   recorder.onstop = () => {
+    if (!chunks.length) {
+      alert('No se genero contenido de video. Prueba de nuevo.');
+      return;
+    }
+
     const blobType = mimeType || 'video/webm';
     const blob = new Blob(chunks, { type: blobType });
-    const videoUrl = URL.createObjectURL(blob);
+    videoUrl = URL.createObjectURL(blob);
     const ext = blobType.includes('webm') ? 'webm' : 'mp4';
     const fileName = `pizarra-tactica.${ext}`;
 
     const previewHtml = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Video exportado</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:16px;justify-items:center}video{max-width:min(100%,1100px);border-radius:10px;border:1px solid #333;background:#000}a{display:inline-block;background:#1f6feb;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:700}</style></head><body><h1>Video exportado</h1><video controls autoplay src="${videoUrl}"></video><a href="${videoUrl}" download="${fileName}">Descargar video</a></body></html>`;
-    const previewUrl = URL.createObjectURL(new Blob([previewHtml], { type: 'text/html' }));
-    window.open(previewUrl, '_blank');
+    if (previewWindow && !previewWindow.closed) {
+      previewWindow.document.open();
+      previewWindow.document.write(previewHtml);
+      previewWindow.document.close();
+    } else {
+      previewUrl = URL.createObjectURL(new Blob([previewHtml], { type: 'text/html' }));
+      window.open(previewUrl, '_blank');
+      const fallbackDownload = document.createElement('a');
+      fallbackDownload.href = videoUrl;
+      fallbackDownload.download = fileName;
+      fallbackDownload.style.display = 'none';
+      document.body.appendChild(fallbackDownload);
+      fallbackDownload.click();
+      fallbackDownload.remove();
+    }
 
     // Liberar recursos con margen suficiente para descarga/reproduccion.
     setTimeout(() => {
-      URL.revokeObjectURL(previewUrl);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
       URL.revokeObjectURL(videoUrl);
     }, 10 * 60 * 1000);
   };
@@ -1469,21 +1548,28 @@ async function exportVideo() {
   const prevPlayers = JSON.parse(JSON.stringify(state.players));
   const prevBall = { ...state.ball };
   const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
-  let i = 0;
-  recorder.start();
-  for (; i < total; i++) {
-    goToSlide(i, false);
-    await new Promise(res => setTimeout(res, speed));
-    // Renderizar el pitch en el canvas temporal
-    const frame = await html2canvas(pitch, { backgroundColor: null, useCORS: true, scale: 1 });
-    ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(frame, 0, 0, width, height);
+  try {
+    let i = 0;
+    recorder.start();
+    for (; i < total; i++) {
+      goToSlide(i, false);
+      await new Promise(res => setTimeout(res, speed));
+      // Renderizar el pitch en el canvas temporal
+      const frame = await html2canvas(pitch, { backgroundColor: null, useCORS: true, scale: 1 });
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(frame, 0, 0, width, height);
+    }
+    recorder.stop();
+  } catch (error) {
+    if (recorder.state !== 'inactive') recorder.stop();
+    alert('Error al exportar el video. Intentalo de nuevo.');
+    console.error(error);
+  } finally {
+    // Restaurar estado
+    goToSlide(prevSlide, false);
+    state.players = prevPlayers;
+    state.ball = prevBall;
   }
-  recorder.stop();
-  // Restaurar estado
-  goToSlide(prevSlide, false);
-  state.players = prevPlayers;
-  state.ball = prevBall;
 }
 
 // Alternativa: exportar los fotogramas como imagenes
@@ -1800,10 +1886,11 @@ function renderMobileAssignList() {
       card.className = 'mas-player-card' + (isAssigned ? ' assigned' : '');
       const photoWrap = document.createElement('div');
       photoWrap.className = 'mas-photo-wrap';
-      if (player.photo) {
+      const photoSrc = getPlayerPhoto(player);
+      if (photoSrc) {
         const img = document.createElement('img');
         img.className = 'mas-photo';
-        img.src = player.photo;
+        img.src = photoSrc;
         img.onerror = () => { img.style.display = 'none'; };
         photoWrap.appendChild(img);
       }
@@ -1880,13 +1967,64 @@ function toggleMobilePanel(side) {
   if (btnPlantillas) btnPlantillas.classList.remove('active');
 }
 
-function toggleFullscreen() {
+function isFullscreenActive() {
   const d = document;
-  if (!d.fullscreenElement) {
-    d.documentElement.requestFullscreen?.();
+  return !!(d.fullscreenElement || d.webkitFullscreenElement || d.msFullscreenElement);
+}
+
+function syncFullscreenBtn() {
+  const btn = document.getElementById('fullscreen-btn');
+  if (!btn) return;
+  const active = isFullscreenActive() || document.body.classList.contains('pseudo-fullscreen');
+  btn.classList.toggle('active', active);
+  btn.title = active ? 'Salir de pantalla completa' : 'Pantalla completa';
+}
+
+async function toggleFullscreen() {
+  const d = document;
+  const el = d.documentElement;
+  const pseudoActive = d.body.classList.contains('pseudo-fullscreen');
+
+  if (!isFullscreenActive() && !pseudoActive) {
+    const request =
+      el.requestFullscreen ||
+      el.webkitRequestFullscreen ||
+      el.msRequestFullscreen;
+
+    if (request) {
+      try {
+        const maybePromise = request.call(el);
+        if (maybePromise && typeof maybePromise.then === 'function') {
+          await maybePromise;
+        }
+      } catch (err) {
+        // Fallback para navegadores moviles que bloquean fullscreen nativo.
+        d.body.classList.add('pseudo-fullscreen');
+      }
+    } else {
+      d.body.classList.add('pseudo-fullscreen');
+    }
   } else {
-    d.exitFullscreen?.();
+    const exit =
+      d.exitFullscreen ||
+      d.webkitExitFullscreen ||
+      d.msExitFullscreen;
+
+    if (isFullscreenActive() && exit) {
+      try {
+        const maybePromise = exit.call(d);
+        if (maybePromise && typeof maybePromise.then === 'function') {
+          await maybePromise;
+        }
+      } catch (err) {
+        d.body.classList.remove('pseudo-fullscreen');
+      }
+    } else {
+      d.body.classList.remove('pseudo-fullscreen');
+    }
   }
+
+  syncFullscreenBtn();
 }
 
 function closeMobilePanels() {
@@ -1954,12 +2092,17 @@ window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
 
+document.addEventListener('fullscreenchange', syncFullscreenBtn);
+document.addEventListener('webkitfullscreenchange', syncFullscreenBtn);
+document.addEventListener('msfullscreenchange', syncFullscreenBtn);
+
 Object.assign(window, {
   setLang,
   toggleFullscreen,
   toggleTheme,
   switchTab,
   toggleTeamVisibility,
+  setTeamColor,
   exportImage,
   exportVideo,
   undo,

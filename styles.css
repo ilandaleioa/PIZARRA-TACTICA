@@ -1580,3 +1580,16 @@ body.light .mbn-btn.active { color: var(--accent); }
   .slide-chip  { height: clamp(28px, 5vmin, 36px); min-height: unset; font-size: clamp(11px, 2.2vmin, 15px); }
 }
 
+/* Fallback de pantalla completa para moviles sin Fullscreen API fiable */
+body.pseudo-fullscreen .topnav {
+  display: none !important;
+}
+
+body.pseudo-fullscreen .mobile-bottom-nav {
+  display: none !important;
+}
+
+body.pseudo-fullscreen .main-layout {
+  height: 100dvh !important;
+}
+
