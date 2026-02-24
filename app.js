@@ -876,6 +876,8 @@ window.state = state;
 window.undo = undo;
 window.togglePhotoMode = togglePhotoMode;
 window.quitarJugadores = quitarJugadores;
+window.exportImage = exportImage;
+window.exportVideo = exportVideo;
 
 // Eliminar cualquier llave de cierre sobrante al final del archivo
 
