@@ -833,7 +833,11 @@ function togglePhotoMode() {
 }
 
 // ─── TAB SWITCH ──────────────────────────────
+
 function switchTab(tab) {
+  // ...existing code...
+}
+window.switchTab = switchTab;
 
   document.getElementById('tab-plantilla').classList.toggle('active', tab === 'plantilla');
   document.getElementById('tab-pizarra').classList.toggle('active', tab === 'pizarra');
