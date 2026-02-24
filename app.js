@@ -834,11 +834,8 @@ function togglePhotoMode() {
 
 // ─── TAB SWITCH ──────────────────────────────
 
-function switchTab(tab) {
-  // ...existing code...
-}
-window.switchTab = switchTab;
 
+function switchTab(tab) {
   document.getElementById('tab-plantilla').classList.toggle('active', tab === 'plantilla');
   document.getElementById('tab-pizarra').classList.toggle('active', tab === 'pizarra');
   document.getElementById('section-pizarra').classList.toggle('hidden', tab !== 'pizarra');
@@ -864,10 +861,7 @@ window.switchTab = switchTab;
   }
 }
 window.switchTab = switchTab;
-
-// ─── PLANTILLA VIEW ──────────────────────────
-function avatarColor(posKey) {
-  return { portero: '#4e342e', defensa: '#1565c0', medio: '#2e7d32', delantero: '#C62828' }[posKey] || '#444';
+// ...resto del archivo...
 }
 
 function renderPlantillaView() {
