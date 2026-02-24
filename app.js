@@ -18,6 +18,11 @@ function applyFormation(team) {
     if (el) { el.style.left = p.x + '%'; el.style.top = p.y + '%'; }
   });
 }
+
+// ─── PANEL MÓVIL ─────────────────────────────
+function toggleMobilePanel() {
+  // Función vacía para evitar error de referencia
+}
 // Funciones vacías para evitar errores en los botones
 function switchTab(tabName) {
   // Función vacía
