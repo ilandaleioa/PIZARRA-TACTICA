@@ -17,7 +17,7 @@
   --green:     #2e7d32;
   --radius:    clamp(4px, 0.5vmin, 8px);
   /* Sidebar widths escalan con viewport */
-  --sidebar-w: clamp(160px, 16vw, 230px);
+  --sidebar-w: clamp(220px, 22vw, 310px);
   --right-w:   clamp(190px, 18vw, 280px);
   /* Token size: usa vmin para escalar igual en portrait y landscape */
   --token-size:  clamp(26px, 5.5vmin, 58px);
@@ -86,6 +86,8 @@ html, body {
   display: flex;
   flex-direction: column;
   line-height: 1.2;
+  align-items: center;
+  text-align: center;
 }
 .logo-title {
   font-size: clamp(12px, 1.4vw + 0.2vh, 20px);
@@ -198,7 +200,7 @@ html, body {
   color: var(--text-dim);
   cursor: pointer;
   padding: clamp(10px, 1.5vh, 18px) clamp(10px, 1.2vw, 18px);
-  font-size: clamp(10px, 0.9vw, 14px);
+  font-size: clamp(9px, 0.75vw, 12px);
   font-weight: 600;
   letter-spacing: .5px;
   text-align: left;
@@ -250,116 +252,71 @@ html, body {
 .player-cards-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 10px;
 }
 
 .player-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
-  @media (max-width: 768px) {
-    #pitch-container {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: #222;
-      z-index: 1;
-    }
-    #pitch {
-      width: 100vw;
-      height: 100vh;
-      max-width: 100vw;
-      max-height: 100vh;
-      margin: 0;
-      background: #222;
-    }
-    .player-token {
-      font-size: 1.1em;
-      width: 40px;
-      height: 40px;
-    }
-    .mobile-assign-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-    .mobile-assign-sheet {
-      width: 95vw;
-      max-width: 500px;
-      background: #fff;
-      border-radius: 16px;
-      padding: 8px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-      max-height: 80vh;
-      overflow-y: visible;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    #mobile-assign-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      justify-content: center;
-      max-height: 60vh;
-      overflow-y: visible;
-    }
-    .mobile-player-row {
-      flex: 1 1 40%;
-      min-width: 120px;
-      max-width: 160px;
-      background: #f5f5f5;
-      border-radius: 8px;
-      padding: 6px 8px;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      transition: background 0.2s;
-    }
-    .mobile-player-row:hover {
-      background: #e0e0e0;
-    }
-    .mobile-player-photo {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-right: 8px;
-      background: #ddd;
-    }
-    .mobile-player-name {
-      font-size: 1em;
-      font-weight: 500;
-      color: #222;
-      flex: 1;
-    }
-    .mobile-player-dorsal {
-      font-size: 0.9em;
-      color: #888;
-      margin-left: 6px;
-    }
-  }
+  width: 168px;
+  padding: 8px 8px 10px;
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 8px;
+  row-gap: 6px;
+  align-items: start;
+}
+
+.pc-dorsal {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.pc-avatar {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+  width: 100%;
+  height: 96px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface2);
+}
+
+.pc-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.pc-info {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.pc-name {
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: .6px;
+  letter-spacing: .3px;
   text-transform: uppercase;
   color: var(--text);
   margin-bottom: 2px;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pc-apodo {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 500;
   color: var(--text-dim);
   font-style: italic;
@@ -369,20 +326,20 @@ html, body {
 
 .pc-meta {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   flex-wrap: wrap;
 }
 .pc-pos {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
-  letter-spacing: .5px;
+  letter-spacing: .4px;
   color: var(--accent);
   text-transform: uppercase;
 }
 .pc-edad {
-  font-size: 9px;
+  font-size: 8px;
   color: var(--text-dim);
   font-weight: 500;
 }
@@ -577,7 +534,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: clamp(5px, 0.6vw, 10px);
-  font-size: clamp(10px, 0.85vw, 13px);
+  font-size: clamp(9px, 0.72vw, 11px);
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--text-dim);
@@ -598,7 +555,7 @@ html, body {
   color: var(--text);
   padding: clamp(7px, 1vh, 12px) clamp(8px, 1vw, 14px);
   border-radius: var(--radius);
-  font-size: clamp(12px, 1.1vw, 15px);
+  font-size: clamp(10px, 0.9vw, 13px);
   cursor: pointer;
   margin-bottom: clamp(12px, 1.8vh, 22px);
   appearance: none;
@@ -629,24 +586,33 @@ html, body {
   display: flex;
   gap: 8px;
   margin-top: 14px;
+  align-items: stretch;
 }
 
 .action-btn {
   flex: 1;
+  min-width: 0;
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text);
   padding: clamp(6px, 1vh, 10px) clamp(4px, 0.5vw, 8px);
   border-radius: var(--radius);
   cursor: pointer;
-  font-size: clamp(10px, 0.85vw, 13px);
+  font-size: clamp(9px, 0.72vw, 11px);
   font-weight: 600;
   letter-spacing: .4px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
   transition: background .15s;
+}
+.action-btn span {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .action-btn:hover { background: #333; }
 .action-btn.secondary { border-color: #444; }
@@ -1151,7 +1117,7 @@ body.light .mbn-btn.active { color: var(--accent); }
 /* ─── RESPONSIVE TWEAK (tablet 900px) ──────── */
 @media (max-width: 900px) {
   :root {
-    --sidebar-w: clamp(150px, 20vw, 195px);
+    --sidebar-w: clamp(210px, 28vw, 270px);
     --right-w:   clamp(170px, 22vw, 230px);
     /* tokens ligeramente mayores para pantalla táctil */
     --token-size: clamp(30px, 6vmin, 52px);
@@ -1342,6 +1308,17 @@ body.light .mbn-btn.active { color: var(--accent); }
   }
 
   .action-row { gap: clamp(4px, 1.5vw, 8px); }
+}
+
+@media (max-width: 430px) {
+  .action-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .action-btn {
+    width: 100%;
+    min-height: 46px;
+  }
 }
 
 /* ─── MOBILE ASSIGN BOTTOM SHEET ──────────────────────────── */

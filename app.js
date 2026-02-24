@@ -1,4 +1,4 @@
-console.log('app.js cargado');
+﻿// ...existing code...
 // ...existing code...
 // ...existing code...
 function applyFormation(team) {
@@ -18,23 +18,6 @@ function applyFormation(team) {
     if (el) { el.style.left = p.x + '%'; el.style.top = p.y + '%'; }
   });
 }
-
-// ─── PANEL MÓVIL ─────────────────────────────
-function toggleMobilePanel() {
-  // Función vacía para evitar error de referencia
-}
-// Funciones vacías para evitar errores en los botones
-function switchTab(tabName) {
-  // Función vacía
-}
-
-function exportImage() {
-  // Función vacía
-}
-
-function exportVideo() {
-  // Función vacía
-}
 window.applyFormation = applyFormation;
 // ...existing code...
 // ...existing code...
@@ -43,7 +26,7 @@ function renderPlantillaView() {
   const lang = LANGS[currentLang];
   const container = document.getElementById('plantilla-content');
   if (!container) {
-    alert('No se encontró el contenedor de plantilla (plantilla-content). Revisa el HTML.');
+    alert('No se encontrÃ³ el contenedor de plantilla (plantilla-content). Revisa el HTML.');
     return;
   }
   container.innerHTML = '';
@@ -66,18 +49,6 @@ window.renderPlantillaView = renderPlantillaView;
 // Exponer funciones globales para el HTML
 // Devuelve un color aclarado en formato hex
 function lighten(color, percent) {
-  // ─── TOGGLE VISIBILITY ────────────────────────
-  const teamVisible = { my: true, rival: false };
-
-  function toggleTeamVisibility(team) {
-    teamVisible[team] = !teamVisible[team];
-    const visible = teamVisible[team];
-
-    // Show/hide pitch tokens
-    // ...resto del código...
-  }
-  // Exponer función global después de definirla
-  window.toggleTeamVisibility = toggleTeamVisibility;
   let r, g, b;
   if (typeof color !== 'string') return color;
   if (color.startsWith('#')) {
@@ -96,6 +67,28 @@ function lighten(color, percent) {
   g = Math.min(255, Math.floor(g + (255 - g) * percent / 100));
   b = Math.min(255, Math.floor(b + (255 - b) * percent / 100));
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
+function isLight(color) {
+  let r, g, b;
+  if (typeof color !== 'string') return false;
+  if (color.startsWith('#')) {
+    let hex = color.slice(1);
+    if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+    if (hex.length !== 6) return false;
+    r = parseInt(hex.slice(0, 2), 16);
+    g = parseInt(hex.slice(2, 4), 16);
+    b = parseInt(hex.slice(4, 6), 16);
+  } else if (color.startsWith('rgb')) {
+    const parts = color.match(/\d+/g);
+    if (!parts || parts.length < 3) return false;
+    [r, g, b] = parts.map(Number);
+  } else {
+    return false;
+  }
+  const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+  return luminance > 160;
+}
 'use strict';
 
 // Devuelve true si el color es claro, false si es oscuro
@@ -103,7 +96,7 @@ function lighten(color, percent) {
 
 async function exportVideo() {
   const pitch = document.getElementById('pitch');
-  if (!pitch) return alert('No se encontró el campo.');
+  if (!pitch) return alert('No se encontrÃ³ el campo.');
   const total = state.slides.length;
   if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
 
@@ -111,10 +104,10 @@ async function exportVideo() {
   const isMediaRecorderSupported = typeof window.MediaRecorder !== 'undefined';
   const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream;
   if (!isMediaRecorderSupported || !isCaptureStreamSupported) {
-    if (confirm('Tu navegador no soporta la grabación de video. ¿Quieres descargar los fotogramas como imágenes?')) {
+    if (confirm('Tu navegador no soporta la grabaciÃ³n de video. Â¿Quieres descargar los fotogramas como imÃ¡genes?')) {
       exportFramesAsImages();
     } else {
-      alert('La exportación de video solo funciona en Chrome o Edge.');
+      alert('La exportaciÃ³n de video solo funciona en Chrome o Edge.');
     }
     return;
   }
@@ -134,9 +127,9 @@ async function exportVideo() {
   recorder.onstop = () => {
     const blob = new Blob(chunks, { type: 'video/webm' });
     const url = URL.createObjectURL(blob);
-    // Abrir el video en una nueva pestaña
+    // Abrir el video en una nueva pestaÃ±a
     window.open(url, '_blank');
-    // También crear un enlace de descarga en la nueva pestaña
+    // TambiÃ©n crear un enlace de descarga en la nueva pestaÃ±a
     setTimeout(() => URL.revokeObjectURL(url), 60000);
   };
 
@@ -156,14 +149,72 @@ async function exportVideo() {
 }
 const LANGS = {
   es: {
-    deshacer:'DESHACER', compartir:'COMPARTIR', resetear:'RESETEAR',
-    asignar:'ASIGNAR JUGADORES A PIZARRA', plantilla_desc:'Gestiona tu plantilla de jugadores.',
-    portero:'PORTERO', defensa:'DEFENSA', medio:'CENTROCAMPISTA', delantero:'DELANTERO',
+    plantilla:'PLANTILLA',
+    pizarra:'PIZARRA TACTICA',
+    mi_equipo:'MI EQUIPO',
+    equipo_rival:'EQUIPO RIVAL',
+    imagen:'IMAGEN',
+    video:'VIDEO',
+    deshacer:'DESHACER',
+    compartir:'COMPARTIR',
+    resetear:'RESETEAR',
+    asignar:'ASIGNAR JUGADORES A PIZARRA',
+    plantilla_desc:'Gestiona tu plantilla de jugadores.',
+    portero:'PORTERO',
+    defensa:'DEFENSA',
+    medio:'CENTROCAMPISTA',
+    delantero:'DELANTERO',
+  },
+  eu: {
+    plantilla:'PLANTILLA',
+    pizarra:'TAKTIKA ARBELA',
+    mi_equipo:'NIRE TALDEA',
+    equipo_rival:'AURKARI TALDEA',
+    imagen:'IRUDIA',
+    video:'BIDEOA',
+    deshacer:'DESEGIN',
+    compartir:'PARTEKATU',
+    resetear:'BERRABIAZI',
+    asignar:'JOKALARIAK ARBELARA ESLEITU',
+    plantilla_desc:'Kudeatu zure jokalarien zerrenda.',
+    portero:'ATEZAINA',
+    defensa:'DEFENTSA',
+    medio:'ERDILARIA',
+    delantero:'AURRELARIA',
+  },
+  fr: {
+    plantilla:'EFFECTIF',
+    pizarra:'TABLEAU TACTIQUE',
+    mi_equipo:'MON EQUIPE',
+    equipo_rival:'EQUIPE ADVERSE',
+    imagen:'IMAGE',
+    video:'VIDEO',
+    deshacer:'ANNULER',
+    compartir:'PARTAGER',
+    resetear:'REINITIALISER',
+    asignar:'ASSIGNER LES JOUEURS AU TABLEAU',
+    plantilla_desc:'Gerez votre effectif.',
+    portero:'GARDIEN',
+    defensa:'DEFENSE',
+    medio:'MILIEU',
+    delantero:'ATTAQUANT',
   },
   en: {
-    deshacer:'UNDO', compartir:'SHARE', resetear:'RESET',
-    asignar:'ASSIGN PLAYERS TO BOARD', plantilla_desc:'Manage your squad.',
-    portero:'GOALKEEPER', defensa:'DEFENCE', medio:'MIDFIELD', delantero:'FORWARD',
+    plantilla:'SQUAD',
+    pizarra:'TACTICAL BOARD',
+    mi_equipo:'MY TEAM',
+    equipo_rival:'RIVAL TEAM',
+    imagen:'IMAGE',
+    video:'VIDEO',
+    deshacer:'UNDO',
+    compartir:'SHARE',
+    resetear:'RESET',
+    asignar:'ASSIGN PLAYERS TO BOARD',
+    plantilla_desc:'Manage your squad.',
+    portero:'GOALKEEPER',
+    defensa:'DEFENCE',
+    medio:'MIDFIELD',
+    delantero:'FORWARD',
   }
 };
 
@@ -175,14 +226,15 @@ async function renderSlide(index) {
   } else if (typeof renderSlideChips === 'function') {
     renderSlideChips();
   }
-  // Si tienes otra función para refrescar la vista, agrégala aquí
-  // Puedes añadir un pequeño retardo si la actualización es asíncrona
+  // Si tienes otra funciÃ³n para refrescar la vista, agrÃ©gala aquÃ­
+  // Puedes aÃ±adir un pequeÃ±o retardo si la actualizaciÃ³n es asÃ­ncrona
   await new Promise(res => setTimeout(res, 50));
+}
 
 
 let currentLang = 'es';
 
-// ─── THEME ───────────────────────────────────
+// â”€â”€â”€ THEME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light');
   const btn = document.getElementById('theme-btn');
@@ -201,28 +253,29 @@ function toggleTheme() {
 })();
 
 function setLang(lang) {
-  currentLang = lang;
-  document.querySelectorAll('.lang').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
+  currentLang = LANGS[lang] ? lang : 'es';
+  const dict = LANGS[currentLang] || LANGS.es;
+  document.querySelectorAll('.lang').forEach(b => b.classList.toggle('active', b.textContent === currentLang.toUpperCase()));
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (LANGS[lang][key]) el.textContent = LANGS[lang][key];
+    if (dict[key]) el.textContent = dict[key];
   });
   renderPlayerList();
   if (!document.getElementById('plantilla-view').classList.contains('hidden')) renderPlantillaView();
 }
 
-// ─── SQUAD DATA ──────────────────────────────
+// â”€â”€â”€ SQUAD DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const CDN = 'https://cdn.athletic-club.eus/imagenes/player_images/medium/';
 const SQUAD = {
   portero: [
-    { id: 'US', name: 'Unai Simón',  abbr: 'U.S', dorsal: 1,  edad: 27, photo: CDN+'unai-simon-mendibil_L.png' },
+    { id: 'US', name: 'Unai SimÃ³n',  abbr: 'U.S', dorsal: 1,  edad: 27, photo: CDN+'unai-simon-mendibil_L.png' },
     { id: 'PA', name: 'Padilla',     abbr: 'PAD', dorsal: 27, edad: 23, photo: CDN+'alex-padilla-perez_L.png' },
   ],
   defensa: [
     { id: 'GO', name: 'Gorosabel',  abbr: 'GOR', dorsal: 2,  edad: 28, photo: CDN+'andoni-gorosabel-espinosa_L.png' },
     { id: 'VI', name: 'Vivian',     abbr: 'VIV', dorsal: 3,  edad: 25, photo: CDN+'daniel-vivian-moreno_L.png' },
     { id: 'PR', name: 'Paredes',    abbr: 'PAR', dorsal: 4,  edad: 23, photo: CDN+'aitor-paredes-casamichana_L.png' },
-    { id: 'YE', name: 'Yeray',      abbr: 'YER', dorsal: 5,  edad: 30, photo: CDN+'yeray-alvarez-lopez.png' },
+    { id: 'YE', name: 'Yeray',      abbr: 'YER', dorsal: 5,  edad: 30, photo: CDN+'yeray-alvarez-lopez_L.png' },
     { id: 'AR', name: 'Areso',      abbr: 'ARE', dorsal: 12, edad: 26, photo: CDN+'jesus-areso-blanco_L.png' },
     { id: 'EG', name: 'Egiluz',     abbr: 'EGI', dorsal: 13, edad: 22, photo: CDN+'unai-egiluz-arroyo_L.png' },
     { id: 'LA', name: 'Laporte',    abbr: 'LAP', dorsal: 14, edad: 31, photo: CDN+'aymeric-laporte.png' },
@@ -236,10 +289,10 @@ const SQUAD = {
     { id: 'SA', name: 'O. Sancet',       abbr: 'SAN', dorsal: 8,  edad: 23, photo: CDN+'oihan-sancet-tirapu_L.png' },
     { id: 'RG', name: 'R. de Galarreta', abbr: 'GAL', dorsal: 16, edad: 31, photo: CDN+'inigo-ruiz-de-galarreta-etxeberria_L.png' },
     { id: 'JZ', name: 'Jauregizar',      abbr: 'JAU', dorsal: 18, edad: 24, photo: CDN+'mikel-jauregizar-alboniga_L.png' },
-    { id: 'UG', name: 'Unai Gómez',      abbr: 'U.G', dorsal: 20, edad: 26, photo: CDN+'unai-gomez-etxebarria_L.png' },
+    { id: 'UG', name: 'Unai GÃ³mez',      abbr: 'U.G', dorsal: 20, edad: 26, photo: CDN+'unai-gomez-etxebarria_L.png' },
     { id: 'PD', name: 'Prados',          abbr: 'PRA', dorsal: 24, edad: 24, photo: CDN+'benat-prados-diaz_L.png' },
     { id: 'RE', name: 'Rego',            abbr: 'REG', dorsal: 30, edad: 22, photo: CDN+'alejandro-rego-mora_L.png' },
-    { id: 'IS', name: 'Ibon Sánchez',    abbr: 'IBN', dorsal: 35, edad: 21, photo: CDN+'ibon-sanchez-ocen.png' },
+    { id: 'IS', name: 'Ibon SÃ¡nchez',    abbr: 'IBN', dorsal: 35, edad: 21, photo: CDN+'ibon-sanchez-ocen.png' },
     { id: 'SE', name: 'Selton',          abbr: 'SEL', dorsal: 44, edad: 22, photo: CDN+'selton-sued-sanchez-camilo.png' },
   ],
   delantero: [
@@ -252,40 +305,18 @@ const SQUAD = {
     { id: 'NA', name: 'Navarro',      abbr: 'NAV', dorsal: 23, edad: 24, photo: CDN+'robert-navarro-munoz_L.png' },
     { id: 'IZ', name: 'Izeta',        abbr: 'IZE', dorsal: 25, edad: 21, photo: CDN+'urko-iruretagoiena-lertxundi_L.png' },
     { id: 'HI', name: 'Hierro',       abbr: 'HIE', dorsal: 31, edad: 21, photo: CDN+'asier-hierro-campo.png' },
-  ],
-};
-    { id: 'YE', name: 'Yeray',       abbr: 'YER', dorsal: 5,  edad: 27, photo: CDN+'yeray-alvarez-lopez_L.png' },
-    { id: 'LE', name: 'Lekue',       abbr: 'LEK', dorsal: 15, edad: 29, photo: CDN+'inigo-lekue-martinez_L.png' },
-    { id: 'DE', name: 'De Marcos',   abbr: 'DEM', dorsal: 18, edad: 34, photo: CDN+'oscar-de-marcos-arana_L.png' },
-    { id: 'PR', name: 'Paredes',     abbr: 'PAR', dorsal: 4,  edad: 23, photo: CDN+'aitor-paredes-casamar_L.png' },
-    { id: 'IN', name: 'Íñigo Ruiz',  abbr: 'IRG', dorsal: 24, edad: 28, photo: CDN+'inigo-ruiz-de-galarreta-ezama_L.png' },
-  ],
-  medio: [
-    { id: 'VE', name: 'Vesga',       abbr: 'VES', dorsal: 6,  edad: 30, photo: CDN+'mikel-vesga-arruti_L.png' },
-    { id: 'DA', name: 'Dani García', abbr: 'DGA', dorsal: 14, edad: 33, photo: CDN+'dani-garcia-carrillo_L.png' },
-    { id: 'ZA', name: 'Zarraga',     abbr: 'ZAR', dorsal: 19, edad: 24, photo: CDN+'oier-zarraga-ezkurra_L.png' },
-    { id: 'BE', name: 'Berenguer',   abbr: 'BER', dorsal: 7,  edad: 28, photo: CDN+'alex-berenguer-remiro_L.png' },
-    { id: 'MI', name: 'Muniain',     abbr: 'MUN', dorsal: 10, edad: 32, photo: CDN+'iker-muniain-goñi_L.png' },
-    { id: 'SI', name: 'Sancet',      abbr: 'SAN', dorsal: 8,  edad: 25, photo: CDN+'oihan-sancet-tirapu_L.png' },
-  ],
-  delantero: [
-    { id: 'IW', name: 'I. Williams',  abbr: 'I.W', dorsal: 9,  edad: 31, photo: CDN+'inaki-williams-arthuer_L.png' },
-    { id: 'NW', name: 'Nico Williams',abbr: 'N.W', dorsal: 10, edad: 23, photo: CDN+'nico-williams-arthuer_L.png' },
-    { id: 'GU', name: 'Guruzeta',     abbr: 'GUR', dorsal: 11, edad: 28, photo: CDN+'gorka-guruzeta-rodriguez_L.png' },
-    { id: 'RA', name: 'Raúl García',  abbr: 'RAU', dorsal: 22, edad: 36, photo: CDN+'raul-garcia-escudero_L.png' },
-    { id: 'IZ', name: 'Izeta',        abbr: 'IZE', dorsal: 25, edad: 21, photo: CDN+'urko-iruretagoiena-lertxundi_L.png' },
-    { id: 'HI', name: 'Hierro',       abbr: 'HIE', dorsal: 31, edad: 21, photo: CDN+'asier-hierro-campo.png' },
+    { id: 'ED', name: 'Eder',         abbr: 'EDE', dorsal: 49, edad: 20, photo: CDN+'eder-garcia-garcia.png' },
   ],
 };
 
-// ─── FORMATIONS ──────────────────────────────
+// â”€â”€â”€ FORMATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Positions as % [left, top] relative to the pitch.
-// "My team" plays bottom half (top ~50%–95%), rival top half (~5%–50%).
+// "My team" plays bottom half (top ~50%â€“95%), rival top half (~5%â€“50%).
 const FORMATIONS = {
-  // Área grande superior: 0–20% | Área grande inferior: 80–100%
-  // mi equipo: GK=93%, DEF=80%, MED=57%, FWD=34%  → step ~23% igual entre líneas
-  // rival:     GK=7%,  DEF=20%, MED=43%, FWD=66%  → step ~23% igual entre líneas
-  // Laterales/extremos adelantados 3% respecto a sus compañeros de línea
+  // Ãrea grande superior: 0â€“20% | Ãrea grande inferior: 80â€“100%
+  // mi equipo: GK=93%, DEF=80%, MED=57%, FWD=34%  â†’ step ~23% igual entre lÃ­neas
+  // rival:     GK=7%,  DEF=20%, MED=43%, FWD=66%  â†’ step ~23% igual entre lÃ­neas
+  // Laterales/extremos adelantados 3% respecto a sus compaÃ±eros de lÃ­nea
   '1-4-4-2': {
     my: [
       [50,  93],  // 1 GK
@@ -321,9 +352,9 @@ const FORMATIONS = {
       [8,   77],  // 3 Lat Izq  (adelantado)
       [36,  80],  // 4 Central Izq
       [60,  80],  // 5 Central Der
-      [50,  62],  // 6 Medio pivote (más profundo)
-      [68,  49],  // 7 Interior Der (más avanzado)
-      [27,  49],  // 8 Interior Izq (más avanzado)
+      [50,  62],  // 6 Medio pivote (mÃ¡s profundo)
+      [68,  49],  // 7 Interior Der (mÃ¡s avanzado)
+      [27,  49],  // 8 Interior Izq (mÃ¡s avanzado)
       [83,  34],  // 9 Extremo Der
       [50,  34],  // 10 Delantero Centro
       [8,   34],  // 11 Extremo Izq
@@ -334,9 +365,9 @@ const FORMATIONS = {
       [8,   23],  // 3 Lat Izq  (adelantado)
       [36,  20],  // 4 Central Izq
       [60,  20],  // 5 Central Der
-      [50,  38],  // 6 Medio pivote (más profundo)
-      [68,  51],  // 7 Interior Der (más avanzado)
-      [27,  51],  // 8 Interior Izq (más avanzado)
+      [50,  38],  // 6 Medio pivote (mÃ¡s profundo)
+      [68,  51],  // 7 Interior Der (mÃ¡s avanzado)
+      [27,  51],  // 8 Interior Izq (mÃ¡s avanzado)
       [83,  66],  // 9 Extremo Der
       [50,  66],  // 10 Delantero Centro
       [8,   66],  // 11 Extremo Izq
@@ -416,7 +447,30 @@ const FORMATIONS = {
   },
 };
 
-// ─── STATE ───────────────────────────────────
+// Ajuste global solicitado:
+// - Los 10 jugadores de campo más adelantados en todos los sistemas.
+// - Centrales mantienen su línea.
+// - Laterales y extremos (zonas de banda) un poco más adelantados.
+(function tuneFormations() {
+  const BASE_ADVANCE = 3;
+  const WING_EXTRA = 2;
+  const isWingLane = x => x <= 20 || x >= 80;
+
+  Object.values(FORMATIONS).forEach(f => {
+    ['my', 'rival'].forEach(side => {
+      f[side] = f[side].map((pos, idx) => {
+        if (idx === 0) return pos; // portero
+        const [x, y] = pos;
+        const dir = side === 'my' ? -1 : 1;
+        const delta = BASE_ADVANCE + (isWingLane(x) ? WING_EXTRA : 0);
+        const ny = Math.min(99, Math.max(1, y + dir * delta));
+        return [x, ny];
+      });
+    });
+  });
+})();
+
+// â”€â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const GK_COLOR      = '#E91E8C';   // portero mi equipo rosa
 const RIVAL_GK_COLOR = '#FDD835';  // portero rival siempre amarillo
 const MY_COLOR    = '#C62828';   // mi equipo rojo por defecto
@@ -431,13 +485,13 @@ let state = {
   currentSlide: 0,
   players: [],      // { id, team, jersey, x, y, name, abbr, photo }
   assignedPlayers: {},  // jerseyKey -> squad player id
-    ball: { x: 50, y: 50 },     // balón (centro)
+    ball: { x: 50, y: 50 },     // balÃ³n (centro)
   photoMode: false, // mostrar fotos de jugadores en los tokens
 };
 
 let history = [];   // undo stack
 
-// ─── INIT ────────────────────────────────────
+// â”€â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Player photos (base64) stored per player id
 const playerPhotos = {};
 
@@ -462,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSlideChips();
   setupCanvas();
   setupBall();
-  // Si por algún motivo los jugadores no se ven, forzar renderizado tras breve retardo
+  // Si por algÃºn motivo los jugadores no se ven, forzar renderizado tras breve retardo
   setTimeout(() => {
     if (!document.querySelector('#players-container .player-token')) {
       initState();
@@ -484,15 +538,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-const DEFAULT_LOGO = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Athletic_Club_crest.svg/100px-Athletic_Club_crest.svg.png';
+const DEFAULT_LOGO = 'escudo.png';
 
 function initNavLogo() {
   const img         = document.getElementById('nav-logo-img');
   const placeholder = document.getElementById('nav-logo-placeholder');
   const wrap        = img ? img.closest('.nav-logo-wrap') : null;
   if (!img || !wrap) return;
-  const saved = localStorage.getItem('ac-nav-logo') || DEFAULT_LOGO;
-  img.src = saved;
+  const saved = localStorage.getItem('ac-nav-logo');
+  // Keep user-uploaded logos (data URLs). Otherwise force the local shield.
+  const logoSrc = saved && saved.startsWith('data:image/') ? saved : DEFAULT_LOGO;
+  img.src = logoSrc;
   img.style.display = 'block';
   if (placeholder) placeholder.style.display = 'none';
   wrap.classList.add('has-logo');
@@ -535,11 +591,11 @@ function initState() {
       photo: jugador.photo || '',
       edad: jugador.edad || '',
     });
-    // Rival sigue vacío
+    // Rival sigue vacÃ­o
     state.players.push({ id: `rival-${i}`, team: 'rival', jersey: i + 1, x: rivalPos[i][0], y: rivalPos[i][1], name: '', abbr: '' });
   }
-  // Balón en el centro del campo
-  state.ball = { x: 50, y: 50 };
+  // Balón en los pies del portero local
+  placeBallAtMyGoalkeeperFeet();
   // Populate slide 0 with initial positions
   state.slides[0] = {
     players: JSON.parse(JSON.stringify(state.players)),
@@ -548,7 +604,7 @@ function initState() {
   saveHistory();
 }
 
-// ─── SELECTED TOKEN ─────────────────────────
+// â”€â”€â”€ SELECTED TOKEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let selectedTokenId = null;
 
 function selectToken(id) {
@@ -558,7 +614,7 @@ function selectToken(id) {
     if (prev) prev.classList.remove('selected');
   }
   if (selectedTokenId === id) {
-    // Second click on same token → deselect
+    // Second click on same token â†’ deselect
     selectedTokenId = null;
     updateAssignHint();
     return;
@@ -568,7 +624,7 @@ function selectToken(id) {
   if (el) el.classList.add('selected');
   updateAssignHint();
 
-  // En móvil abrir el panel de asignación automáticamente
+  // En mÃ³vil abrir el panel de asignaciÃ³n automÃ¡ticamente
   if (window.innerWidth <= 768) {
     openMobileAssignModal();
   }
@@ -579,15 +635,15 @@ function updateAssignHint() {
   if (!hint) return;
   if (selectedTokenId) {
     const p = state.players.find(pl => pl.id === selectedTokenId);
-    hint.textContent = `Círculo ${p ? p.jersey : ''} seleccionado — ahora elige un jugador`;
+    hint.textContent = `CÃ­rculo ${p ? p.jersey : ''} seleccionado â€” ahora elige un jugador`;
     hint.classList.add('active');
   } else {
-    hint.textContent = 'Pulsa un círculo del campo para asignar jugador';
+    hint.textContent = 'Pulsa un cÃ­rculo del campo para asignar jugador';
     hint.classList.remove('active');
   }
 }
 
-// ─── RENDER PLAYERS ──────────────────────────
+// â”€â”€â”€ RENDER PLAYERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderPlayers() {
   const container = document.getElementById('players-container');
   container.innerHTML = '';
@@ -631,7 +687,7 @@ function renderPlayers() {
   });
 }
 
-// ─── DRAG ────────────────────────────────────
+// â”€â”€â”€ DRAG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 // Sin restricciones de orden: cada jugador puede moverse libremente por el campo.
 function computeYLimits(playerData) {
@@ -705,7 +761,7 @@ function makeDraggable(el, playerData) {
   }, { passive: false });
 }
 
-// ─── FORMATION ───────────────────────────────
+// â”€â”€â”€ FORMATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function applyFormation(team) {
   const sel = document.getElementById(team === 'my' ? 'my-formation' : 'rival-formation');
   const name = sel.value;
@@ -724,7 +780,7 @@ function applyFormation(team) {
   });
 }
 
-// ─── COLORS ──────────────────────────────────
+// â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function setTeamColor(team, color) {
   if (team === 'my') state.myColor    = color;
   else               state.rivalColor = color;
@@ -736,7 +792,7 @@ function setTeamColor(team, color) {
       rgbToHex(sw.style.background) === color.toLowerCase());
   });
 
-  // Re-render tokens for that team (skip GKs – they have fixed colors)
+  // Re-render tokens for that team (skip GKs â€“ they have fixed colors)
   state.players.filter(p => p.team === team).forEach(p => {
     if (p.jersey === 1) return; // GK keeps its fixed color
     const el = document.getElementById('token-' + p.id);
@@ -747,7 +803,7 @@ function setTeamColor(team, color) {
   });
 }
 
-// ─── RIGHT PANEL: PLAYER LIST ─────────────────
+// â”€â”€â”€ RIGHT PANEL: PLAYER LIST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderPlayerList() {
   const lang = LANGS[currentLang];
   const container = document.getElementById('player-list');
@@ -757,7 +813,7 @@ function renderPlayerList() {
   const hint = document.createElement('div');
   hint.id = 'assign-hint';
   hint.className = 'assign-hint';
-  hint.textContent = 'Pulsa un círculo del campo para asignar jugador';
+  hint.textContent = 'Pulsa un cÃ­rculo del campo para asignar jugador';
   container.appendChild(hint);
   updateAssignHint();
 
@@ -802,7 +858,9 @@ function renderPlayerList() {
   });
 }
 
-
+// Assign a squad player to a selected token, or next free slot
+function assignPlayer(player, posKey) {
+  let slot;
 
   if (selectedTokenId) {
     // Assign to the specifically selected token
@@ -850,7 +908,7 @@ function renderPlayerList() {
   updateAssignHint();
   renderPlayerList();
 
-  // En móvil: cerrar la vista plantilla y volver al campo
+  // En mÃ³vil: cerrar la vista plantilla y volver al campo
   if (window.innerWidth <= 768) {
     const pv = document.getElementById('plantilla-view');
     if (pv && !pv.classList.contains('hidden')) {
@@ -859,7 +917,7 @@ function renderPlayerList() {
   }
 }
 
-// ─── PHOTO MODE ──────────────────────────────
+// â”€â”€â”€ PHOTO MODE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function togglePhotoMode() {
   state.photoMode = !state.photoMode;
   const btn = document.getElementById('btn-photo-mode');
@@ -870,9 +928,9 @@ function togglePhotoMode() {
   renderPlayers();
 }
 
-
-// ─── TAB SWITCH ──────────────────────────────
+// â”€â”€â”€ TAB SWITCH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function switchTab(tab) {
+
   document.getElementById('tab-plantilla').classList.toggle('active', tab === 'plantilla');
   document.getElementById('tab-pizarra').classList.toggle('active', tab === 'pizarra');
   document.getElementById('section-pizarra').classList.toggle('hidden', tab !== 'pizarra');
@@ -898,21 +956,18 @@ function switchTab(tab) {
   }
 }
 window.switchTab = switchTab;
-window.state = state;
-window.undo = undo;
-window.togglePhotoMode = togglePhotoMode;
-window.quitarJugadores = quitarJugadores;
-window.exportImage = exportImage;
-window.exportVideo = exportVideo;
 
-// Eliminar cualquier llave de cierre sobrante al final del archivo
+// â”€â”€â”€ PLANTILLA VIEW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function avatarColor(posKey) {
+  return { portero: '#4e342e', defensa: '#1565c0', medio: '#2e7d32', delantero: '#C62828' }[posKey] || '#444';
+}
 
 function renderPlantillaView() {
   console.log('[DEBUG] Ejecutando renderPlantillaView');
   const lang = LANGS[currentLang];
   const container = document.getElementById('plantilla-content');
   if (!container) {
-    alert('No se encontró el contenedor de plantilla (plantilla-content). Revisa el HTML.');
+    alert('No se encontrÃ³ el contenedor de plantilla (plantilla-content). Revisa el HTML.');
     return;
   }
   container.innerHTML = '';
@@ -955,7 +1010,7 @@ function renderPlantillaView() {
           <div class="pc-name">${player.name}</div>
           <div class="pc-meta">
             <span class="pc-pos">${pos.label}</span>
-            <span class="pc-edad">${player.edad} años</span>
+            <span class="pc-edad">${player.edad} aÃ±os</span>
           </div>
         </div>
       `;
@@ -967,7 +1022,7 @@ function renderPlantillaView() {
   });
 }
 
-// ─── PLAYER MODAL ────────────────────────────
+// â”€â”€â”€ PLAYER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let _editId  = null;
 let _editPos = null;
 
@@ -1060,8 +1115,8 @@ function savePlayerModal() {
   }
 }
 
-// ─── TOGGLE VISIBILITY ────────────────────────
-const teamVisible = { my: true, rival: false };
+// â”€â”€â”€ TOGGLE VISIBILITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const teamVisible = { my: true, rival: true };
 
 function toggleTeamVisibility(team) {
   teamVisible[team] = !teamVisible[team];
@@ -1083,7 +1138,7 @@ function toggleTeamVisibility(team) {
   }
 }
 
-// ─── UNDO ────────────────────────────────────
+// â”€â”€â”€ UNDO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function saveHistory() {
   history.push(JSON.stringify(state.players));
   if (history.length > 50) history.shift();
@@ -1097,7 +1152,7 @@ function undo() {
 }
 
 
-// ─── QUITAR JUGADORES ───────────────────────
+// â”€â”€â”€ QUITAR JUGADORES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function quitarJugadores() {
   // Limpiar los nombres y dorsales de los jugadores asignados en la pizarra
   if (state && state.players) {
@@ -1105,26 +1160,24 @@ function quitarJugadores() {
       p.name = '';
       p.abbr = '';
       p.dorsal = '';
-      // Si hay otros campos de texto visibles, también se pueden limpiar aquí
+      // Si hay otros campos de texto visibles, tambiÃ©n se pueden limpiar aquÃ­
     });
     if (state.assignedPlayers) state.assignedPlayers = {};
     renderPlayers();
     renderPlayerList();
   }
 }
-// ─── RESET ───────────────────────────────────
+// â”€â”€â”€ RESET â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function resetBoard() {
   state.assignedPlayers = {};
   history = [];
   initState();
-  // Siempre colocar el balón en el centro
-  state.ball = { x: 50, y: 50 };
   renderPlayers();
   renderPlayerList();
   applyBallPosition();
 }
 
-// ─── SLIDES ──────────────────────────────────
+// â”€â”€â”€ SLIDES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let animInterval = null; // reference to current animation interval
 
 function renderSlideChips() {
@@ -1214,17 +1267,17 @@ function goToSlide(idx, animate) {
   const sd = state.slides[idx];
   if (sd) {
     state.players = JSON.parse(JSON.stringify(sd.players || sd));
-    // Siempre colocar el balón en el centro
-    state.ball = { x: 50, y: 50 };
+    if (sd.ball) state.ball = { ...sd.ball };
+    else placeBallAtMyGoalkeeperFeet();
     applyBallPosition();
     renderPlayers();
   }
 }
 
 function playAnimation() {
-  // Si ya está reproduciendo, detener
+  // Si ya estÃ¡ reproduciendo, detener
   if (animInterval) {
-    clearInterval(animInterval);
+    cancelAnimationFrame(animInterval);
     animInterval = null;
     const btn = document.getElementById('btn-play');
     if (btn) { btn.innerHTML = '&#9654;'; btn.title = 'Reproducir'; btn.style.background = '#2e7d32'; }
@@ -1243,47 +1296,63 @@ function playAnimation() {
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
-  // Ir al primer slide instantáneamente
+  // Ir al primer slide instantÃ¡neamente
   goToSlide(0, false);
   let i = 1;
 
-  // Nueva animación progresiva
+  // Nueva animaciÃ³n progresiva
   function interpolate(a, b, t) {
     return a + (b - a) * t;
   }
 
-  function animateStep(fromSlide, toSlide, duration, onComplete) {
+  function dist(a, b) {
+    const dx = (b.x - a.x);
+    const dy = (b.y - a.y);
+    return Math.hypot(dx, dy);
+  }
+
+  function animateStep(fromSlide, toSlide, onComplete) {
     const start = performance.now();
-    // Copias profundas para evitar mutaciones
     const fromPlayers = JSON.parse(JSON.stringify(fromSlide.players));
     const toPlayers = JSON.parse(JSON.stringify(toSlide.players));
     const fromBall = { ...fromSlide.ball };
     const toBall = { ...toSlide.ball };
+    // Referencia: 20 unidades del campo por el tiempo seleccionado.
+    const unitsPerMs = 20 / speed;
 
     function step(now) {
-      let t = (now - start) / duration;
-      if (t > 1) t = 1;
-      // Interpolar posiciones de jugadores
+      const elapsed = now - start;
+      let allDone = true;
+
       const currPlayers = fromPlayers.map((p, idx) => {
         const dest = toPlayers[idx];
+        const d = dist(p, dest);
+        const t = d === 0 ? 1 : Math.min(1, (elapsed * unitsPerMs) / d);
+        if (t < 1) allDone = false;
         return {
           ...p,
           x: interpolate(p.x, dest.x, t),
           y: interpolate(p.y, dest.y, t)
         };
       });
-      // Interpolar balón
+
+      const ballDist = dist(fromBall, toBall);
+      const ballT = ballDist === 0 ? 1 : Math.min(1, (elapsed * unitsPerMs) / ballDist);
+      if (ballT < 1) allDone = false;
       const currBall = {
-        x: interpolate(fromBall.x, toBall.x, t),
-        y: interpolate(fromBall.y, toBall.y, t)
+        x: interpolate(fromBall.x, toBall.x, ballT),
+        y: interpolate(fromBall.y, toBall.y, ballT)
       };
+
       updateTokenPositions(currPlayers, currBall);
-      if (t < 1) {
+      if (!allDone) {
         animInterval = requestAnimationFrame(step);
       } else {
+        animInterval = null;
         if (onComplete) onComplete();
       }
     }
+
     animInterval = requestAnimationFrame(step);
   }
 
@@ -1295,7 +1364,7 @@ function playAnimation() {
     }
     const fromSlide = state.slides[i - 1];
     const toSlide = state.slides[i];
-    animateStep(fromSlide, toSlide, speed, () => {
+    animateStep(fromSlide, toSlide, () => {
       i++;
       playNext();
     });
@@ -1304,7 +1373,7 @@ function playAnimation() {
 }
 
 
-// ─── EXPORT IMAGE ────────────────────────────
+// â”€â”€â”€ EXPORT IMAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function exportImage() {
   html2canvasFallback();
 }
@@ -1319,10 +1388,10 @@ function html2canvasFallback() {
   link.click();
 }
 
-// ─── EXPORT VIDEO ────────────────────────────
+// â”€â”€â”€ EXPORT VIDEO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function exportVideo() {
   const pitch = document.getElementById('pitch');
-  if (!pitch) return alert('No se encontró el campo.');
+  if (!pitch) return alert('No se encontrÃ³ el campo.');
   const total = state.slides.length;
   if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
 
@@ -1330,10 +1399,10 @@ async function exportVideo() {
   const isMediaRecorderSupported = typeof window.MediaRecorder !== 'undefined';
   const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream;
   if (!isMediaRecorderSupported || !isCaptureStreamSupported) {
-    if (confirm('Tu navegador no soporta la grabación de video. ¿Quieres descargar los fotogramas como imágenes?')) {
+    if (confirm('Tu navegador no soporta la grabaciÃ³n de video. Â¿Quieres descargar los fotogramas como imÃ¡genes?')) {
       exportFramesAsImages();
     } else {
-      alert('La exportación de video solo funciona en Chrome o Edge.');
+      alert('La exportaciÃ³n de video solo funciona en Chrome o Edge.');
     }
     return;
   }
@@ -1386,12 +1455,12 @@ async function exportVideo() {
   state.ball = prevBall;
 }
 
-// Alternativa: exportar los fotogramas como imágenes
+// Alternativa: exportar los fotogramas como imÃ¡genes
 function exportFramesAsImages() {
   const pitch = document.getElementById('pitch');
-  if (!pitch) return alert('No se encontró el campo.');
+  if (!pitch) return alert('No se encontrÃ³ el campo.');
   const total = state.slides.length;
-  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar imágenes.');
+  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar imÃ¡genes.');
   // Guardar estado actual
   const prevSlide = state.currentSlide;
   const prevPlayers = JSON.parse(JSON.stringify(state.players));
@@ -1411,7 +1480,7 @@ function exportFramesAsImages() {
     goToSlide(prevSlide, false);
     state.players = prevPlayers;
     state.ball = prevBall;
-    // Descargar todas las imágenes
+    // Descargar todas las imÃ¡genes
     images.forEach((img, idx) => {
       const a = document.createElement('a');
       a.href = img;
@@ -1420,12 +1489,12 @@ function exportFramesAsImages() {
       a.click();
       setTimeout(() => document.body.removeChild(a), 100);
     });
-    alert('Se han descargado los fotogramas como imágenes PNG.');
+    alert('Se han descargado los fotogramas como imÃ¡genes PNG.');
   })();
 }
 
 function canvasSnapshot(element) {
-  // Simple SVG → canvas fallback
+  // Simple SVG â†’ canvas fallback
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${element.offsetWidth}' height='${element.offsetHeight}'>
     <foreignObject width='100%' height='100%'>
       <div xmlns='http://www.w3.org/1999/xhtml' style='width:${element.offsetWidth}px;height:${element.offsetHeight}px'>
@@ -1440,7 +1509,7 @@ function canvasSnapshot(element) {
   return c.toDataURL();
 }
 
-// ─── SHARE ───────────────────────────────────
+// â”€â”€â”€ SHARE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function share() {
   const data = {
     myColor:    state.myColor,
@@ -1453,9 +1522,9 @@ function share() {
   const encoded = btoa(encodeURIComponent(json));
   const url = location.href.split('#')[0] + '#' + encoded;
   navigator.clipboard.writeText(url).then(() => {
-    alert(currentLang === 'es' ? '¡Enlace copiado al portapapeles!' :
+    alert(currentLang === 'es' ? 'Â¡Enlace copiado al portapapeles!' :
           currentLang === 'eu' ? 'Esteka arbelean kopiatua!' :
-          currentLang === 'fr' ? 'Lien copié dans le presse-papier !' :
+          currentLang === 'fr' ? 'Lien copiÃ© dans le presse-papier !' :
           'Link copied to clipboard!');
   }).catch(() => {
     prompt('Copia este enlace:', url);
@@ -1485,12 +1554,25 @@ function loadFromHash() {
   } catch(e) { /* ignore bad hash */ }
 }
 
-// ─── BALL DRAG ───────────────────────────────
+// â”€â”€â”€ BALL DRAG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function applyBallPosition() {
   const ball = document.getElementById('ball-token');
   if (!ball) return;
-  ball.style.left = '50%';
-  ball.style.top  = '50%';
+  ball.style.left = state.ball.x + '%';
+  ball.style.top  = state.ball.y + '%';
+}
+
+function placeBallAtMyGoalkeeperFeet() {
+  const myGK = state.players.find(p => p.team === 'my' && p.jersey === 1) || state.players.find(p => p.team === 'my');
+  if (!myGK) {
+    state.ball = { x: 50, y: 50 };
+    return;
+  }
+  // Mi equipo ataca hacia arriba: balón ligeramente por delante del portero.
+  state.ball = {
+    x: Math.min(Math.max(myGK.x, 1), 99),
+    y: Math.min(Math.max(myGK.y - 7, 1), 99),
+  };
 }
 
 function setupBall() {
@@ -1556,7 +1638,7 @@ function setupBall() {
   }, { passive: false });
 }
 
-// ─── CANVAS DRAWING ──────────────────────────
+// â”€â”€â”€ CANVAS DRAWING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function setupCanvas() {
   const pitch  = document.getElementById('pitch');
   const canvas = document.getElementById('draw-canvas');
@@ -1607,7 +1689,7 @@ function setupCanvas() {
 // Run on load
 window.addEventListener('load', loadFromHash);
 
-// ── MOBILE ASSIGN MODAL ─────────────────────────────────────
+// â”€â”€ MOBILE ASSIGN MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let mobileAssignTab = 'portero';
 
 function setMobileAssignTab(pos) {
@@ -1623,11 +1705,11 @@ function openMobileAssignModal() {
   const title = document.getElementById('mobile-assign-title');
   if (title) {
     title.textContent = p
-      ? `Asignar al círculo ${p.jersey}`
+      ? `Asignar al cÃ­rculo ${p.jersey}`
       : 'Selecciona un jugador';
   }
 
-  // Preseleccionar tab según número de camiseta del círculo
+  // Preseleccionar tab segÃºn nÃºmero de camiseta del cÃ­rculo
   if (p) {
     if (p.jersey === 1)          mobileAssignTab = 'portero';
     else if (p.jersey <= 5)      mobileAssignTab = 'defensa';
@@ -1651,7 +1733,7 @@ function closeMobileAssignModal() {
   const overlay = document.getElementById('mobile-assign-overlay');
   if (!overlay) return;
   overlay.classList.remove('active');
-  // Esperar a que termine la animación antes de ocultar
+  // Esperar a que termine la animaciÃ³n antes de ocultar
   overlay.addEventListener('transitionend', () => overlay.classList.add('hidden'), { once: true });
   // Fallback por si no hay transitionend
   setTimeout(() => overlay.classList.add('hidden'), 320);
@@ -1701,7 +1783,7 @@ function renderMobileAssignList() {
       if (isAssigned) {
         const chk = document.createElement('div');
         chk.className = 'mas-check';
-        chk.textContent = '✓';
+        chk.textContent = 'âœ“';
         photoWrap.appendChild(chk);
       }
       const name = document.createElement('div');
@@ -1721,17 +1803,6 @@ function renderMobileAssignList() {
     container.appendChild(group);
   });
 }
-
-
-// --- exportVideo como función global ---
-function exportVideo() {
-  // ...existing code...
-  }
-
-  // Exponer la función globalmente después de su definición
-  window.switchTab = switchTab;
-}
-
 // --- TOGGLE MOBILE PLANTILLA ---
 function toggleMobilePlantilla() {
   const pv = document.getElementById('plantilla-view');
@@ -1745,6 +1816,45 @@ function toggleMobilePlantilla() {
   } else {
     pv.classList.add('hidden');
     if (centerArea) centerArea.classList.remove('hidden');
+  }
+}
+
+function toggleMobilePanel(side) {
+  const left = document.querySelector('.sidebar-left');
+  const right = document.querySelector('.sidebar-right');
+  const overlay = document.getElementById('mobile-overlay');
+  const btnLeft = document.getElementById('mbn-left');
+  const btnRight = document.getElementById('mbn-right');
+  const btnPitch = document.getElementById('mbn-pitch');
+  const btnPlantillas = document.getElementById('mbn-plantillas');
+
+  if (!left || !right) return;
+
+  const isLeft = side === 'left';
+  const target = isLeft ? left : right;
+  const other = isLeft ? right : left;
+  const wasOpen = target.classList.contains('mobile-open');
+
+  left.classList.remove('mobile-open');
+  right.classList.remove('mobile-open');
+
+  if (!wasOpen) target.classList.add('mobile-open');
+
+  const anyOpen = left.classList.contains('mobile-open') || right.classList.contains('mobile-open');
+  if (overlay) overlay.classList.toggle('active', anyOpen);
+
+  if (btnLeft) btnLeft.classList.toggle('active', left.classList.contains('mobile-open'));
+  if (btnRight) btnRight.classList.toggle('active', right.classList.contains('mobile-open'));
+  if (btnPitch) btnPitch.classList.toggle('active', !anyOpen);
+  if (btnPlantillas) btnPlantillas.classList.remove('active');
+}
+
+function toggleFullscreen() {
+  const d = document;
+  if (!d.fullscreenElement) {
+    d.documentElement.requestFullscreen?.();
+  } else {
+    d.exitFullscreen?.();
   }
 }
 
@@ -1774,7 +1884,7 @@ window.addEventListener('resize', () => {
   if (window.innerWidth > 768) closeMobilePanels();
 });
 
-// ── SWIPE-TO-CLOSE DRAWERS ───────────────────────────────────
+// â”€â”€ SWIPE-TO-CLOSE DRAWERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 (function initDrawerSwipe() {
   const drawers = [
     document.querySelector('.sidebar-left'),
@@ -1808,17 +1918,37 @@ window.addEventListener('resize', () => {
   });
 });
 
-// ── ORIENTACIÓN: reajustar paneles al girar ──────────────────
+// â”€â”€ ORIENTACIÃ“N: reajustar paneles al girar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
 
-// ─── PANEL MÓVIL ──────────────────────────────
-function toggleMobilePanel() {
-  // Aquí puedes poner la lógica real si la necesitas
-  // Por ahora solo alterna una clase en el body para ejemplo
-  document.body.classList.toggle('mobile-panel-open');
-}
-window.toggleMobilePanel = toggleMobilePanel;
+Object.assign(window, {
+  setLang,
+  toggleFullscreen,
+  toggleTheme,
+  switchTab,
+  toggleTeamVisibility,
+  exportImage,
+  exportVideo,
+  undo,
+  share,
+  togglePhotoMode,
+  resetBoard,
+  quitarJugadores,
+  playAnimation,
+  goToSlide,
+  addSlide,
+  toggleMobilePanel,
+  closeMobilePanels,
+  toggleMobilePlantilla,
+  closeMobileAssignModal,
+  setMobileAssignTab,
+  handleModalOverlayClick,
+  closePlayerModal,
+  setModalPos,
+  previewModalPhoto,
+  savePlayerModal,
+  loadNavLogo,
+});
 
-}
