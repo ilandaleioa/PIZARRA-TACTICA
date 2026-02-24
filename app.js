@@ -1493,12 +1493,28 @@ async function exportVideo() {
   canvas.height = height;
   const ctx = canvas.getContext('2d');
 
-  const preferredTypes = [
+  const mp4Types = [
+    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=h264,aac',
+    'video/mp4'
+  ];
+  const webmTypes = [
     'video/webm;codecs=vp9',
     'video/webm;codecs=vp8',
     'video/webm'
   ];
-  const mimeType = preferredTypes.find(t => MediaRecorder.isTypeSupported(t)) || '';
+  const mp4Type = mp4Types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+  let mimeType = mp4Type;
+  if (!mimeType) {
+    const fallbackWebm = webmTypes.find(t => MediaRecorder.isTypeSupported(t)) || '';
+    if (!fallbackWebm) {
+      alert('Tu navegador no soporta exportacion de video MP4/WebM con MediaRecorder.');
+      return;
+    }
+    const allowWebm = confirm('Este navegador no permite exportar en MP4. ¿Quieres exportar en WEBM?');
+    if (!allowWebm) return;
+    mimeType = fallbackWebm;
+  }
 
   // Capturar el stream del canvas
   const stream = canvas.captureStream(30); // 30 fps
