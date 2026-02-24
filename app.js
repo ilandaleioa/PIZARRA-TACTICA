@@ -832,9 +832,8 @@ function togglePhotoMode() {
   renderPlayers();
 }
 
+
 // ─── TAB SWITCH ──────────────────────────────
-
-
 function switchTab(tab) {
   document.getElementById('tab-plantilla').classList.toggle('active', tab === 'plantilla');
   document.getElementById('tab-pizarra').classList.toggle('active', tab === 'pizarra');
@@ -861,8 +860,8 @@ function switchTab(tab) {
   }
 }
 window.switchTab = switchTab;
-// ...resto del archivo...
-}
+
+// Eliminar cualquier llave de cierre sobrante al final del archivo
 
 function renderPlantillaView() {
   console.log('[DEBUG] Ejecutando renderPlantillaView');
