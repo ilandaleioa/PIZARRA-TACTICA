@@ -1787,4 +1787,12 @@ window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
 
+// ─── PANEL MÓVIL ──────────────────────────────
+function toggleMobilePanel() {
+  // Aquí puedes poner la lógica real si la necesitas
+  // Por ahora solo alterna una clase en el body para ejemplo
+  document.body.classList.toggle('mobile-panel-open');
+}
+window.toggleMobilePanel = toggleMobilePanel;
+
 }
