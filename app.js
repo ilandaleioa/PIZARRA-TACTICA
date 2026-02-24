@@ -254,6 +254,35 @@ const SQUAD = {
     { id: 'HI', name: 'Hierro',       abbr: 'HIE', dorsal: 31, edad: 21, photo: CDN+'asier-hierro-campo.png' },
   ],
 };
+  portero: [
+    { id: 'US', name: 'Unai Simón',  abbr: 'U.S', dorsal: 1,  edad: 27, photo: CDN+'unai-simon-mendibil_L.png' },
+    { id: 'PA', name: 'Padilla',     abbr: 'PAD', dorsal: 27, edad: 23, photo: CDN+'alex-padilla-perez_L.png' },
+  ],
+  defensa: [
+    { id: 'VI', name: 'Vivian',      abbr: 'VIV', dorsal: 3,  edad: 25, photo: CDN+'dani-vivian-moreno_L.png' },
+    { id: 'YE', name: 'Yeray',       abbr: 'YER', dorsal: 5,  edad: 27, photo: CDN+'yeray-alvarez-lopez_L.png' },
+    { id: 'LE', name: 'Lekue',       abbr: 'LEK', dorsal: 15, edad: 29, photo: CDN+'inigo-lekue-martinez_L.png' },
+    { id: 'DE', name: 'De Marcos',   abbr: 'DEM', dorsal: 18, edad: 34, photo: CDN+'oscar-de-marcos-arana_L.png' },
+    { id: 'PR', name: 'Paredes',     abbr: 'PAR', dorsal: 4,  edad: 23, photo: CDN+'aitor-paredes-casamar_L.png' },
+    { id: 'IN', name: 'Íñigo Ruiz',  abbr: 'IRG', dorsal: 24, edad: 28, photo: CDN+'inigo-ruiz-de-galarreta-ezama_L.png' },
+  ],
+  medio: [
+    { id: 'VE', name: 'Vesga',       abbr: 'VES', dorsal: 6,  edad: 30, photo: CDN+'mikel-vesga-arruti_L.png' },
+    { id: 'DA', name: 'Dani García', abbr: 'DGA', dorsal: 14, edad: 33, photo: CDN+'dani-garcia-carrillo_L.png' },
+    { id: 'ZA', name: 'Zarraga',     abbr: 'ZAR', dorsal: 19, edad: 24, photo: CDN+'oier-zarraga-ezkurra_L.png' },
+    { id: 'BE', name: 'Berenguer',   abbr: 'BER', dorsal: 7,  edad: 28, photo: CDN+'alex-berenguer-remiro_L.png' },
+    { id: 'MI', name: 'Muniain',     abbr: 'MUN', dorsal: 10, edad: 32, photo: CDN+'iker-muniain-goñi_L.png' },
+    { id: 'SI', name: 'Sancet',      abbr: 'SAN', dorsal: 8,  edad: 25, photo: CDN+'oihan-sancet-tirapu_L.png' },
+  ],
+  delantero: [
+    { id: 'IW', name: 'I. Williams',  abbr: 'I.W', dorsal: 9,  edad: 31, photo: CDN+'inaki-williams-arthuer_L.png' },
+    { id: 'NW', name: 'Nico Williams',abbr: 'N.W', dorsal: 10, edad: 23, photo: CDN+'nico-williams-arthuer_L.png' },
+    { id: 'GU', name: 'Guruzeta',     abbr: 'GUR', dorsal: 11, edad: 28, photo: CDN+'gorka-guruzeta-rodriguez_L.png' },
+    { id: 'RA', name: 'Raúl García',  abbr: 'RAU', dorsal: 22, edad: 36, photo: CDN+'raul-garcia-escudero_L.png' },
+    { id: 'IZ', name: 'Izeta',        abbr: 'IZE', dorsal: 25, edad: 21, photo: CDN+'urko-iruretagoiena-lertxundi_L.png' },
+    { id: 'HI', name: 'Hierro',       abbr: 'HIE', dorsal: 31, edad: 21, photo: CDN+'asier-hierro-campo.png' },
+  ],
+};
 
 // ─── FORMATIONS ──────────────────────────────
 // Positions as % [left, top] relative to the pitch.
