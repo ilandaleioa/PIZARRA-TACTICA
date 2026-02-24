@@ -26,7 +26,7 @@ function renderPlantillaView() {
   const lang = LANGS[currentLang];
   const container = document.getElementById('plantilla-content');
   if (!container) {
-    alert('No se encontrÃ³ el contenedor de plantilla (plantilla-content). Revisa el HTML.');
+    alert('No se encontro el contenedor de plantilla (plantilla-content). Revisa el HTML.');
     return;
   }
   container.innerHTML = '';
@@ -96,7 +96,7 @@ function isLight(color) {
 
 async function exportVideo() {
   const pitch = document.getElementById('pitch');
-  if (!pitch) return alert('No se encontrÃ³ el campo.');
+  if (!pitch) return alert('No se encontro el campo.');
   const total = state.slides.length;
   if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
 
@@ -104,10 +104,10 @@ async function exportVideo() {
   const isMediaRecorderSupported = typeof window.MediaRecorder !== 'undefined';
   const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream;
   if (!isMediaRecorderSupported || !isCaptureStreamSupported) {
-    if (confirm('Tu navegador no soporta la grabaciÃ³n de video. Â¿Quieres descargar los fotogramas como imÃ¡genes?')) {
+    if (confirm('Tu navegador no soporta la grabacion de video. ¿Quieres descargar los fotogramas como imagenes?')) {
       exportFramesAsImages();
     } else {
-      alert('La exportaciÃ³n de video solo funciona en Chrome o Edge.');
+      alert('La exportacion de video solo funciona en Chrome o Edge.');
     }
     return;
   }
@@ -127,9 +127,9 @@ async function exportVideo() {
   recorder.onstop = () => {
     const blob = new Blob(chunks, { type: 'video/webm' });
     const url = URL.createObjectURL(blob);
-    // Abrir el video en una nueva pestaÃ±a
+    // Abrir el video en una nueva pestana
     window.open(url, '_blank');
-    // TambiÃ©n crear un enlace de descarga en la nueva pestaÃ±a
+    // Tambien crear un enlace de descarga en la nueva pestana
     setTimeout(() => URL.revokeObjectURL(url), 60000);
   };
 
@@ -226,15 +226,15 @@ async function renderSlide(index) {
   } else if (typeof renderSlideChips === 'function') {
     renderSlideChips();
   }
-  // Si tienes otra funciÃ³n para refrescar la vista, agrÃ©gala aquÃ­
-  // Puedes aÃ±adir un pequeÃ±o retardo si la actualizaciÃ³n es asÃ­ncrona
+  // Si tienes otra funcion para refrescar la vista, agregala aqui
+  // Puedes anadir un pequeno retardo si la actualizacion es asincrona
   await new Promise(res => setTimeout(res, 50));
 }
 
 
 let currentLang = 'es';
 
-// â”€â”€â”€ THEME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── THEME ───────────────────────────────────
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light');
   const btn = document.getElementById('theme-btn');
@@ -264,11 +264,11 @@ function setLang(lang) {
   if (!document.getElementById('plantilla-view').classList.contains('hidden')) renderPlantillaView();
 }
 
-// â”€â”€â”€ SQUAD DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── SQUAD DATA ──────────────────────────────
 const CDN = 'https://cdn.athletic-club.eus/imagenes/player_images/medium/';
 const SQUAD = {
   portero: [
-    { id: 'US', name: 'Unai SimÃ³n',  abbr: 'U.S', dorsal: 1,  edad: 27, photo: CDN+'unai-simon-mendibil_L.png' },
+    { id: 'US', name: 'Unai Simon',  abbr: 'U.S', dorsal: 1,  edad: 27, photo: CDN+'unai-simon-mendibil_L.png' },
     { id: 'PA', name: 'Padilla',     abbr: 'PAD', dorsal: 27, edad: 23, photo: CDN+'alex-padilla-perez_L.png' },
   ],
   defensa: [
@@ -289,10 +289,10 @@ const SQUAD = {
     { id: 'SA', name: 'O. Sancet',       abbr: 'SAN', dorsal: 8,  edad: 23, photo: CDN+'oihan-sancet-tirapu_L.png' },
     { id: 'RG', name: 'R. de Galarreta', abbr: 'GAL', dorsal: 16, edad: 31, photo: CDN+'inigo-ruiz-de-galarreta-etxeberria_L.png' },
     { id: 'JZ', name: 'Jauregizar',      abbr: 'JAU', dorsal: 18, edad: 24, photo: CDN+'mikel-jauregizar-alboniga_L.png' },
-    { id: 'UG', name: 'Unai GÃ³mez',      abbr: 'U.G', dorsal: 20, edad: 26, photo: CDN+'unai-gomez-etxebarria_L.png' },
+    { id: 'UG', name: 'Unai Gomez',      abbr: 'U.G', dorsal: 20, edad: 26, photo: CDN+'unai-gomez-etxebarria_L.png' },
     { id: 'PD', name: 'Prados',          abbr: 'PRA', dorsal: 24, edad: 24, photo: CDN+'benat-prados-diaz_L.png' },
     { id: 'RE', name: 'Rego',            abbr: 'REG', dorsal: 30, edad: 22, photo: CDN+'alejandro-rego-mora_L.png' },
-    { id: 'IS', name: 'Ibon SÃ¡nchez',    abbr: 'IBN', dorsal: 35, edad: 21, photo: CDN+'ibon-sanchez-ocen.png' },
+    { id: 'IS', name: 'Ibon Sanchez',    abbr: 'IBN', dorsal: 35, edad: 21, photo: CDN+'ibon-sanchez-ocen.png' },
     { id: 'SE', name: 'Selton',          abbr: 'SEL', dorsal: 44, edad: 22, photo: CDN+'selton-sued-sanchez-camilo.png' },
   ],
   delantero: [
@@ -309,14 +309,14 @@ const SQUAD = {
   ],
 };
 
-// â”€â”€â”€ FORMATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── FORMATIONS ──────────────────────────────
 // Positions as % [left, top] relative to the pitch.
-// "My team" plays bottom half (top ~50%â€“95%), rival top half (~5%â€“50%).
+// "My team" plays bottom half (top ~50%–95%), rival top half (~5%–50%).
 const FORMATIONS = {
-  // Ãrea grande superior: 0â€“20% | Ãrea grande inferior: 80â€“100%
-  // mi equipo: GK=93%, DEF=80%, MED=57%, FWD=34%  â†’ step ~23% igual entre lÃ­neas
-  // rival:     GK=7%,  DEF=20%, MED=43%, FWD=66%  â†’ step ~23% igual entre lÃ­neas
-  // Laterales/extremos adelantados 3% respecto a sus compaÃ±eros de lÃ­nea
+  // Area grande superior: 0–20% | Area grande inferior: 80–100%
+  // mi equipo: GK=93%, DEF=80%, MED=57%, FWD=34%  → step ~23% igual entre lineas
+  // rival:     GK=7%,  DEF=20%, MED=43%, FWD=66%  → step ~23% igual entre lineas
+  // Laterales/extremos adelantados 3% respecto a sus companeros de linea
   '1-4-4-2': {
     my: [
       [50,  93],  // 1 GK
@@ -352,9 +352,9 @@ const FORMATIONS = {
       [8,   77],  // 3 Lat Izq  (adelantado)
       [36,  80],  // 4 Central Izq
       [60,  80],  // 5 Central Der
-      [50,  62],  // 6 Medio pivote (mÃ¡s profundo)
-      [68,  49],  // 7 Interior Der (mÃ¡s avanzado)
-      [27,  49],  // 8 Interior Izq (mÃ¡s avanzado)
+      [50,  62],  // 6 Medio pivote (mas profundo)
+      [68,  49],  // 7 Interior Der (mas avanzado)
+      [27,  49],  // 8 Interior Izq (mas avanzado)
       [83,  34],  // 9 Extremo Der
       [50,  34],  // 10 Delantero Centro
       [8,   34],  // 11 Extremo Izq
@@ -365,9 +365,9 @@ const FORMATIONS = {
       [8,   23],  // 3 Lat Izq  (adelantado)
       [36,  20],  // 4 Central Izq
       [60,  20],  // 5 Central Der
-      [50,  38],  // 6 Medio pivote (mÃ¡s profundo)
-      [68,  51],  // 7 Interior Der (mÃ¡s avanzado)
-      [27,  51],  // 8 Interior Izq (mÃ¡s avanzado)
+      [50,  38],  // 6 Medio pivote (mas profundo)
+      [68,  51],  // 7 Interior Der (mas avanzado)
+      [27,  51],  // 8 Interior Izq (mas avanzado)
       [83,  66],  // 9 Extremo Der
       [50,  66],  // 10 Delantero Centro
       [8,   66],  // 11 Extremo Izq
@@ -448,9 +448,9 @@ const FORMATIONS = {
 };
 
 // Ajuste global solicitado:
-// - Los 10 jugadores de campo más adelantados en todos los sistemas.
-// - Centrales mantienen su línea.
-// - Laterales y extremos (zonas de banda) un poco más adelantados.
+// - Los 10 jugadores de campo mas adelantados en todos los sistemas.
+// - Centrales mantienen su linea.
+// - Laterales y extremos (zonas de banda) un poco mas adelantados.
 (function tuneFormations() {
   const BASE_ADVANCE = 3;
   const WING_EXTRA = 2;
@@ -470,7 +470,7 @@ const FORMATIONS = {
   });
 })();
 
-// â”€â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── STATE ───────────────────────────────────
 const GK_COLOR      = '#E91E8C';   // portero mi equipo rosa
 const RIVAL_GK_COLOR = '#FDD835';  // portero rival siempre amarillo
 const MY_COLOR    = '#C62828';   // mi equipo rojo por defecto
@@ -485,13 +485,13 @@ let state = {
   currentSlide: 0,
   players: [],      // { id, team, jersey, x, y, name, abbr, photo }
   assignedPlayers: {},  // jerseyKey -> squad player id
-    ball: { x: 50, y: 50 },     // balÃ³n (centro)
+    ball: { x: 50, y: 50 },     // balon (centro)
   photoMode: false, // mostrar fotos de jugadores en los tokens
 };
 
 let history = [];   // undo stack
 
-// â”€â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── INIT ────────────────────────────────────
 // Player photos (base64) stored per player id
 const playerPhotos = {};
 
@@ -516,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSlideChips();
   setupCanvas();
   setupBall();
-  // Si por algÃºn motivo los jugadores no se ven, forzar renderizado tras breve retardo
+  // Si por algun motivo los jugadores no se ven, forzar renderizado tras breve retardo
   setTimeout(() => {
     if (!document.querySelector('#players-container .player-token')) {
       initState();
@@ -591,10 +591,10 @@ function initState() {
       photo: jugador.photo || '',
       edad: jugador.edad || '',
     });
-    // Rival sigue vacÃ­o
+    // Rival sigue vacio
     state.players.push({ id: `rival-${i}`, team: 'rival', jersey: i + 1, x: rivalPos[i][0], y: rivalPos[i][1], name: '', abbr: '' });
   }
-  // Balón en los pies del portero local
+  // Balon en los pies del portero local
   placeBallAtMyGoalkeeperFeet();
   // Populate slide 0 with initial positions
   state.slides[0] = {
@@ -604,7 +604,7 @@ function initState() {
   saveHistory();
 }
 
-// â”€â”€â”€ SELECTED TOKEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── SELECTED TOKEN ─────────────────────────
 let selectedTokenId = null;
 
 function selectToken(id) {
@@ -614,7 +614,7 @@ function selectToken(id) {
     if (prev) prev.classList.remove('selected');
   }
   if (selectedTokenId === id) {
-    // Second click on same token â†’ deselect
+    // Second click on same token → deselect
     selectedTokenId = null;
     updateAssignHint();
     return;
@@ -624,7 +624,7 @@ function selectToken(id) {
   if (el) el.classList.add('selected');
   updateAssignHint();
 
-  // En mÃ³vil abrir el panel de asignaciÃ³n automÃ¡ticamente
+  // En movil abrir el panel de asignacion automaticamente
   if (window.innerWidth <= 768) {
     openMobileAssignModal();
   }
@@ -635,15 +635,15 @@ function updateAssignHint() {
   if (!hint) return;
   if (selectedTokenId) {
     const p = state.players.find(pl => pl.id === selectedTokenId);
-    hint.textContent = `CÃ­rculo ${p ? p.jersey : ''} seleccionado â€” ahora elige un jugador`;
+    hint.textContent = `Circulo ${p ? p.jersey : ''} seleccionado — ahora elige un jugador`;
     hint.classList.add('active');
   } else {
-    hint.textContent = 'Pulsa un cÃ­rculo del campo para asignar jugador';
+    hint.textContent = 'Pulsa un circulo del campo para asignar jugador';
     hint.classList.remove('active');
   }
 }
 
-// â”€â”€â”€ RENDER PLAYERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── RENDER PLAYERS ──────────────────────────
 function renderPlayers() {
   const container = document.getElementById('players-container');
   container.innerHTML = '';
@@ -687,7 +687,7 @@ function renderPlayers() {
   });
 }
 
-// â”€â”€â”€ DRAG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── DRAG ────────────────────────────────────
 
 // Sin restricciones de orden: cada jugador puede moverse libremente por el campo.
 function computeYLimits(playerData) {
@@ -761,7 +761,7 @@ function makeDraggable(el, playerData) {
   }, { passive: false });
 }
 
-// â”€â”€â”€ FORMATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── FORMATION ───────────────────────────────
 function applyFormation(team) {
   const sel = document.getElementById(team === 'my' ? 'my-formation' : 'rival-formation');
   const name = sel.value;
@@ -780,7 +780,7 @@ function applyFormation(team) {
   });
 }
 
-// â”€â”€â”€ COLORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── COLORS ──────────────────────────────────
 function setTeamColor(team, color) {
   if (team === 'my') state.myColor    = color;
   else               state.rivalColor = color;
@@ -792,7 +792,7 @@ function setTeamColor(team, color) {
       rgbToHex(sw.style.background) === color.toLowerCase());
   });
 
-  // Re-render tokens for that team (skip GKs â€“ they have fixed colors)
+  // Re-render tokens for that team (skip GKs – they have fixed colors)
   state.players.filter(p => p.team === team).forEach(p => {
     if (p.jersey === 1) return; // GK keeps its fixed color
     const el = document.getElementById('token-' + p.id);
@@ -803,7 +803,7 @@ function setTeamColor(team, color) {
   });
 }
 
-// â”€â”€â”€ RIGHT PANEL: PLAYER LIST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── RIGHT PANEL: PLAYER LIST ─────────────────
 function renderPlayerList() {
   const lang = LANGS[currentLang];
   const container = document.getElementById('player-list');
@@ -813,7 +813,7 @@ function renderPlayerList() {
   const hint = document.createElement('div');
   hint.id = 'assign-hint';
   hint.className = 'assign-hint';
-  hint.textContent = 'Pulsa un cÃ­rculo del campo para asignar jugador';
+  hint.textContent = 'Pulsa un circulo del campo para asignar jugador';
   container.appendChild(hint);
   updateAssignHint();
 
@@ -908,7 +908,7 @@ function assignPlayer(player, posKey) {
   updateAssignHint();
   renderPlayerList();
 
-  // En mÃ³vil: cerrar la vista plantilla y volver al campo
+  // En movil: cerrar la vista plantilla y volver al campo
   if (window.innerWidth <= 768) {
     const pv = document.getElementById('plantilla-view');
     if (pv && !pv.classList.contains('hidden')) {
@@ -917,7 +917,7 @@ function assignPlayer(player, posKey) {
   }
 }
 
-// â”€â”€â”€ PHOTO MODE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PHOTO MODE ──────────────────────────────
 function togglePhotoMode() {
   state.photoMode = !state.photoMode;
   const btn = document.getElementById('btn-photo-mode');
@@ -928,7 +928,7 @@ function togglePhotoMode() {
   renderPlayers();
 }
 
-// â”€â”€â”€ TAB SWITCH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── TAB SWITCH ──────────────────────────────
 function switchTab(tab) {
 
   document.getElementById('tab-plantilla').classList.toggle('active', tab === 'plantilla');
@@ -957,7 +957,7 @@ function switchTab(tab) {
 }
 window.switchTab = switchTab;
 
-// â”€â”€â”€ PLANTILLA VIEW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PLANTILLA VIEW ──────────────────────────
 function avatarColor(posKey) {
   return { portero: '#4e342e', defensa: '#1565c0', medio: '#2e7d32', delantero: '#C62828' }[posKey] || '#444';
 }
@@ -967,7 +967,7 @@ function renderPlantillaView() {
   const lang = LANGS[currentLang];
   const container = document.getElementById('plantilla-content');
   if (!container) {
-    alert('No se encontrÃ³ el contenedor de plantilla (plantilla-content). Revisa el HTML.');
+    alert('No se encontro el contenedor de plantilla (plantilla-content). Revisa el HTML.');
     return;
   }
   container.innerHTML = '';
@@ -1010,7 +1010,7 @@ function renderPlantillaView() {
           <div class="pc-name">${player.name}</div>
           <div class="pc-meta">
             <span class="pc-pos">${pos.label}</span>
-            <span class="pc-edad">${player.edad} aÃ±os</span>
+            <span class="pc-edad">${player.edad} anos</span>
           </div>
         </div>
       `;
@@ -1022,7 +1022,7 @@ function renderPlantillaView() {
   });
 }
 
-// â”€â”€â”€ PLAYER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PLAYER MODAL ────────────────────────────
 let _editId  = null;
 let _editPos = null;
 
@@ -1115,7 +1115,7 @@ function savePlayerModal() {
   }
 }
 
-// â”€â”€â”€ TOGGLE VISIBILITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── TOGGLE VISIBILITY ────────────────────────
 const teamVisible = { my: true, rival: true };
 
 function toggleTeamVisibility(team) {
@@ -1138,7 +1138,7 @@ function toggleTeamVisibility(team) {
   }
 }
 
-// â”€â”€â”€ UNDO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── UNDO ────────────────────────────────────
 function saveHistory() {
   history.push(JSON.stringify(state.players));
   if (history.length > 50) history.shift();
@@ -1152,7 +1152,7 @@ function undo() {
 }
 
 
-// â”€â”€â”€ QUITAR JUGADORES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── QUITAR JUGADORES ───────────────────────
 function quitarJugadores() {
   // Limpiar los nombres y dorsales de los jugadores asignados en la pizarra
   if (state && state.players) {
@@ -1160,14 +1160,14 @@ function quitarJugadores() {
       p.name = '';
       p.abbr = '';
       p.dorsal = '';
-      // Si hay otros campos de texto visibles, tambiÃ©n se pueden limpiar aquÃ­
+      // Si hay otros campos de texto visibles, tambien se pueden limpiar aqui
     });
     if (state.assignedPlayers) state.assignedPlayers = {};
     renderPlayers();
     renderPlayerList();
   }
 }
-// â”€â”€â”€ RESET â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── RESET ───────────────────────────────────
 function resetBoard() {
   state.assignedPlayers = {};
   history = [];
@@ -1177,7 +1177,7 @@ function resetBoard() {
   applyBallPosition();
 }
 
-// â”€â”€â”€ SLIDES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── SLIDES ──────────────────────────────────
 let animInterval = null; // reference to current animation interval
 
 function renderSlideChips() {
@@ -1275,7 +1275,7 @@ function goToSlide(idx, animate) {
 }
 
 function playAnimation() {
-  // Si ya estÃ¡ reproduciendo, detener
+  // Si ya esta reproduciendo, detener
   if (animInterval) {
     cancelAnimationFrame(animInterval);
     animInterval = null;
@@ -1296,11 +1296,11 @@ function playAnimation() {
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
-  // Ir al primer slide instantÃ¡neamente
+  // Ir al primer slide instantaneamente
   goToSlide(0, false);
   let i = 1;
 
-  // Nueva animaciÃ³n progresiva
+  // Nueva animacion progresiva
   function interpolate(a, b, t) {
     return a + (b - a) * t;
   }
@@ -1373,7 +1373,7 @@ function playAnimation() {
 }
 
 
-// â”€â”€â”€ EXPORT IMAGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── EXPORT IMAGE ────────────────────────────
 function exportImage() {
   html2canvasFallback();
 }
@@ -1388,10 +1388,23 @@ function html2canvasFallback() {
   link.click();
 }
 
-// â”€â”€â”€ EXPORT VIDEO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── EXPORT VIDEO ────────────────────────────
+async function ensureHtml2Canvas() {
+  if (typeof window.html2canvas === 'function') return window.html2canvas;
+  await new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('No se pudo cargar html2canvas'));
+    document.head.appendChild(script);
+  });
+  return window.html2canvas;
+}
+
 async function exportVideo() {
   const pitch = document.getElementById('pitch');
-  if (!pitch) return alert('No se encontrÃ³ el campo.');
+  if (!pitch) return alert('No se encontro el campo.');
   const total = state.slides.length;
   if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
 
@@ -1399,11 +1412,17 @@ async function exportVideo() {
   const isMediaRecorderSupported = typeof window.MediaRecorder !== 'undefined';
   const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream;
   if (!isMediaRecorderSupported || !isCaptureStreamSupported) {
-    if (confirm('Tu navegador no soporta la grabaciÃ³n de video. Â¿Quieres descargar los fotogramas como imÃ¡genes?')) {
+    if (confirm('Tu navegador no soporta la grabacion de video. ¿Quieres descargar los fotogramas como imagenes?')) {
       exportFramesAsImages();
     } else {
-      alert('La exportaciÃ³n de video solo funciona en Chrome o Edge.');
+      alert('La exportacion de video solo funciona en Chrome o Edge.');
     }
+    return;
+  }
+
+  const html2canvas = await ensureHtml2Canvas().catch(() => null);
+  if (!html2canvas) {
+    alert('No se pudo preparar la captura del video. Intentalo de nuevo.');
     return;
   }
 
@@ -1414,24 +1433,35 @@ async function exportVideo() {
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
+
+  const preferredTypes = [
+    'video/webm;codecs=vp9',
+    'video/webm;codecs=vp8',
+    'video/webm'
+  ];
+  const mimeType = preferredTypes.find(t => MediaRecorder.isTypeSupported(t)) || '';
+
   // Capturar el stream del canvas
   const stream = canvas.captureStream(30); // 30 fps
-  const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+  const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
   let chunks = [];
   recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
   recorder.onstop = () => {
-    const blob = new Blob(chunks, { type: 'video/webm' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'pizarra-tactica.webm';
-    document.body.appendChild(a);
-    a.click();
+    const blobType = mimeType || 'video/webm';
+    const blob = new Blob(chunks, { type: blobType });
+    const videoUrl = URL.createObjectURL(blob);
+    const ext = blobType.includes('webm') ? 'webm' : 'mp4';
+    const fileName = `pizarra-tactica.${ext}`;
+
+    const previewHtml = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Video exportado</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:16px;justify-items:center}video{max-width:min(100%,1100px);border-radius:10px;border:1px solid #333;background:#000}a{display:inline-block;background:#1f6feb;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:700}</style></head><body><h1>Video exportado</h1><video controls autoplay src="${videoUrl}"></video><a href="${videoUrl}" download="${fileName}">Descargar video</a></body></html>`;
+    const previewUrl = URL.createObjectURL(new Blob([previewHtml], { type: 'text/html' }));
+    window.open(previewUrl, '_blank');
+
+    // Liberar recursos con margen suficiente para descarga/reproduccion.
     setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
+      URL.revokeObjectURL(previewUrl);
+      URL.revokeObjectURL(videoUrl);
+    }, 10 * 60 * 1000);
   };
 
   // Guardar estado actual
@@ -1445,8 +1475,9 @@ async function exportVideo() {
     goToSlide(i, false);
     await new Promise(res => setTimeout(res, speed));
     // Renderizar el pitch en el canvas temporal
+    const frame = await html2canvas(pitch, { backgroundColor: null, useCORS: true, scale: 1 });
     ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(pitch, 0, 0, width, height);
+    ctx.drawImage(frame, 0, 0, width, height);
   }
   recorder.stop();
   // Restaurar estado
@@ -1455,12 +1486,12 @@ async function exportVideo() {
   state.ball = prevBall;
 }
 
-// Alternativa: exportar los fotogramas como imÃ¡genes
+// Alternativa: exportar los fotogramas como imagenes
 function exportFramesAsImages() {
   const pitch = document.getElementById('pitch');
-  if (!pitch) return alert('No se encontrÃ³ el campo.');
+  if (!pitch) return alert('No se encontro el campo.');
   const total = state.slides.length;
-  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar imÃ¡genes.');
+  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar imagenes.');
   // Guardar estado actual
   const prevSlide = state.currentSlide;
   const prevPlayers = JSON.parse(JSON.stringify(state.players));
@@ -1480,7 +1511,7 @@ function exportFramesAsImages() {
     goToSlide(prevSlide, false);
     state.players = prevPlayers;
     state.ball = prevBall;
-    // Descargar todas las imÃ¡genes
+    // Descargar todas las imagenes
     images.forEach((img, idx) => {
       const a = document.createElement('a');
       a.href = img;
@@ -1489,12 +1520,12 @@ function exportFramesAsImages() {
       a.click();
       setTimeout(() => document.body.removeChild(a), 100);
     });
-    alert('Se han descargado los fotogramas como imÃ¡genes PNG.');
+    alert('Se han descargado los fotogramas como imagenes PNG.');
   })();
 }
 
 function canvasSnapshot(element) {
-  // Simple SVG â†’ canvas fallback
+  // Simple SVG → canvas fallback
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${element.offsetWidth}' height='${element.offsetHeight}'>
     <foreignObject width='100%' height='100%'>
       <div xmlns='http://www.w3.org/1999/xhtml' style='width:${element.offsetWidth}px;height:${element.offsetHeight}px'>
@@ -1509,7 +1540,7 @@ function canvasSnapshot(element) {
   return c.toDataURL();
 }
 
-// â”€â”€â”€ SHARE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── SHARE ───────────────────────────────────
 function share() {
   const data = {
     myColor:    state.myColor,
@@ -1522,9 +1553,9 @@ function share() {
   const encoded = btoa(encodeURIComponent(json));
   const url = location.href.split('#')[0] + '#' + encoded;
   navigator.clipboard.writeText(url).then(() => {
-    alert(currentLang === 'es' ? 'Â¡Enlace copiado al portapapeles!' :
+    alert(currentLang === 'es' ? '¡Enlace copiado al portapapeles!' :
           currentLang === 'eu' ? 'Esteka arbelean kopiatua!' :
-          currentLang === 'fr' ? 'Lien copiÃ© dans le presse-papier !' :
+          currentLang === 'fr' ? 'Lien copie dans le presse-papier !' :
           'Link copied to clipboard!');
   }).catch(() => {
     prompt('Copia este enlace:', url);
@@ -1554,7 +1585,7 @@ function loadFromHash() {
   } catch(e) { /* ignore bad hash */ }
 }
 
-// â”€â”€â”€ BALL DRAG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── BALL DRAG ───────────────────────────────
 function applyBallPosition() {
   const ball = document.getElementById('ball-token');
   if (!ball) return;
@@ -1568,7 +1599,7 @@ function placeBallAtMyGoalkeeperFeet() {
     state.ball = { x: 50, y: 50 };
     return;
   }
-  // Mi equipo ataca hacia arriba: balón ligeramente por delante del portero.
+  // Mi equipo ataca hacia arriba: balon ligeramente por delante del portero.
   state.ball = {
     x: Math.min(Math.max(myGK.x, 1), 99),
     y: Math.min(Math.max(myGK.y - 7, 1), 99),
@@ -1638,7 +1669,7 @@ function setupBall() {
   }, { passive: false });
 }
 
-// â”€â”€â”€ CANVAS DRAWING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── CANVAS DRAWING ──────────────────────────
 function setupCanvas() {
   const pitch  = document.getElementById('pitch');
   const canvas = document.getElementById('draw-canvas');
@@ -1689,7 +1720,7 @@ function setupCanvas() {
 // Run on load
 window.addEventListener('load', loadFromHash);
 
-// â”€â”€ MOBILE ASSIGN MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── MOBILE ASSIGN MODAL ─────────────────────────────────────
 let mobileAssignTab = 'portero';
 
 function setMobileAssignTab(pos) {
@@ -1705,11 +1736,11 @@ function openMobileAssignModal() {
   const title = document.getElementById('mobile-assign-title');
   if (title) {
     title.textContent = p
-      ? `Asignar al cÃ­rculo ${p.jersey}`
+      ? `Asignar al circulo ${p.jersey}`
       : 'Selecciona un jugador';
   }
 
-  // Preseleccionar tab segÃºn nÃºmero de camiseta del cÃ­rculo
+  // Preseleccionar tab segun numero de camiseta del circulo
   if (p) {
     if (p.jersey === 1)          mobileAssignTab = 'portero';
     else if (p.jersey <= 5)      mobileAssignTab = 'defensa';
@@ -1733,7 +1764,7 @@ function closeMobileAssignModal() {
   const overlay = document.getElementById('mobile-assign-overlay');
   if (!overlay) return;
   overlay.classList.remove('active');
-  // Esperar a que termine la animaciÃ³n antes de ocultar
+  // Esperar a que termine la animacion antes de ocultar
   overlay.addEventListener('transitionend', () => overlay.classList.add('hidden'), { once: true });
   // Fallback por si no hay transitionend
   setTimeout(() => overlay.classList.add('hidden'), 320);
@@ -1783,7 +1814,7 @@ function renderMobileAssignList() {
       if (isAssigned) {
         const chk = document.createElement('div');
         chk.className = 'mas-check';
-        chk.textContent = 'âœ“';
+        chk.textContent = '✓';
         photoWrap.appendChild(chk);
       }
       const name = document.createElement('div');
@@ -1884,7 +1915,7 @@ window.addEventListener('resize', () => {
   if (window.innerWidth > 768) closeMobilePanels();
 });
 
-// â”€â”€ SWIPE-TO-CLOSE DRAWERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── SWIPE-TO-CLOSE DRAWERS ───────────────────────────────────
 (function initDrawerSwipe() {
   const drawers = [
     document.querySelector('.sidebar-left'),
@@ -1918,7 +1949,7 @@ window.addEventListener('resize', () => {
   });
 });
 
-// â”€â”€ ORIENTACIÃ“N: reajustar paneles al girar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── ORIENTACION: reajustar paneles al girar ──────────────────
 window.addEventListener('orientationchange', () => {
   setTimeout(closeMobilePanels, 100);
 });
@@ -1951,4 +1982,5 @@ Object.assign(window, {
   savePlayerModal,
   loadNavLogo,
 });
+
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AC Center â€“ Pizarra TÃ¡ctica</title>
+  <title>AC Center – Pizarra Tactica</title>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -12,8 +12,9 @@
 </head>
 <body>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•  TOP NAV  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════════  TOP NAV  ═══════════════════════ -->
 <header class="topnav">
+  <div class="topnav-logo">
     <div class="nav-logo-wrap" title="Haz clic para subir el escudo" onclick="document.getElementById('nav-logo-input').click()">
       <img id="nav-logo-img" src="escudo.png" alt="Escudo AC" style="display:block" onerror="this.src='escudo.png'" />
       <span id="nav-logo-placeholder" title="Subir escudo" style="display:none">&#128247;</span>
@@ -21,7 +22,7 @@
     <input type="file" id="nav-logo-input" accept="image/*" style="display:none" onchange="loadNavLogo(event)" />
     <div class="logo-texts">
       <span class="logo-title">ATHLETIC CLUB FOOTBALL CENTER</span>
-      <span class="logo-sub">PIZARRA TÁCTICA</span>
+      <span class="logo-sub">PIZARRA TACTICA</span>
     </div>
   </div>
   <div class="topnav-right">
@@ -37,10 +38,10 @@
   </div>
 </header>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•  MAIN LAYOUT  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════════  MAIN LAYOUT  ═══════════════════════ -->
 <div class="main-layout">
 
-  <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ LEFT SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <!-- ──────────── LEFT SIDEBAR ──────────── -->
   <aside class="sidebar-left">
     <button class="sidebar-tab" id="tab-plantilla" onclick="switchTab('plantilla')">
       <span class="tab-icon">&#9776;</span>
@@ -48,7 +49,7 @@
     </button>
     <button class="sidebar-tab active" id="tab-pizarra" onclick="switchTab('pizarra')">
       <span class="tab-icon">&#9633;</span>
-      <span data-i18n="pizarra">PIZARRA TÃCTICA</span>
+      <span data-i18n="pizarra">PIZARRA TACTICA</span>
     </button>
 
     <!-- MI EQUIPO -->
@@ -108,7 +109,7 @@
       </div>
       <div class="action-row">
         <button class="action-btn danger full" onclick="resetBoard()">&#9632; <span data-i18n="resetear">RESETEAR</span></button>
-        <button class="action-btn secondary full" onclick="quitarJugadores()">ðŸ§¹ <span>QUITAR JUGADORES</span></button>
+        <button class="action-btn secondary full" onclick="quitarJugadores()">🧹 <span>QUITAR JUGADORES</span></button>
       </div>
     </div>
 
@@ -118,18 +119,18 @@
     </div>
   </aside>
 
-  <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CENTER AREA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <!-- ──────────── CENTER AREA ──────────── -->
   <main class="center-area">
 
     <!-- Slide controls -->
     <div class="slide-controls">
       <button class="slide-btn play" id="btn-play" onclick="playAnimation()" title="Reproducir">&#9654;</button>
-      <button class="slide-btn add"  onclick="addSlide()" title="AÃ±adir fotograma">&#43;</button>
-      <select class="speed-select" id="anim-speed" title="Velocidad de animaciÃ³n">
+      <button class="slide-btn add"  onclick="addSlide()" title="Anadir fotograma">&#43;</button>
+      <select class="speed-select" id="anim-speed" title="Velocidad de animacion">
         <option value="2000">&#x1F422; Lenta</option>
         <option value="1000" selected>Normal</option>
-        <option value="500">&#9889; RÃ¡pida</option>
-        <option value="250">&#9889;&#9889; Muy rÃ¡pida</option>
+        <option value="500">&#9889; Rapida</option>
+        <option value="250">&#9889;&#9889; Muy rapida</option>
       </select>
       <div class="slide-chips" id="slide-chips"></div>
     </div>
@@ -144,7 +145,7 @@
           <rect x="30" y="18" width="700" height="484" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
           <!-- Halfway line -->
           <line x1="30" y1="260" x2="730" y2="260" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
-          <!-- Centre circle (dot only â€“ real circle drawn via CSS overlay) -->
+          <!-- Centre circle (dot only – real circle drawn via CSS overlay) -->
           <circle cx="380" cy="260" r="4" fill="rgba(255,255,255,0.92)"/>
           <!-- Top penalty area -->
           <rect x="175" y="18" width="410" height="85" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
@@ -170,13 +171,13 @@
           <path d="M 44 502 A 14 14 0 0 1 30 486"  fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.2"/>
         </svg>
 
-        <!-- Centre circle overlay â€“ always a perfect circle -->
+        <!-- Centre circle overlay – always a perfect circle -->
         <div class="center-circle-overlay"></div>
 
         <!-- Player tokens rendered by JS -->
         <div id="players-container"></div>
 
-        <!-- BalÃ³n arrastrable -->
+        <!-- Balon arrastrable -->
         <div id="ball-token" class="ball-token" style="left:50%;top:50%;"></div>
 
         <!-- Drawing canvas overlay -->
@@ -186,23 +187,23 @@
 
   </main>
 
-  <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ RIGHT SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <!-- ──────────── RIGHT SIDEBAR ──────────── -->
   <aside class="sidebar-right">
     <h3 class="assign-title" data-i18n="asignar">ASIGNAR JUGADORES A PIZARRA</h3>
     <div id="player-list"></div>
   </aside>
 
-  <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PLANTILLA VIEW (full area) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <!-- ──────────── PLANTILLA VIEW (full area) ──────────── -->
   <div id="plantilla-view" class="plantilla-view hidden">
     <div class="plantilla-header">
-      <h2>GESTIÃ“N DE PLANTILLA</h2>
+      <h2>GESTION DE PLANTILLA</h2>
     </div>
     <div id="plantilla-content"></div>
   </div>
 
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•  MOBILE BOTTOM NAV  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════  MOBILE BOTTOM NAV  ═══════════════════ -->
 <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
   <button class="mbn-btn" id="mbn-left" onclick="toggleMobilePanel('left')">
     <span class="mbn-icon">&#9776;</span>
@@ -223,7 +224,7 @@
 </nav>
 <div class="mobile-overlay" id="mobile-overlay" onclick="closeMobilePanels()"></div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•  MOBILE ASSIGN SHEET  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════  MOBILE ASSIGN SHEET  ═══════════════════ -->
 <div id="mobile-assign-overlay" class="mobile-assign-overlay hidden" onclick="closeMobileAssignModal()">
   <div class="mobile-assign-sheet" onclick="event.stopPropagation()">
     <div class="mobile-assign-handle"></div>
@@ -241,7 +242,7 @@
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•  PLAYER MODAL  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════  PLAYER MODAL  ═══════════════════ -->
 <div id="player-modal-overlay" class="modal-overlay hidden" onclick="handleModalOverlayClick(event)">
   <div class="player-modal">
     <h3>PERFIL DEL JUGADOR</h3>
@@ -253,7 +254,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="modal-placeholder-icon">
           <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
         </svg>
-        <span>AÃ‘ADIR FOTO</span>
+        <span>ANADIR FOTO</span>
       </div>
       <div class="modal-photo-change-overlay">&#128247; CAMBIAR FOTO</div>
     </div>
@@ -274,7 +275,7 @@
       </div>
     </div>
 
-    <div class="modal-section-label">POSICIÃ“N PRINCIPAL</div>
+    <div class="modal-section-label">POSICION PRINCIPAL</div>
     <div class="modal-pos-grid">
       <button class="modal-pos-btn" data-pos="portero"   onclick="setModalPos('portero')">PORTERO</button>
       <button class="modal-pos-btn" data-pos="defensa"   onclick="setModalPos('defensa')">DEFENSA</button>
@@ -289,7 +290,7 @@
   </div>
 </div>
 
-<script src="app.js?v=115"></script><script>
+<script src="app.js?v=118"></script><script>
 (function() {
   function initBall() {
     var ball = document.getElementById('ball-token');
@@ -404,6 +405,8 @@
 })();
 </script></body>
 </html>
+
+
 
 
 
