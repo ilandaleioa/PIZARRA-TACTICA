@@ -1426,8 +1426,46 @@ function playAnimation() {
 
 
 // ─── EXPORT IMAGE ────────────────────────────
-function exportImage() {
-  html2canvasFallback();
+async function exportImage() {
+  const pitch = document.getElementById('pitch');
+  if (!pitch) return alert('No se encontro el campo.');
+
+  const html2canvas = await ensureHtml2Canvas().catch(() => null);
+  if (!html2canvas) {
+    html2canvasFallback();
+    return;
+  }
+
+  const width = Math.max(1, Math.round(pitch.clientWidth || pitch.offsetWidth));
+  const height = Math.max(1, Math.round(pitch.clientHeight || pitch.offsetHeight));
+
+  try {
+    document.body.classList.add('exporting-video');
+    await new Promise(res => requestAnimationFrame(() => res()));
+
+    const image = await html2canvas(pitch, {
+      backgroundColor: '#0f3d0f',
+      useCORS: true,
+      scale: Math.min(2, window.devicePixelRatio || 1),
+      width,
+      height,
+      x: 0,
+      y: 0,
+      scrollX: -window.scrollX,
+      scrollY: -window.scrollY,
+      logging: false,
+    });
+
+    const link = document.createElement('a');
+    link.download = 'pizarra-tactica.png';
+    link.href = image.toDataURL('image/png');
+    link.click();
+  } catch (error) {
+    console.error(error);
+    html2canvasFallback();
+  } finally {
+    document.body.classList.remove('exporting-video');
+  }
 }
 
 function html2canvasFallback() {
@@ -1535,22 +1573,16 @@ async function exportVideo() {
     const ext = blobType.includes('webm') ? 'webm' : 'mp4';
     const fileName = `pizarra-tactica.${ext}`;
 
-    const previewHtml = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Video exportado</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:16px;justify-items:center}video{max-width:min(100%,1100px);border-radius:10px;border:1px solid #333;background:#000}a{display:inline-block;background:#1f6feb;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:700}</style></head><body><h1>Video exportado</h1><video controls autoplay playsinline muted src="${videoUrl}"></video><a href="${videoUrl}" download="${fileName}">Descargar video</a></body></html>`;
-    if (previewWindow && !previewWindow.closed) {
-      previewWindow.document.open();
-      previewWindow.document.write(previewHtml);
-      previewWindow.document.close();
-    } else {
-      previewUrl = URL.createObjectURL(new Blob([previewHtml], { type: 'text/html' }));
-      window.open(previewUrl, '_blank');
-      const fallbackDownload = document.createElement('a');
-      fallbackDownload.href = videoUrl;
-      fallbackDownload.download = fileName;
-      fallbackDownload.style.display = 'none';
-      document.body.appendChild(fallbackDownload);
-      fallbackDownload.click();
-      fallbackDownload.remove();
-    }
+    // Descargar automáticamente el video generado
+    const autoDownload = document.createElement('a');
+    autoDownload.href = videoUrl;
+    autoDownload.download = fileName;
+    autoDownload.style.display = 'none';
+    document.body.appendChild(autoDownload);
+    autoDownload.click();
+    setTimeout(() => document.body.removeChild(autoDownload), 200);
+    // Opcional: mostrar alerta de éxito
+    alert('El video se ha descargado correctamente.');
 
     // Liberar recursos con margen suficiente para descarga/reproduccion.
     setTimeout(() => {
