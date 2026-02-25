@@ -1496,10 +1496,12 @@ async function exportImage() {
     if (typeof applyBallPosition === 'function') applyBallPosition();
     await new Promise(res => setTimeout(res, 50));
 
+    // Aumentar la escala para mayor calidad (4x o máximo permitido por el navegador)
+    const exportScale = Math.max(3, Math.min(4, (window.devicePixelRatio || 1) * 2));
     const image = await html2canvas(pitch, {
       backgroundColor: '#0f3d0f',
       useCORS: true,
-      scale: Math.min(2, window.devicePixelRatio || 1),
+      scale: exportScale,
       width,
       height,
       x: 0,
@@ -1559,6 +1561,17 @@ function downloadBlobFile(blob, fileName) {
   }, 30000);
 }
 
+function openVideoPreview(blob, title = 'Video exportado') {
+  const url = URL.createObjectURL(blob);
+  const win = window.open('', '_blank');
+  if (!win) return;
+  const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${title}</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:16px;justify-items:center}video{max-width:min(100%,1100px);border-radius:10px;border:1px solid #333;background:#000}</style></head><body><h1>${title}</h1><video controls autoplay playsinline src="${url}"></video></body></html>`;
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => URL.revokeObjectURL(url), 10 * 60 * 1000);
+}
+
 async function convertWebmToMp4ViaServer(webmBlob) {
   const res = await fetch('/api/convert-webm-to-mp4', {
     method: 'POST',
@@ -1614,8 +1627,8 @@ async function exportVideo() {
     'video/mp4'
   ];
   const webmTypes = [
-    'video/webm;codecs=vp9',
     'video/webm;codecs=vp8',
+    'video/webm;codecs=vp9',
     'video/webm'
   ];
   // Capturar el stream del canvas
@@ -1660,7 +1673,7 @@ async function exportVideo() {
     return;
   }
   if (!mimeType || mimeType.includes('webm')) {
-    alert('Tu navegador no permite exportar en MP4 directamente. Se descargara en WEBM.');
+    alert('Tu navegador no permite exportar en MP4 directo. Se grabara en WEBM y se intentara convertir a MP4.');
   }
   let chunks = [];
   recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
@@ -1670,11 +1683,12 @@ async function exportVideo() {
       return;
     }
 
-    const blobType = mimeType || 'video/webm';
+    const blobType = recorder.mimeType || mimeType || 'video/webm';
     const recordedBlob = new Blob(chunks, { type: blobType });
 
     if (blobType.includes('mp4')) {
       downloadBlobFile(recordedBlob, 'pizarra-tactica.mp4');
+      openVideoPreview(recordedBlob, 'Video MP4 exportado');
       alert('El video MP4 se ha descargado correctamente.');
       return;
     }
@@ -1682,10 +1696,12 @@ async function exportVideo() {
     try {
       const mp4Blob = await convertWebmToMp4ViaServer(recordedBlob);
       downloadBlobFile(mp4Blob, 'pizarra-tactica.mp4');
+      openVideoPreview(mp4Blob, 'Video MP4 exportado');
       alert('El video MP4 se ha descargado correctamente.');
     } catch (error) {
       console.error(error);
       downloadBlobFile(recordedBlob, 'pizarra-tactica.webm');
+      openVideoPreview(recordedBlob, 'Video WEBM exportado');
       alert('No se pudo convertir a MP4 en servidor. Se ha descargado WEBM como respaldo.');
     }
   };
