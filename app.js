@@ -1429,8 +1429,8 @@ function playAnimation() {
       return;
     }
 
-    // La duración será proporcional a la distancia máxima (velocidad constante)
-    const duration = Math.max(200, (maxDist / 20) * speed); // 20 = referencia de campo
+    // Usar velocidad constante definida por el usuario
+    const duration = speed;
 
     function step(now) {
       const elapsed = now - start;
@@ -1711,34 +1711,88 @@ async function exportVideo() {
   const prevPlayers = JSON.parse(JSON.stringify(state.players));
   const prevBall = { ...state.ball };
   const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
+  const fps = 30;
   const waitPaint = async (n = 2) => {
     for (let k = 0; k < n; k++) {
       await new Promise(res => requestAnimationFrame(() => res()));
     }
   };
+  const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const dist = (a, b) => Math.hypot((b.x - a.x), (b.y - a.y));
+  const frameIntervalMs = Math.round(1000 / fps);
+  const baseAnimDur = getComputedStyle(document.documentElement).getPropertyValue('--anim-dur');
+  const captureFrame = async () => {
+    const frame = await html2canvas(pitch, {
+      backgroundColor: '#0f3d0f',
+      useCORS: true,
+      scale: 1,
+      width,
+      height,
+      x: 0,
+      y: 0,
+      scrollX: -window.scrollX,
+      scrollY: -window.scrollY,
+      logging: false,
+    });
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(frame, 0, 0, width, height);
+  };
   try {
     document.body.classList.add('exporting-video');
-    let i = 0;
+    document.documentElement.style.setProperty('--anim-dur', '0ms');
+    goToSlide(0, false);
+    if (typeof renderPlayers === 'function') renderPlayers();
+    if (typeof applyBallPosition === 'function') applyBallPosition();
+    await waitPaint(2);
+
     recorder.start();
-    for (; i < total; i++) {
-      goToSlide(i, false);
-      await waitPaint(2);
-      // Renderizar el pitch en el canvas temporal
-      const frame = await html2canvas(pitch, {
-        backgroundColor: '#0f3d0f',
-        useCORS: true,
-        scale: 1,
-        width,
-        height,
-        x: 0,
-        y: 0,
-        scrollX: -window.scrollX,
-        scrollY: -window.scrollY,
-        logging: false,
+
+    // Captura inicial
+    await captureFrame();
+    await sleep(frameIntervalMs);
+
+    for (let i = 0; i < total - 1; i++) {
+      const fromSlide = state.slides[i];
+      const toSlide = state.slides[i + 1];
+      if (!fromSlide || !toSlide) continue;
+
+      const fromPlayers = JSON.parse(JSON.stringify(fromSlide.players || []));
+      const toPlayers = JSON.parse(JSON.stringify(toSlide.players || []));
+      const fromBall = { ...(fromSlide.ball || state.ball) };
+      const toBall = { ...(toSlide.ball || state.ball) };
+
+      let maxDist = 0;
+      fromPlayers.forEach((p, idx) => {
+        const d = dist(p, toPlayers[idx] || p);
+        if (d > maxDist) maxDist = d;
       });
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(frame, 0, 0, width, height);
-      await new Promise(res => setTimeout(res, speed));
+      const ballDist = dist(fromBall, toBall);
+      if (ballDist > maxDist) maxDist = ballDist;
+
+      const transitionMs = maxDist === 0 ? Math.max(120, speed * 0.15) : Math.max(220, (maxDist / 20) * speed);
+      const frames = Math.max(2, Math.round((transitionMs / 1000) * fps));
+
+      for (let f = 0; f < frames; f++) {
+        const t = frames <= 1 ? 1 : (f / (frames - 1));
+        const currPlayers = fromPlayers.map((p, idx) => {
+          const dest = toPlayers[idx] || p;
+          return {
+            ...p,
+            x: lerp(p.x, dest.x, t),
+            y: lerp(p.y, dest.y, t)
+          };
+        });
+        const currBall = {
+          x: lerp(fromBall.x, toBall.x, t),
+          y: lerp(fromBall.y, toBall.y, t)
+        };
+
+        updateTokenPositions(currPlayers, currBall);
+        await waitPaint(1);
+        await captureFrame();
+        await sleep(frameIntervalMs);
+      }
     }
     recorder.stop();
   } catch (error) {
@@ -1747,6 +1801,7 @@ async function exportVideo() {
     console.error(error);
   } finally {
     document.body.classList.remove('exporting-video');
+    document.documentElement.style.setProperty('--anim-dur', baseAnimDur || '.7s');
     // Restaurar estado
     goToSlide(prevSlide, false);
     state.players = prevPlayers;
