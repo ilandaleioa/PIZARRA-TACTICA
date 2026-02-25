@@ -1454,6 +1454,7 @@ function playAnimation() {
       };
 
       updateTokenPositions(currPlayers, currBall);
+      if (typeof applyBallPosition === 'function') applyBallPosition();
       if (t < 1) {
         animInterval = requestAnimationFrame(step);
       } else {
