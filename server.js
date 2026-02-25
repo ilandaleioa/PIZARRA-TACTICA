@@ -3,12 +3,31 @@ const express = require('express');
 const path = require('path');
 const os = require('os');
 const fs = require('fs/promises');
+const fsSync = require('fs');
 const { spawn } = require('child_process');
 const { randomUUID } = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const FFMPEG_BIN = process.env.FFMPEG_PATH || 'ffmpeg';
+function resolveFfmpegBin() {
+  if (process.env.FFMPEG_PATH) return process.env.FFMPEG_PATH;
+  const wingetPath = path.join(
+    os.homedir(),
+    'AppData',
+    'Local',
+    'Microsoft',
+    'WinGet',
+    'Packages',
+    'Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe',
+    'ffmpeg-8.0.1-full_build',
+    'bin',
+    'ffmpeg.exe'
+  );
+  if (fsSync.existsSync(wingetPath)) return wingetPath;
+  return 'ffmpeg';
+}
+
+const FFMPEG_BIN = resolveFfmpegBin();
 
 async function runFfmpeg(args) {
   await new Promise((resolve, reject) => {
