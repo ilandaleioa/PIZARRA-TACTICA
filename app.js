@@ -1343,8 +1343,14 @@ function updateTokenPositions(players, ball) {
     }
   });
   if (ball) {
+    // Actualizar posición visual del balón
+    const ballEl = document.getElementById('ball-token');
+    if (ballEl) {
+      ballEl.style.left = ball.x + '%';
+      ballEl.style.top  = ball.y + '%';
+    }
+    // Actualizar estado global
     state.ball = { ...ball };
-    applyBallPosition();
   }
 }
 
@@ -1391,8 +1397,9 @@ function playAnimation() {
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
-  // Siempre comenzar desde el primer slide
+  // Siempre comenzar desde el primer slide y poner el balón en los pies del portero
   goToSlide(0, false);
+  placeBallAtMyGoalkeeperFeet();
   let i = 1;
 
   // Nueva animacion progresiva
