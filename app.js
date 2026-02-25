@@ -1391,7 +1391,7 @@ function playAnimation() {
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
-  // Ir al primer slide instantaneamente
+  // Siempre comenzar desde el primer slide
   goToSlide(0, false);
   let i = 1;
 
