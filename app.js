@@ -1441,7 +1441,10 @@ async function exportImage() {
 
   try {
     document.body.classList.add('exporting-video');
-    await new Promise(res => requestAnimationFrame(() => res()));
+    // Forzar renderizado de jugadores y balón antes de capturar
+    if (typeof renderPlayers === 'function') renderPlayers();
+    if (typeof applyBallPosition === 'function') applyBallPosition();
+    await new Promise(res => setTimeout(res, 50));
 
     const image = await html2canvas(pitch, {
       backgroundColor: '#0f3d0f',
