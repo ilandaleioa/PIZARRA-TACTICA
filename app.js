@@ -653,10 +653,53 @@ function selectToken(id) {
   if (el) el.classList.add('selected');
   updateAssignHint();
 
-  // En movil abrir el panel de asignacion automaticamente
+  // En móvil mostrar modal de asignación
   if (window.innerWidth <= 768) {
-    openMobileAssignModal();
+    showMobileAssignModal();
   }
+}
+
+// Modal emergente para asignar jugador en móvil
+function showMobileAssignModal() {
+  // Crear modal si no existe
+  let modal = document.getElementById('mobile-assign-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'mobile-assign-modal';
+    modal.className = 'mobile-assign-modal';
+    modal.innerHTML = `
+      <div class="mam-backdrop" onclick="closeMobileAssignModal()"></div>
+      <div class="mam-content">
+        <div class="mam-header">
+          <span>Selecciona un jugador para asignar</span>
+          <button class="mam-close" onclick="closeMobileAssignModal()">&times;</button>
+        </div>
+        <div class="mam-list" id="mam-list"></div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  // Rellenar lista de jugadores
+  const list = modal.querySelector('#mam-list');
+  list.innerHTML = '';
+  ['portero','defensa','medio','delantero'].forEach(pos => {
+    SQUAD[pos].forEach(player => {
+      const btn = document.createElement('button');
+      btn.className = 'mam-player-btn';
+      btn.innerHTML = `<span>${player.dorsal}</span> <span>${player.name}</span>`;
+      btn.onclick = function() {
+        assignPlayer(player, pos);
+        closeMobileAssignModal();
+      };
+      list.appendChild(btn);
+    });
+  });
+  modal.style.display = 'flex';
+}
+
+function closeMobileAssignModal() {
+  const modal = document.getElementById('mobile-assign-modal');
+  if (modal) modal.style.display = 'none';
 }
 
 function updateAssignHint() {
@@ -1369,35 +1412,42 @@ function playAnimation() {
     const toPlayers = JSON.parse(JSON.stringify(toSlide.players));
     const fromBall = { ...fromSlide.ball };
     const toBall = { ...toSlide.ball };
-    // Referencia: 20 unidades del campo por el tiempo seleccionado.
-    const unitsPerMs = 20 / speed;
+
+    // Calcular la distancia máxima a recorrer (jugador o balón)
+    let maxDist = 0;
+    fromPlayers.forEach((p, idx) => {
+      const d = dist(p, toPlayers[idx]);
+      if (d > maxDist) maxDist = d;
+    });
+    const ballDist = dist(fromBall, toBall);
+    if (ballDist > maxDist) maxDist = ballDist;
+
+    // Si no hay movimiento, animación instantánea
+    if (maxDist === 0) {
+      updateTokenPositions(toPlayers, toBall);
+      if (onComplete) onComplete();
+      return;
+    }
+
+    // La duración será proporcional a la distancia máxima (velocidad constante)
+    const duration = Math.max(200, (maxDist / 20) * speed); // 20 = referencia de campo
 
     function step(now) {
       const elapsed = now - start;
-      let allDone = true;
+      const t = Math.min(1, elapsed / duration);
 
-      const currPlayers = fromPlayers.map((p, idx) => {
-        const dest = toPlayers[idx];
-        const d = dist(p, dest);
-        const t = d === 0 ? 1 : Math.min(1, (elapsed * unitsPerMs) / d);
-        if (t < 1) allDone = false;
-        return {
-          ...p,
-          x: interpolate(p.x, dest.x, t),
-          y: interpolate(p.y, dest.y, t)
-        };
-      });
-
-      const ballDist = dist(fromBall, toBall);
-      const ballT = ballDist === 0 ? 1 : Math.min(1, (elapsed * unitsPerMs) / ballDist);
-      if (ballT < 1) allDone = false;
+      const currPlayers = fromPlayers.map((p, idx) => ({
+        ...p,
+        x: interpolate(p.x, toPlayers[idx].x, t),
+        y: interpolate(p.y, toPlayers[idx].y, t)
+      }));
       const currBall = {
-        x: interpolate(fromBall.x, toBall.x, ballT),
-        y: interpolate(fromBall.y, toBall.y, ballT)
+        x: interpolate(fromBall.x, toBall.x, t),
+        y: interpolate(fromBall.y, toBall.y, t)
       };
 
       updateTokenPositions(currPlayers, currBall);
-      if (!allDone) {
+      if (t < 1) {
         animInterval = requestAnimationFrame(step);
       } else {
         animInterval = null;
@@ -1495,6 +1545,37 @@ async function ensureHtml2Canvas() {
   return window.html2canvas;
 }
 
+function downloadBlobFile(blob, fileName) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    a.remove();
+    URL.revokeObjectURL(url);
+  }, 30000);
+}
+
+async function convertWebmToMp4ViaServer(webmBlob) {
+  const res = await fetch('/api/convert-webm-to-mp4', {
+    method: 'POST',
+    headers: { 'Content-Type': 'video/webm' },
+    body: webmBlob
+  });
+  if (!res.ok) {
+    let detail = '';
+    try {
+      const err = await res.json();
+      detail = err && (err.detail || err.error) ? ` ${err.detail || err.error}` : '';
+    } catch (_) {}
+    throw new Error(`Fallo la conversion en servidor.${detail}`);
+  }
+  return res.blob();
+}
+
 async function exportVideo() {
   const pitch = document.getElementById('pitch');
   if (!pitch) return alert('No se encontro el campo.');
@@ -1519,13 +1600,6 @@ async function exportVideo() {
     return;
   }
 
-  // Abrir una pestana de previsualizacion inmediatamente para evitar bloqueos de popup
-  const previewWindow = window.open('', '_blank');
-  if (previewWindow) {
-    previewWindow.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Exportando video...</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:12px;justify-items:center}p{color:#aab3c2;margin:0}</style></head><body><h1>Procesando video</h1><p>Espera unos segundos, se abrira la previsualizacion automaticamente.</p></body></html>`);
-    previewWindow.document.close();
-  }
-
   // Crear un canvas temporal para capturar cada frame
   const width = Math.max(1, Math.round(pitch.clientWidth || pitch.offsetWidth));
   const height = Math.max(1, Math.round(pitch.clientHeight || pitch.offsetHeight));
@@ -1544,54 +1618,76 @@ async function exportVideo() {
     'video/webm;codecs=vp8',
     'video/webm'
   ];
-  const mp4Type = mp4Types.find(t => MediaRecorder.isTypeSupported(t)) || '';
-  let mimeType = mp4Type;
-  if (!mimeType) {
-    const fallbackWebm = webmTypes.find(t => MediaRecorder.isTypeSupported(t)) || '';
-    if (!fallbackWebm) {
-      alert('Tu navegador no soporta exportacion de video MP4/WebM con MediaRecorder.');
-      return;
-    }
-    const allowWebm = confirm('Este navegador no permite exportar en MP4. ¿Quieres exportar en WEBM?');
-    if (!allowWebm) return;
-    mimeType = fallbackWebm;
-  }
-
   // Capturar el stream del canvas
   const stream = canvas.captureStream(30); // 30 fps
-  const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+  let mimeType = '';
+  let recorder = null;
+  const tryCreateRecorder = (type) => {
+    try {
+      if (!type) return new MediaRecorder(stream);
+      return new MediaRecorder(stream, { mimeType: type });
+    } catch (_) {
+      return null;
+    }
+  };
+  for (const type of mp4Types) {
+    if (MediaRecorder.isTypeSupported(type)) {
+      const r = tryCreateRecorder(type);
+      if (r) {
+        recorder = r;
+        mimeType = type;
+        break;
+      }
+    }
+  }
+  if (!recorder) {
+    for (const type of webmTypes) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        const r = tryCreateRecorder(type);
+        if (r) {
+          recorder = r;
+          mimeType = type;
+          break;
+        }
+      }
+    }
+  }
+  if (!recorder) {
+    recorder = tryCreateRecorder('');
+  }
+  if (!recorder) {
+    alert('Tu navegador no soporta exportacion de video con MediaRecorder.');
+    return;
+  }
+  if (!mimeType || mimeType.includes('webm')) {
+    alert('Tu navegador no permite exportar en MP4 directamente. Se descargara en WEBM.');
+  }
   let chunks = [];
-  let videoUrl = '';
-  let previewUrl = '';
   recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-  recorder.onstop = () => {
+  recorder.onstop = async () => {
     if (!chunks.length) {
       alert('No se genero contenido de video. Prueba de nuevo.');
       return;
     }
 
     const blobType = mimeType || 'video/webm';
-    const blob = new Blob(chunks, { type: blobType });
-    videoUrl = URL.createObjectURL(blob);
-    const ext = blobType.includes('webm') ? 'webm' : 'mp4';
-    const fileName = `pizarra-tactica.${ext}`;
+    const recordedBlob = new Blob(chunks, { type: blobType });
 
-    // Descargar automáticamente el video generado
-    const autoDownload = document.createElement('a');
-    autoDownload.href = videoUrl;
-    autoDownload.download = fileName;
-    autoDownload.style.display = 'none';
-    document.body.appendChild(autoDownload);
-    autoDownload.click();
-    setTimeout(() => document.body.removeChild(autoDownload), 200);
-    // Opcional: mostrar alerta de éxito
-    alert('El video se ha descargado correctamente.');
+    if (blobType.includes('mp4')) {
+      downloadBlobFile(recordedBlob, 'pizarra-tactica.mp4');
+      alert('El video MP4 se ha descargado correctamente.');
+      return;
+    }
 
-    // Liberar recursos con margen suficiente para descarga/reproduccion.
-    setTimeout(() => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      URL.revokeObjectURL(videoUrl);
-    }, 10 * 60 * 1000);
+    try {
+      const mp4Blob = await convertWebmToMp4ViaServer(recordedBlob);
+      downloadBlobFile(mp4Blob, 'pizarra-tactica.mp4');
+      alert('El video MP4 se ha descargado correctamente.');
+    } catch (error) {
+      console.error(error);
+      downloadBlobFile(recordedBlob, 'pizarra-tactica.webm');
+      alert('No se pudo convertir a MP4 en servidor. Se ha descargado WEBM como respaldo.');
+    }
   };
 
   // Guardar estado actual
