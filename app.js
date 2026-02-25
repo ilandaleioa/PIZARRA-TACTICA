@@ -1397,9 +1397,14 @@ function playAnimation() {
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
-  // Siempre comenzar desde el primer slide y poner el balón en los pies del portero
+  // Restaurar posiciones de partida de jugadores y balón
+  if (state.slides[0]) {
+    state.players = JSON.parse(JSON.stringify(state.slides[0].players));
+    state.ball = { ...state.slides[0].ball };
+    applyBallPosition();
+    renderPlayers();
+  }
   goToSlide(0, false);
-  placeBallAtMyGoalkeeperFeet();
   let i = 1;
 
   // Nueva animacion progresiva
