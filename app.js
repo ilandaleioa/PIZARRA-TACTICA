@@ -93,60 +93,8 @@ function isLight(color) {
 
 // Devuelve true si el color es claro, false si es oscuro
 // html2canvas debe estar incluido por CDN en index.html si se usa en el navegador
+// NOTA: La funcion exportVideo principal esta definida mas abajo junto a ensureHtml2Canvas.
 
-async function exportVideo() {
-  const pitch = document.getElementById('pitch');
-  if (!pitch) return alert('No se encontro el campo.');
-  const total = state.slides.length;
-  if (total < 2) return alert('Necesitas al menos 2 fotogramas para exportar el video.');
-
-  // Comprobar compatibilidad de MediaRecorder y captureStream
-  const isMediaRecorderSupported = typeof window.MediaRecorder !== 'undefined';
-  const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream;
-  if (!isMediaRecorderSupported || !isCaptureStreamSupported) {
-    if (confirm('Tu navegador no soporta la grabacion de video. ¿Quieres descargar los fotogramas como imagenes?')) {
-      exportFramesAsImages();
-    } else {
-      alert('La exportacion de video solo funciona en Chrome o Edge.');
-    }
-    return;
-  }
-
-  // Crear un canvas temporal para capturar cada frame
-  const width = pitch.offsetWidth;
-  const height = pitch.offsetHeight;
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
-  // Capturar el stream del canvas
-  const stream = canvas.captureStream(30); // 30 fps
-  const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-  let chunks = [];
-  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-  recorder.onstop = () => {
-    const blob = new Blob(chunks, { type: 'video/webm' });
-    const url = URL.createObjectURL(blob);
-    // Abrir el video en una nueva pestana
-    window.open(url, '_blank');
-    // Tambien crear un enlace de descarga en la nueva pestana
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-  };
-
-  recorder.start();
-
-  for (let i = 0; i < total; i++) {
-    // Renderizar el slide actual en el DOM
-    await renderSlide(i);
-    // Capturar el contenido HTML como imagen usando html2canvas
-    const image = await html2canvas(pitch);
-    ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(image, 0, 0, width, height);
-    await new Promise(res => setTimeout(res, 1000 / 30)); // 30 fps
-  }
-
-  recorder.stop();
-}
 const LANGS = {
   es: {
     plantilla:'PLANTILLA',
@@ -1558,14 +1506,50 @@ async function exportVideo() {
     return;
   }
 
-  // Abrir una pestana de previsualizacion inmediatamente para evitar bloqueos de popup
+  // Abrir una pestana de previsualizacion con barra de progreso
   const previewWindow = window.open('', '_blank');
   if (previewWindow) {
-    previewWindow.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Exportando video...</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:24px;display:grid;gap:12px;justify-items:center}p{color:#aab3c2;margin:0}</style></head><body><h1>Procesando video</h1><p>Espera unos segundos, se abrira la previsualizacion automaticamente.</p></body></html>`);
+    previewWindow.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Exportando video...</title><style>
+      body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:48px 24px;display:flex;flex-direction:column;align-items:center;gap:16px}
+      h1{margin:0;font-size:1.6rem}
+      .status{color:#aab3c2;margin:0;font-size:1rem}
+      .progress-wrap{width:min(400px,80vw);height:22px;background:#222;border-radius:11px;overflow:hidden;margin-top:8px}
+      .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#2e7d32,#66bb6a);border-radius:11px;transition:width .2s}
+      .pct{font-size:.85rem;color:#66bb6a;margin-top:4px}
+    </style></head><body>
+      <h1 id="title">Capturando fotogramas...</h1>
+      <p class="status" id="status">Preparando...</p>
+      <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
+      <span class="pct" id="pct">0%</span>
+    </body></html>`);
     previewWindow.document.close();
   }
+  const updateProgress = (phase, current, max) => {
+    if (!previewWindow || previewWindow.closed) return;
+    try {
+      const pct = Math.round((current / max) * 100);
+      const bar = previewWindow.document.getElementById('bar');
+      const pctEl = previewWindow.document.getElementById('pct');
+      const title = previewWindow.document.getElementById('title');
+      const status = previewWindow.document.getElementById('status');
+      if (bar) bar.style.width = pct + '%';
+      if (pctEl) pctEl.textContent = pct + '%';
+      if (phase === 'capture') {
+        if (title) title.textContent = 'Capturando fotogramas...';
+        if (status) status.textContent = `Fotograma ${current} de ${max}`;
+      } else if (phase === 'compose') {
+        if (title) title.textContent = 'Componiendo video...';
+        if (status) status.textContent = `Escribiendo fotograma ${current} de ${max}`;
+      } else if (phase === 'done') {
+        if (title) title.textContent = 'Video listo!';
+        if (status) status.textContent = 'Descarga iniciada automaticamente.';
+        if (bar) bar.style.width = '100%';
+        if (pctEl) pctEl.textContent = '100%';
+      }
+    } catch(_) {}
+  };
 
-  // Crear un canvas temporal para capturar cada frame
+  // Crear un canvas temporal para componer cada frame
   const width = Math.max(1, Math.round(pitch.clientWidth || pitch.offsetWidth));
   const height = Math.max(1, Math.round(pitch.clientHeight || pitch.offsetHeight));
   const canvas = document.createElement('canvas');
@@ -1573,29 +1557,26 @@ async function exportVideo() {
   canvas.height = height;
   const ctx = canvas.getContext('2d');
 
-  const mp4Types = [
-    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
-    'video/mp4;codecs=h264,aac',
-    'video/mp4'
-  ];
   const webmTypes = [
     'video/webm;codecs=vp9',
     'video/webm;codecs=vp8',
     'video/webm'
   ];
-  // Capturar el stream del canvas
-  const stream = canvas.captureStream(30); // 30 fps
+  // Usar captureStream(30) para captura automatica a 30fps
+  const FPS = 30;
+  const FRAME_MS = 1000 / FPS;
+  const stream = canvas.captureStream(FPS);
   let mimeType = '';
   let recorder = null;
   const tryCreateRecorder = (type) => {
     try {
-      if (!type) return new MediaRecorder(stream);
-      return new MediaRecorder(stream, { mimeType: type });
+      if (!type) return new MediaRecorder(stream, { videoBitsPerSecond: 2500000 });
+      return new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 2500000 });
     } catch (_) {
       return null;
     }
   };
-  for (const type of mp4Types) {
+  for (const type of webmTypes) {
     if (MediaRecorder.isTypeSupported(type)) {
       const r = tryCreateRecorder(type);
       if (r) {
@@ -1606,79 +1587,41 @@ async function exportVideo() {
     }
   }
   if (!recorder) {
-    for (const type of webmTypes) {
-      if (MediaRecorder.isTypeSupported(type)) {
-        const r = tryCreateRecorder(type);
-        if (r) {
-          recorder = r;
-          mimeType = type;
-          break;
-        }
-      }
-    }
-  }
-  if (!recorder) {
     recorder = tryCreateRecorder('');
   }
   if (!recorder) {
     alert('Tu navegador no soporta exportacion de video con MediaRecorder.');
+    if (previewWindow && !previewWindow.closed) previewWindow.close();
     return;
   }
-  if (!mimeType || mimeType.includes('webm')) {
-    alert('Tu navegador no permite exportar en MP4 directamente. Se descargara en WEBM.');
-  }
+
   let chunks = [];
-  let videoUrl = '';
-  let previewUrl = '';
-  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-  recorder.onstop = () => {
-    if (!chunks.length) {
-      alert('No se genero contenido de video. Prueba de nuevo.');
-      return;
-    }
-
-    const blobType = mimeType || 'video/webm';
-    const blob = new Blob(chunks, { type: blobType });
-    videoUrl = URL.createObjectURL(blob);
-    const ext = blobType.includes('webm') ? 'webm' : 'mp4';
-    const fileName = `pizarra-tactica.${ext}`;
-
-    // Descargar automáticamente el video generado
-    const autoDownload = document.createElement('a');
-    autoDownload.href = videoUrl;
-    autoDownload.download = fileName;
-    autoDownload.style.display = 'none';
-    document.body.appendChild(autoDownload);
-    autoDownload.click();
-    setTimeout(() => document.body.removeChild(autoDownload), 200);
-    // Opcional: mostrar alerta de éxito
-    alert('El video se ha descargado correctamente.');
-
-    // Liberar recursos con margen suficiente para descarga/reproduccion.
-    setTimeout(() => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      URL.revokeObjectURL(videoUrl);
-    }, 10 * 60 * 1000);
-  };
+  const recordingDone = new Promise(resolve => {
+    recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    recorder.onstop = () => resolve();
+  });
 
   // Guardar estado actual
   const prevSlide = state.currentSlide;
   const prevPlayers = JSON.parse(JSON.stringify(state.players));
   const prevBall = { ...state.ball };
   const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
-  const waitPaint = async (n = 2) => {
-    for (let k = 0; k < n; k++) {
-      await new Promise(res => requestAnimationFrame(() => res()));
-    }
-  };
+  // Numero de frames a mantener cada slide estatico (30 fps * speed en segundos)
+  const framesPerSlide = Math.max(1, Math.round((speed / 1000) * FPS));
+  // Frames para la transicion entre slides
+  const transitionFrames = Math.max(1, Math.round((speed * 0.75 / 1000) * FPS));
+
+  const lerp = (a, b, t) => a + (b - a) * t;
+
   try {
     document.body.classList.add('exporting-video');
-    let i = 0;
-    recorder.start();
-    for (; i < total; i++) {
+
+    // ─── FASE 1: Pre-capturar todos los fotogramas con html2canvas ───
+    const capturedFrames = [];
+    for (let i = 0; i < total; i++) {
       goToSlide(i, false);
-      await waitPaint(2);
-      // Renderizar el pitch en el canvas temporal
+      // Esperar dos repaints para que el DOM se actualice completamente
+      await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
       const frame = await html2canvas(pitch, {
         backgroundColor: '#0f3d0f',
         useCORS: true,
@@ -1691,21 +1634,151 @@ async function exportVideo() {
         scrollY: -window.scrollY,
         logging: false,
       });
-      ctx.clearRect(0, 0, width, height);
-      ctx.drawImage(frame, 0, 0, width, height);
-      await new Promise(res => setTimeout(res, speed));
+      capturedFrames.push(frame);
+      updateProgress('capture', i + 1, total);
     }
+
+    // Tambien capturar frames de transicion (posiciones intermedias)
+    const transitionCaptures = [];
+    for (let i = 0; i < total - 1; i++) {
+      const fromSlide = state.slides[i];
+      const toSlide = state.slides[i + 1];
+      const fromPlayers = fromSlide.players || fromSlide;
+      const toPlayers = toSlide.players || toSlide;
+      const fromBall = fromSlide.ball || { x: 50, y: 50 };
+      const toBall = toSlide.ball || { x: 50, y: 50 };
+      const interpFrames = [];
+
+      for (let f = 1; f < transitionFrames; f++) {
+        const t = f / transitionFrames;
+        // Interpolar posiciones de jugadores en el DOM
+        const interpPlayers = fromPlayers.map((p, idx) => ({
+          ...p,
+          x: lerp(p.x, toPlayers[idx].x, t),
+          y: lerp(p.y, toPlayers[idx].y, t),
+        }));
+        const interpBall = {
+          x: lerp(fromBall.x, toBall.x, t),
+          y: lerp(fromBall.y, toBall.y, t),
+        };
+        // Aplicar posiciones al DOM
+        updateTokenPositions(interpPlayers, interpBall);
+        await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+        const frame = await html2canvas(pitch, {
+          backgroundColor: '#0f3d0f',
+          useCORS: true,
+          scale: 1,
+          width,
+          height,
+          x: 0,
+          y: 0,
+          scrollX: -window.scrollX,
+          scrollY: -window.scrollY,
+          logging: false,
+        });
+        interpFrames.push(frame);
+      }
+      transitionCaptures.push(interpFrames);
+      updateProgress('capture', total + i + 1, total + (total - 1));
+    }
+
+    // ─── FASE 2: Componer video pintando frames en el canvas ───
+    // Pintar un frame inicial negro para arrancar el stream
+    ctx.fillStyle = '#0f3d0f';
+    ctx.fillRect(0, 0, width, height);
+    recorder.start(100); // recoger datos cada 100ms para evitar chunks vacios
+    // Breve pausa para que el recorder arranque
+    await new Promise(res => setTimeout(res, 150));
+
+    const totalComposeSteps = capturedFrames.length + transitionCaptures.length;
+    let composeStep = 0;
+
+    for (let i = 0; i < capturedFrames.length; i++) {
+      // Mantener este frame estatico durante framesPerSlide
+      for (let f = 0; f < framesPerSlide; f++) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(capturedFrames[i], 0, 0, width, height);
+        await new Promise(res => setTimeout(res, FRAME_MS));
+      }
+      composeStep++;
+      updateProgress('compose', composeStep, totalComposeSteps);
+
+      // Transicion interpolada al siguiente slide
+      if (i < capturedFrames.length - 1 && transitionCaptures[i]) {
+        const interpFrames = transitionCaptures[i];
+        for (let f = 0; f < interpFrames.length; f++) {
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(interpFrames[f], 0, 0, width, height);
+          await new Promise(res => setTimeout(res, FRAME_MS));
+        }
+        composeStep++;
+        updateProgress('compose', composeStep, totalComposeSteps);
+      }
+    }
+
+    // Pausa final de ~0.5s para que el ultimo frame sea visible
+    for (let f = 0; f < Math.round(FPS * 0.5); f++) {
+      ctx.drawImage(capturedFrames[capturedFrames.length - 1], 0, 0, width, height);
+      await new Promise(res => setTimeout(res, FRAME_MS));
+    }
+
     recorder.stop();
+    await recordingDone;
+
+    // ─── FASE 3: Descargar ───
+    if (!chunks.length) {
+      alert('No se genero contenido de video. Prueba de nuevo.');
+      if (previewWindow && !previewWindow.closed) previewWindow.close();
+      return;
+    }
+    const blobType = mimeType || 'video/webm';
+    const blob = new Blob(chunks, { type: blobType });
+    const videoUrl = URL.createObjectURL(blob);
+    const fileName = 'pizarra-tactica.webm';
+
+    // Descargar automaticamente
+    const autoDownload = document.createElement('a');
+    autoDownload.href = videoUrl;
+    autoDownload.download = fileName;
+    autoDownload.style.display = 'none';
+    document.body.appendChild(autoDownload);
+    autoDownload.click();
+    setTimeout(() => document.body.removeChild(autoDownload), 200);
+
+    updateProgress('done', 1, 1);
+
+    // Mostrar previsualizacion con reproductor en la ventana
+    if (previewWindow && !previewWindow.closed) {
+      try {
+        previewWindow.document.body.innerHTML = `
+          <h1 style="margin:0;font-size:1.6rem">Video exportado</h1>
+          <video id="vid" controls autoplay loop style="max-width:90vw;max-height:70vh;border-radius:8px;margin-top:12px"></video>
+          <a id="dl" download="${fileName}" style="color:#4fc3f7;text-decoration:none;padding:10px 24px;background:#1565C0;border-radius:6px;font-weight:bold;margin-top:12px;cursor:pointer">Descargar video</a>
+          <p style="color:#aab3c2;margin-top:8px;font-size:.9rem">El archivo <strong>${fileName}</strong> se ha descargado automaticamente.</p>`;
+        // Asignar blob directamente al video para evitar problemas cross-origin
+        const vid = previewWindow.document.getElementById('vid');
+        const dl = previewWindow.document.getElementById('dl');
+        if (vid) vid.src = videoUrl;
+        if (dl) dl.href = videoUrl;
+      } catch(_) {}
+    }
+
+    // Liberar recursos despues de un margen
+    setTimeout(() => URL.revokeObjectURL(videoUrl), 10 * 60 * 1000);
+
   } catch (error) {
     if (recorder.state !== 'inactive') recorder.stop();
     alert('Error al exportar el video. Intentalo de nuevo.');
     console.error(error);
+    if (previewWindow && !previewWindow.closed) previewWindow.close();
   } finally {
     document.body.classList.remove('exporting-video');
     // Restaurar estado
     goToSlide(prevSlide, false);
     state.players = prevPlayers;
     state.ball = prevBall;
+    applyBallPosition();
+    renderPlayers();
   }
 }
 
