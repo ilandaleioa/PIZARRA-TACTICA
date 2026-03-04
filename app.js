@@ -1557,7 +1557,11 @@ async function exportVideo() {
   canvas.height = height;
   const ctx = canvas.getContext('2d');
 
-  const webmTypes = [
+  // Priorizar MP4 (H.264) para descarga directa sin conversion
+  const codecTypes = [
+    'video/mp4;codecs=avc1,opus',
+    'video/mp4;codecs=avc1',
+    'video/mp4',
     'video/webm;codecs=vp9',
     'video/webm;codecs=vp8',
     'video/webm'
@@ -1576,7 +1580,7 @@ async function exportVideo() {
       return null;
     }
   };
-  for (const type of webmTypes) {
+  for (const type of codecTypes) {
     if (MediaRecorder.isTypeSupported(type)) {
       const r = tryCreateRecorder(type);
       if (r) {
@@ -1731,10 +1735,11 @@ async function exportVideo() {
       if (previewWindow && !previewWindow.closed) previewWindow.close();
       return;
     }
+    const isMP4 = mimeType.includes('mp4');
     const blobType = mimeType || 'video/webm';
     const blob = new Blob(chunks, { type: blobType });
     const videoUrl = URL.createObjectURL(blob);
-    const fileName = 'pizarra-tactica.webm';
+    const fileName = isMP4 ? 'pizarra-tactica.mp4' : 'pizarra-tactica.webm';
 
     // Descargar automaticamente
     const autoDownload = document.createElement('a');
