@@ -265,7 +265,7 @@ function setLang(lang) {
 }
 
 // ─── SQUAD DATA ──────────────────────────────
-const CDN = 'https://cdn.athletic-club.eus/imagenes/player_images/medium/';
+const CDN = 'https://cdn.athletic-club.eus/imagenes/player_images/large/';
 const SQUAD = {
   portero: [
     { id: 'US', name: 'Unai Simon',  abbr: 'U.S', dorsal: 1,  edad: 27, photo: CDN+'unai-simon-mendibil_L.png' },
@@ -1805,58 +1805,89 @@ function setupBall() {
   applyBallPosition();
 
   let offsetX, offsetY, pitchRect;
+  let rafId = null;
+  let pendingX = 0, pendingY = 0;
 
+  // Actualiza posicion en el proximo frame para maxima fluidez
+  function scheduleUpdate() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      state.ball.x = Math.min(Math.max(pendingX, 1), 99);
+      state.ball.y = Math.min(Math.max(pendingY, 1), 99);
+      ball.style.left = state.ball.x + '%';
+      ball.style.top  = state.ball.y + '%';
+    });
+  }
+
+  // ─── MOUSE ─────────────
   ball.addEventListener('mousedown', e => {
     e.preventDefault();
     e.stopPropagation();
+    saveHistory();
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
-    offsetX = e.clientX - (state.ball.x / 100 * pitchRect.width  + pitchRect.left);
-    offsetY = e.clientY - (state.ball.y / 100 * pitchRect.height + pitchRect.top);
+    // Calcular offset desde la posicion renderizada real del elemento
+    const ballRect = ball.getBoundingClientRect();
+    const ballCenterX = ballRect.left + ballRect.width  / 2;
+    const ballCenterY = ballRect.top  + ballRect.height / 2;
+    offsetX = e.clientX - ballCenterX;
+    offsetY = e.clientY - ballCenterY;
     ball.classList.add('dragging');
 
     function onMove(mv) {
-      const x = ((mv.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
-      const y = ((mv.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
-      state.ball.x = Math.min(Math.max(x, 1), 99);
-      state.ball.y = Math.min(Math.max(y, 1), 99);
-      ball.style.left = state.ball.x + '%';
-      ball.style.top  = state.ball.y + '%';
+      mv.preventDefault();
+      pendingX = ((mv.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
+      pendingY = ((mv.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
+      scheduleUpdate();
     }
     function onUp() {
       ball.classList.remove('dragging');
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      // Aplicar posicion final de forma inmediata
+      state.ball.x = Math.min(Math.max(pendingX, 1), 99);
+      state.ball.y = Math.min(Math.max(pendingY, 1), 99);
+      ball.style.left = state.ball.x + '%';
+      ball.style.top  = state.ball.y + '%';
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onUp);
     }
-    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mousemove', onMove, { passive: false });
     document.addEventListener('mouseup', onUp);
   });
 
+  // ─── TOUCH ─────────────
   ball.addEventListener('touchstart', e => {
     e.preventDefault();
     e.stopPropagation();
+    saveHistory();
     pitchRect = document.getElementById('pitch').getBoundingClientRect();
     const t = e.touches[0];
-    const elLeft = state.ball.x / 100 * pitchRect.width  + pitchRect.left;
-    const elTop  = state.ball.y / 100 * pitchRect.height + pitchRect.top;
-    offsetX = t.clientX - elLeft;
-    offsetY = t.clientY - elTop;
+    const ballRect = ball.getBoundingClientRect();
+    const ballCenterX = ballRect.left + ballRect.width  / 2;
+    const ballCenterY = ballRect.top  + ballRect.height / 2;
+    offsetX = t.clientX - ballCenterX;
+    offsetY = t.clientY - ballCenterY;
     ball.classList.add('dragging');
 
-    ball.ontouchmove = mv => {
+    function onTouchMove(mv) {
       mv.preventDefault();
       const tc = mv.touches[0];
-      const x = ((tc.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
-      const y = ((tc.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
-      state.ball.x = Math.min(Math.max(x, 1), 99);
-      state.ball.y = Math.min(Math.max(y, 1), 99);
+      pendingX = ((tc.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
+      pendingY = ((tc.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
+      scheduleUpdate();
+    }
+    function onTouchEnd() {
+      ball.classList.remove('dragging');
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      state.ball.x = Math.min(Math.max(pendingX, 1), 99);
+      state.ball.y = Math.min(Math.max(pendingY, 1), 99);
       ball.style.left = state.ball.x + '%';
       ball.style.top  = state.ball.y + '%';
-    };
-    ball.ontouchend = () => {
-      ball.classList.remove('dragging');
-      ball.ontouchmove = null;
-      ball.ontouchend  = null;
-    };
+      ball.removeEventListener('touchmove', onTouchMove);
+      ball.removeEventListener('touchend', onTouchEnd);
+    }
+    ball.addEventListener('touchmove', onTouchMove, { passive: false });
+    ball.addEventListener('touchend', onTouchEnd);
   }, { passive: false });
 }
 

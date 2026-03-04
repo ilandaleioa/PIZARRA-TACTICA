@@ -341,7 +341,7 @@ html, body {
   grid-column: 1 / span 2;
   grid-row: 2;
   width: 100%;
-  height: 96px;
+  height: 130px;
   border-radius: 8px;
   overflow: hidden;
   background: var(--surface2);
@@ -353,6 +353,10 @@ html, body {
   object-fit: cover;
   object-position: top center;
   display: block;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .pc-info {
@@ -848,6 +852,7 @@ html, body {
   user-select: none;
   z-index: 50;
   pointer-events: auto;
+  touch-action: none;
   transition: left var(--anim-dur, .7s) ease, top var(--anim-dur, .7s) ease, transform .12s, box-shadow .12s;
 }
 .ball-token:hover {
@@ -858,7 +863,9 @@ html, body {
   cursor: grabbing;
   transform: translate(-50%, -50%) scale(1.25);
   box-shadow: 0 6px 18px rgba(0,0,0,1);
-  transition: none;
+  z-index: 200;
+  transition: transform .08s ease-out, box-shadow .08s ease-out;
+  will-change: left, top;
 }
 
 /* ─── PLAYER TOKENS ────────────────────────── */
@@ -1530,6 +1537,10 @@ body.light .mbn-btn.active { color: var(--accent); }
   object-position: top center;
   border-radius: 50%;
   display: block;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 .mas-dorsal {
   position: absolute;
