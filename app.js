@@ -1836,9 +1836,9 @@ async function exportVideo() {
       }
     }
 
-    // Pausa final de ~0.5s
+    // Pausa final de ~3s para que el ultimo frame se mantenga visible
     const lastSd = slideData[totalSlides - 1];
-    for (let f = 0; f < Math.round(FPS * 0.5); f++) {
+    for (let f = 0; f < Math.round(FPS * 3); f++) {
       drawScene(bgImage, lastSd.players, lastSd.ball);
       await emitFrame();
     }
