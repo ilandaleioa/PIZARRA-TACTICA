@@ -1506,32 +1506,27 @@ async function exportVideo() {
     return;
   }
 
-  // Abrir una pestana de previsualizacion con barra de progreso
-  const previewWindow = window.open('', '_blank');
-  if (previewWindow) {
-    previewWindow.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Exportando video...</title><style>
-      body{font-family:Segoe UI,Arial,sans-serif;background:#111;color:#eee;margin:0;padding:48px 24px;display:flex;flex-direction:column;align-items:center;gap:16px}
-      h1{margin:0;font-size:1.6rem}
-      .status{color:#aab3c2;margin:0;font-size:1rem}
-      .progress-wrap{width:min(400px,80vw);height:22px;background:#222;border-radius:11px;overflow:hidden;margin-top:8px}
-      .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#2e7d32,#66bb6a);border-radius:11px;transition:width .2s}
-      .pct{font-size:.85rem;color:#66bb6a;margin-top:4px}
-    </style></head><body>
-      <h1 id="title">Capturando fotogramas...</h1>
-      <p class="status" id="status">Preparando...</p>
-      <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
-      <span class="pct" id="pct">0%</span>
-    </body></html>`);
-    previewWindow.document.close();
+  // Overlay de progreso en la misma pagina (sin abrir ventana nueva = mas rapido)
+  let overlay = document.getElementById('export-progress-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'export-progress-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-family:Segoe UI,Arial,sans-serif;color:#eee';
+    overlay.innerHTML = `<h2 id="exp-title" style="margin:0;font-size:1.4rem">Capturando fotogramas...</h2>
+      <p id="exp-status" style="color:#aab3c2;margin:0;font-size:.95rem">Preparando...</p>
+      <div style="width:min(360px,80vw);height:18px;background:#222;border-radius:9px;overflow:hidden"><div id="exp-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#2e7d32,#66bb6a);border-radius:9px;transition:width .15s"></div></div>
+      <span id="exp-pct" style="font-size:.85rem;color:#66bb6a">0%</span>`;
+    document.body.appendChild(overlay);
+  } else {
+    overlay.style.display = 'flex';
   }
   const updateProgress = (phase, current, max) => {
-    if (!previewWindow || previewWindow.closed) return;
     try {
       const pct = Math.round((current / max) * 100);
-      const bar = previewWindow.document.getElementById('bar');
-      const pctEl = previewWindow.document.getElementById('pct');
-      const title = previewWindow.document.getElementById('title');
-      const status = previewWindow.document.getElementById('status');
+      const bar = document.getElementById('exp-bar');
+      const pctEl = document.getElementById('exp-pct');
+      const title = document.getElementById('exp-title');
+      const status = document.getElementById('exp-status');
       if (bar) bar.style.width = pct + '%';
       if (pctEl) pctEl.textContent = pct + '%';
       if (phase === 'capture') {
@@ -1542,11 +1537,15 @@ async function exportVideo() {
         if (status) status.textContent = `Escribiendo fotograma ${current} de ${max}`;
       } else if (phase === 'done') {
         if (title) title.textContent = 'Video listo!';
-        if (status) status.textContent = 'Descarga iniciada automaticamente.';
+        if (status) status.textContent = 'Descarga completada.';
         if (bar) bar.style.width = '100%';
         if (pctEl) pctEl.textContent = '100%';
       }
     } catch(_) {}
+  };
+  const removeOverlay = () => {
+    const ov = document.getElementById('export-progress-overlay');
+    if (ov) ov.style.display = 'none';
   };
 
   // Crear un canvas temporal para componer cada frame
@@ -1708,7 +1707,7 @@ async function exportVideo() {
     // ─── FASE 3: Descargar ───
     if (!chunks.length) {
       alert('No se genero contenido de video. Prueba de nuevo.');
-      if (previewWindow && !previewWindow.closed) previewWindow.close();
+      removeOverlay();
       return;
     }
     const isMP4 = mimeType.includes('mp4');
@@ -1717,7 +1716,7 @@ async function exportVideo() {
     const videoUrl = URL.createObjectURL(blob);
     const fileName = isMP4 ? 'pizarra-tactica.mp4' : 'pizarra-tactica.webm';
 
-    // Descargar automaticamente
+    // Descarga directa sin preview
     const autoDownload = document.createElement('a');
     autoDownload.href = videoUrl;
     autoDownload.download = fileName;
@@ -1727,31 +1726,17 @@ async function exportVideo() {
     setTimeout(() => document.body.removeChild(autoDownload), 200);
 
     updateProgress('done', 1, 1);
-
-    // Mostrar previsualizacion con reproductor en la ventana
-    if (previewWindow && !previewWindow.closed) {
-      try {
-        previewWindow.document.body.innerHTML = `
-          <h1 style="margin:0;font-size:1.6rem">Video exportado</h1>
-          <video id="vid" controls autoplay loop style="max-width:90vw;max-height:70vh;border-radius:8px;margin-top:12px"></video>
-          <a id="dl" download="${fileName}" style="color:#4fc3f7;text-decoration:none;padding:10px 24px;background:#1565C0;border-radius:6px;font-weight:bold;margin-top:12px;cursor:pointer">Descargar video</a>
-          <p style="color:#aab3c2;margin-top:8px;font-size:.9rem">El archivo <strong>${fileName}</strong> se ha descargado automaticamente.</p>`;
-        // Asignar blob directamente al video para evitar problemas cross-origin
-        const vid = previewWindow.document.getElementById('vid');
-        const dl = previewWindow.document.getElementById('dl');
-        if (vid) vid.src = videoUrl;
-        if (dl) dl.href = videoUrl;
-      } catch(_) {}
-    }
+    // Cerrar overlay tras breve pausa
+    setTimeout(() => removeOverlay(), 1500);
 
     // Liberar recursos despues de un margen
-    setTimeout(() => URL.revokeObjectURL(videoUrl), 10 * 60 * 1000);
+    setTimeout(() => URL.revokeObjectURL(videoUrl), 60 * 1000);
 
   } catch (error) {
     if (recorder.state !== 'inactive') recorder.stop();
     alert('Error al exportar el video. Intentalo de nuevo.');
     console.error(error);
-    if (previewWindow && !previewWindow.closed) previewWindow.close();
+    removeOverlay();
   } finally {
     document.body.classList.remove('exporting-video');
     // Restaurar estado
