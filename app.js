@@ -213,7 +213,7 @@ function setLang(lang) {
 }
 
 // ─── SQUAD DATA ──────────────────────────────
-const CDN = 'https://cdn.athletic-club.eus/imagenes/player_images/medium/';
+const CDN = 'https://cdn.athletic-club.eus/imagenes/player_images/large/';
 const SQUAD = {
   portero: [
     { id: 'US', name: 'Unai Simon',  abbr: 'U.S', dorsal: 1,  edad: 27, photo: CDN+'unai-simon-mendibil_L.png' },
@@ -223,14 +223,14 @@ const SQUAD = {
     { id: 'GO', name: 'Gorosabel',  abbr: 'GOR', dorsal: 2,  edad: 28, photo: CDN+'andoni-gorosabel-espinosa_L.png' },
     { id: 'VI', name: 'Vivian',     abbr: 'VIV', dorsal: 3,  edad: 25, photo: CDN+'daniel-vivian-moreno_L.png' },
     { id: 'PR', name: 'Paredes',    abbr: 'PAR', dorsal: 4,  edad: 23, photo: CDN+'aitor-paredes-casamichana_L.png' },
-    { id: 'YE', name: 'Yeray',      abbr: 'YER', dorsal: 5,  edad: 30, photo: CDN+'yeray-alvarez-lopez.png' },
+    { id: 'YE', name: 'Yeray',      abbr: 'YER', dorsal: 5,  edad: 30, photo: CDN+'yeray-alvarez-lopez_L.png' },
     { id: 'AR', name: 'Areso',      abbr: 'ARE', dorsal: 12, edad: 26, photo: CDN+'jesus-areso-blanco_L.png' },
     { id: 'EG', name: 'Egiluz',     abbr: 'EGI', dorsal: 13, edad: 22, photo: CDN+'unai-egiluz-arroyo_L.png' },
     { id: 'LA', name: 'Laporte',    abbr: 'LAP', dorsal: 14, edad: 31, photo: CDN+'aymeric-laporte.png' },
     { id: 'IL', name: 'I. Lekue',   abbr: 'LEK', dorsal: 15, edad: 32, photo: CDN+'inigo-lekue-martinez_L.png' },
     { id: 'YU', name: 'Yuri',       abbr: 'YUR', dorsal: 17, edad: 34, photo: CDN+'yuri-berchiche-izeta_L.png' },
     { id: 'AD', name: 'Adama',      abbr: 'ADA', dorsal: 19, edad: 25, photo: CDN+'adama-boiro-boiro_L.png' },
-    { id: 'KM', name: 'Monreal',    abbr: 'MON', dorsal: 47, edad: 20, photo: CDN+'iker-monreal-agundez_L.png' },
+    { id: 'KM', name: 'Monreal',    abbr: 'MON', dorsal: 47, edad: 20, photo: CDN+'iker-monreal-agundez.png' },
   ],
   medio: [
     { id: 'VE', name: 'Vesga',          abbr: 'VES', dorsal: 6,  edad: 32, photo: CDN+'mikel-vesga-arruti_L.png' },
@@ -240,8 +240,8 @@ const SQUAD = {
     { id: 'UG', name: 'Unai Gomez',      abbr: 'U.G', dorsal: 20, edad: 26, photo: CDN+'unai-gomez-etxebarria_L.png' },
     { id: 'PD', name: 'Prados',          abbr: 'PRA', dorsal: 24, edad: 24, photo: CDN+'benat-prados-diaz_L.png' },
     { id: 'RE', name: 'Rego',            abbr: 'REG', dorsal: 30, edad: 22, photo: CDN+'alejandro-rego-mora_L.png' },
-    { id: 'IS', name: 'Ibon Sanchez',    abbr: 'IBN', dorsal: 35, edad: 21, photo: CDN+'ibon-sanchez-ocen_L.png' },
-    { id: 'SE', name: 'Selton',          abbr: 'SEL', dorsal: 44, edad: 22, photo: CDN+'selton-sued-sanchez-camilo_L.png' },
+    { id: 'IS', name: 'Ibon Sanchez',    abbr: 'IBN', dorsal: 35, edad: 21, photo: CDN+'ibon-sanchez-ocen.png' },
+    { id: 'SE', name: 'Selton',          abbr: 'SEL', dorsal: 44, edad: 22, photo: CDN+'selton-sued-sanchez-camilo.png' },
   ],
   delantero: [
     { id: 'BE', name: 'Berenguer',    abbr: 'BER', dorsal: 7,  edad: 30, photo: CDN+'alejandro-berenguer-remiro_L.png' },
@@ -252,8 +252,8 @@ const SQUAD = {
     { id: 'NS', name: 'Nico Serrano', abbr: 'N.S', dorsal: 22, edad: 22, photo: CDN+'nico-serrano-galdeano_L.png' },
     { id: 'NA', name: 'Navarro',      abbr: 'NAV', dorsal: 23, edad: 24, photo: CDN+'robert-navarro-munoz_L.png' },
     { id: 'IZ', name: 'Izeta',        abbr: 'IZE', dorsal: 25, edad: 21, photo: CDN+'urko-iruretagoiena-lertxundi_L.png' },
-    { id: 'HI', name: 'Hierro',       abbr: 'HIE', dorsal: 31, edad: 21, photo: CDN+'asier-hierro-campo_L.png' },
-    { id: 'ED', name: 'Eder',         abbr: 'EDE', dorsal: 49, edad: 20, photo: CDN+'eder-garcia-altuna_L.png' },
+    { id: 'HI', name: 'Hierro',       abbr: 'HIE', dorsal: 31, edad: 21, photo: CDN+'asier-hierro-campo.png' },
+    { id: 'ED', name: 'Eder',         abbr: 'EDE', dorsal: 49, edad: 20, photo: CDN+'eder-garcia-garcia.png' },
   ],
 };
 
