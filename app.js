@@ -772,20 +772,40 @@ function makeDraggable(el, playerData) {
     offsetY = t.clientY - elCenterY;
     el.classList.add('dragging');
 
+    // Track whether the finger actually moved (to distinguish tap from drag)
+    const startX = t.clientX;
+    const startY = t.clientY;
+    let hasMoved = false;
+    const TAP_THRESHOLD = 10; // px
+
     el.ontouchmove = mv => {
       mv.preventDefault();
       const tc = mv.touches[0];
-      const x = ((tc.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
-      const y = ((tc.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
-      playerData.x = Math.min(Math.max(x, 1), 99);
-      playerData.y = Math.min(Math.max(y, yMin), yMax);
-      el.style.left = playerData.x + '%';
-      el.style.top  = playerData.y + '%';
+      // Check if movement exceeds tap threshold
+      if (!hasMoved) {
+        const dx = Math.abs(tc.clientX - startX);
+        const dy = Math.abs(tc.clientY - startY);
+        if (dx > TAP_THRESHOLD || dy > TAP_THRESHOLD) {
+          hasMoved = true;
+        }
+      }
+      if (hasMoved) {
+        const x = ((tc.clientX - offsetX - pitchRect.left) / pitchRect.width)  * 100;
+        const y = ((tc.clientY - offsetY - pitchRect.top)  / pitchRect.height) * 100;
+        playerData.x = Math.min(Math.max(x, 1), 99);
+        playerData.y = Math.min(Math.max(y, yMin), yMax);
+        el.style.left = playerData.x + '%';
+        el.style.top  = playerData.y + '%';
+      }
     };
     el.ontouchend = () => {
       el.classList.remove('dragging');
       el.ontouchmove = null;
       el.ontouchend  = null;
+      // If it was a tap (no significant movement) and it's my team, select and open assign modal
+      if (!hasMoved && playerData.team === 'my') {
+        selectToken(playerData.id);
+      }
     };
   }, { passive: false });
 }
