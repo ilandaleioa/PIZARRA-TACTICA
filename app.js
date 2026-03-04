@@ -1566,10 +1566,10 @@ async function exportVideo() {
     'video/webm;codecs=vp8',
     'video/webm'
   ];
-  // Usar captureStream(30) para captura automatica a 30fps
+  // Usar captureStream(0) para control manual de frames (mas rapido)
   const FPS = 30;
   const FRAME_MS = 1000 / FPS;
-  const stream = canvas.captureStream(FPS);
+  const stream = canvas.captureStream(0);
   let mimeType = '';
   let recorder = null;
   const tryCreateRecorder = (type) => {
@@ -1620,11 +1620,11 @@ async function exportVideo() {
   try {
     document.body.classList.add('exporting-video');
 
-    // ─── FASE 1: Pre-capturar todos los fotogramas con html2canvas ───
+    // ─── FASE 1: Pre-capturar solo los slides estaticos con html2canvas ───
+    // (Las transiciones se generan por crossfade en canvas, sin html2canvas)
     const capturedFrames = [];
     for (let i = 0; i < total; i++) {
       goToSlide(i, false);
-      // Esperar dos repaints para que el DOM se actualice completamente
       await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
       const frame = await html2canvas(pitch, {
         backgroundColor: '#0f3d0f',
@@ -1642,88 +1642,64 @@ async function exportVideo() {
       updateProgress('capture', i + 1, total);
     }
 
-    // Tambien capturar frames de transicion (posiciones intermedias)
-    const transitionCaptures = [];
-    for (let i = 0; i < total - 1; i++) {
-      const fromSlide = state.slides[i];
-      const toSlide = state.slides[i + 1];
-      const fromPlayers = fromSlide.players || fromSlide;
-      const toPlayers = toSlide.players || toSlide;
-      const fromBall = fromSlide.ball || { x: 50, y: 50 };
-      const toBall = toSlide.ball || { x: 50, y: 50 };
-      const interpFrames = [];
-
-      for (let f = 1; f < transitionFrames; f++) {
-        const t = f / transitionFrames;
-        // Interpolar posiciones de jugadores en el DOM
-        const interpPlayers = fromPlayers.map((p, idx) => ({
-          ...p,
-          x: lerp(p.x, toPlayers[idx].x, t),
-          y: lerp(p.y, toPlayers[idx].y, t),
-        }));
-        const interpBall = {
-          x: lerp(fromBall.x, toBall.x, t),
-          y: lerp(fromBall.y, toBall.y, t),
-        };
-        // Aplicar posiciones al DOM
-        updateTokenPositions(interpPlayers, interpBall);
-        await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
-        const frame = await html2canvas(pitch, {
-          backgroundColor: '#0f3d0f',
-          useCORS: true,
-          scale: 1,
-          width,
-          height,
-          x: 0,
-          y: 0,
-          scrollX: -window.scrollX,
-          scrollY: -window.scrollY,
-          logging: false,
-        });
-        interpFrames.push(frame);
-      }
-      transitionCaptures.push(interpFrames);
-      updateProgress('capture', total + i + 1, total + (total - 1));
-    }
-
     // ─── FASE 2: Componer video pintando frames en el canvas ───
-    // Pintar un frame inicial negro para arrancar el stream
+    // Usar captureStream(0) + requestFrame() para no esperar en tiempo real
+    const videoTrack = stream.getVideoTracks()[0];
+    const canRequestFrame = videoTrack && typeof videoTrack.requestFrame === 'function';
+    // Pintar un frame inicial para arrancar el stream
     ctx.fillStyle = '#0f3d0f';
     ctx.fillRect(0, 0, width, height);
-    recorder.start(100); // recoger datos cada 100ms para evitar chunks vacios
+    recorder.start(100);
     // Breve pausa para que el recorder arranque
     await new Promise(res => setTimeout(res, 150));
 
-    const totalComposeSteps = capturedFrames.length + transitionCaptures.length;
+    const totalComposeSteps = capturedFrames.length * 2 - 1; // slides + transiciones
     let composeStep = 0;
 
+    // Funcion helper para emitir un frame al recorder
+    const emitFrame = async () => {
+      if (canRequestFrame) {
+        videoTrack.requestFrame();
+        // Micro-pausa para que el encoder procese el frame
+        await new Promise(res => setTimeout(res, 2));
+      } else {
+        await new Promise(res => setTimeout(res, FRAME_MS));
+      }
+    };
+
     for (let i = 0; i < capturedFrames.length; i++) {
-      // Mantener este frame estatico durante framesPerSlide
+      // Mantener este slide estatico durante framesPerSlide
       for (let f = 0; f < framesPerSlide; f++) {
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(capturedFrames[i], 0, 0, width, height);
-        await new Promise(res => setTimeout(res, FRAME_MS));
+        await emitFrame();
       }
       composeStep++;
       updateProgress('compose', composeStep, totalComposeSteps);
 
-      // Transicion interpolada al siguiente slide
-      if (i < capturedFrames.length - 1 && transitionCaptures[i]) {
-        const interpFrames = transitionCaptures[i];
-        for (let f = 0; f < interpFrames.length; f++) {
+      // Transicion crossfade al siguiente slide (sin html2canvas)
+      if (i < capturedFrames.length - 1) {
+        for (let f = 1; f <= transitionFrames; f++) {
+          const t = f / transitionFrames;
           ctx.clearRect(0, 0, width, height);
-          ctx.drawImage(interpFrames[f], 0, 0, width, height);
-          await new Promise(res => setTimeout(res, FRAME_MS));
+          // Dibujar frame actual
+          ctx.globalAlpha = 1 - t;
+          ctx.drawImage(capturedFrames[i], 0, 0, width, height);
+          // Superponer frame siguiente con opacidad creciente
+          ctx.globalAlpha = t;
+          ctx.drawImage(capturedFrames[i + 1], 0, 0, width, height);
+          ctx.globalAlpha = 1;
+          await emitFrame();
         }
         composeStep++;
         updateProgress('compose', composeStep, totalComposeSteps);
       }
     }
 
-    // Pausa final de ~0.5s para que el ultimo frame sea visible
+    // Pausa final de ~0.5s
     for (let f = 0; f < Math.round(FPS * 0.5); f++) {
       ctx.drawImage(capturedFrames[capturedFrames.length - 1], 0, 0, width, height);
-      await new Promise(res => setTimeout(res, FRAME_MS));
+      await emitFrame();
     }
 
     recorder.stop();
