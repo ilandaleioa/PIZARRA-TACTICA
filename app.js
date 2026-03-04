@@ -2034,13 +2034,11 @@ function renderMobileAssignList() {
     { key: 'medio', label: 'Medio' },
     { key: 'delantero', label: 'Delantero' }
   ];
-  positions.forEach(pos => {
-    const group = document.createElement('div');
-    group.className = 'mas-player-group';
-    const groupLabel = document.createElement('div');
-    groupLabel.className = 'mas-group-label';
-    groupLabel.textContent = pos.label;
-    group.appendChild(groupLabel);
+  // Filter by selected tab
+  const filteredPositions = positions.filter(pos => pos.key === mobileAssignTab);
+  filteredPositions.forEach(pos => {
+    const grid = document.createElement('div');
+    grid.className = 'mas-player-grid';
     SQUAD[pos.key].forEach(player => {
       const isAssigned = Object.values(state.assignedPlayers).includes(player.id);
       const card = document.createElement('div');
@@ -2077,9 +2075,9 @@ function renderMobileAssignList() {
           assignPlayer(player, pos.key);
         });
       }
-      group.appendChild(card);
+      grid.appendChild(card);
     });
-    container.appendChild(group);
+    container.appendChild(grid);
   });
 }
 // --- TOGGLE MOBILE PLANTILLA ---
