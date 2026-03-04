@@ -1218,6 +1218,7 @@ body.light .mbn-btn.active { color: var(--accent); }
 
   /* ── MAIN LAYOUT ────────────────────────── */
   .main-layout {
+    height: calc(100vh - var(--nav-h) - clamp(50px, 7vh, 62px));
     height: calc(100dvh - var(--nav-h) - clamp(50px, 7vh, 62px));
     flex-direction: row;
     overflow: hidden;
@@ -1230,7 +1231,8 @@ body.light .mbn-btn.active { color: var(--accent); }
     bottom: 56px; left: 0; right: 0;
     top: auto;
     width: 100% !important;
-    max-height: 65dvh;
+    max-height: 75vh;
+    max-height: 75dvh;
     z-index: 160;
     transform: translateY(105%);
     transition: transform .3s cubic-bezier(.4,0,.2,1);
@@ -1238,14 +1240,29 @@ body.light .mbn-btn.active { color: var(--accent); }
     border-right: none;
     flex-direction: column;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
+    padding-bottom: 12px;
   }
   .sidebar-left.mobile-open { transform: translateY(0); }
 
   /* Hide sidebar tab buttons on mobile (use bottom nav) */
   .sidebar-tab { display: none; }
-  /* Always show the pizarra section inside the drawer */
-  #section-pizarra { display: flex !important; flex-direction: column; flex: 1; }
+  /* Always show the pizarra section inside the drawer — override .hidden */
+  #section-pizarra,
+  #section-pizarra.hidden,
+  .sidebar-left #section-pizarra { display: flex !important; flex-direction: column; flex: 0 0 auto; }
+  /* Ensure all children inside the pizarra section are visible */
+  #section-pizarra .section-header,
+  #section-pizarra .formation-select,
+  #section-pizarra .color-palette,
+  #section-pizarra .vis-toggle,
+  #section-pizarra .action-row,
+  #section-pizarra #my-team,
+  #section-pizarra #rival-team {
+    display: flex !important;
+  }
+  #section-pizarra .formation-select { display: block !important; }
 
   /* ── RIGHT SIDEBAR → bottom drawer ─────── */
   .sidebar-right {
@@ -1253,15 +1270,18 @@ body.light .mbn-btn.active { color: var(--accent); }
     bottom: 56px; left: 0; right: 0;
     top: auto;
     width: 100% !important;
-    max-height: 65dvh;
+    max-height: 75vh;
+    max-height: 75dvh;
     z-index: 160;
     transform: translateY(105%);
     transition: transform .3s cubic-bezier(.4,0,.2,1);
     border-top: 2px solid var(--accent2);
     border-left: none;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
+    padding-bottom: 12px;
   }
   .sidebar-right.mobile-open { transform: translateY(0); }
 
@@ -1316,7 +1336,7 @@ body.light .mbn-btn.active { color: var(--accent); }
   }
 
   /* ── SIDEBAR SECTION ────────────────────── */
-  .sidebar-section { padding: 14px 12px; }
+  .sidebar-section { padding: 14px 12px; flex: 0 0 auto !important; }
 
   /* ── PLAYER ROWS (enlarge touch) ────────── */
   .player-row { padding: clamp(9px, 2.5vw, 14px) clamp(8px, 2vw, 14px); }

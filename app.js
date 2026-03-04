@@ -1282,11 +1282,14 @@ function renderSlideChips() {
 function addSlide() {
   saveHistory();
   // Save current slide positions before adding new one
-  state.slides[state.currentSlide] = {
-    players: JSON.parse(JSON.stringify(state.players)),
-    ball: { ...state.ball },
-  };
-  // Deep clone current positions for the new slide
+  // Proteger slide 0: siempre conserva la posicion de partida
+  if (state.currentSlide > 0) {
+    state.slides[state.currentSlide] = {
+      players: JSON.parse(JSON.stringify(state.players)),
+      ball: { ...state.ball },
+    };
+  }
+  // Crear nuevo slide con las posiciones actuales
   state.slides.push({
     players: JSON.parse(JSON.stringify(state.players)),
     ball: { ...state.ball },
@@ -1327,7 +1330,8 @@ function updateTokenPositions(players, ball) {
 
 function goToSlide(idx, animate) {
   // Save current state before switching
-  if (!animate) {
+  // Proteger slide 0: siempre conserva la posicion de partida
+  if (!animate && state.currentSlide > 0) {
     state.slides[state.currentSlide] = {
       players: JSON.parse(JSON.stringify(state.players)),
       ball: { ...state.ball },
@@ -1359,10 +1363,13 @@ function playAnimation() {
   const total = state.slides.length;
   if (total < 2) return;
   // Guardar el slide actual antes de animar
-  state.slides[state.currentSlide] = {
-    players: JSON.parse(JSON.stringify(state.players)),
-    ball: { ...state.ball },
-  };
+  // Proteger slide 0: siempre conserva la posicion de partida
+  if (state.currentSlide > 0) {
+    state.slides[state.currentSlide] = {
+      players: JSON.parse(JSON.stringify(state.players)),
+      ball: { ...state.ball },
+    };
+  }
   const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
   const dur = Math.round(speed * 0.75);
   document.documentElement.style.setProperty('--anim-dur', dur + 'ms');
