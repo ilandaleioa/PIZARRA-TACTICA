@@ -1329,6 +1329,7 @@ function goToSlide(idx, animate) {
 function playAnimation() {
   // Si ya esta reproduciendo, detener
   if (animInterval) {
+    clearTimeout(animInterval);
     cancelAnimationFrame(animInterval);
     animInterval = null;
     const btn = document.getElementById('btn-play');
@@ -1428,7 +1429,11 @@ function playAnimation() {
       playNext();
     });
   }
-  playNext();
+  // Pausar en el primer frame antes de iniciar la animación
+  animInterval = setTimeout(() => {
+    animInterval = null;
+    playNext();
+  }, speed);
 }
 
 
