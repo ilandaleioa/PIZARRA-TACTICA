@@ -1490,9 +1490,14 @@ async function exportVideo() {
 
   // Comprobar compatibilidad de MediaRecorder y captureStream
   const isMediaRecorderSupported = typeof window.MediaRecorder !== 'undefined';
-  const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream;
+  const isCaptureStreamSupported = !!HTMLCanvasElement.prototype.captureStream || !!HTMLCanvasElement.prototype.mozCaptureStream;
+  const isIOS_early = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   if (!isMediaRecorderSupported || !isCaptureStreamSupported) {
-    if (confirm('Tu navegador no soporta la grabacion de video. ¿Quieres descargar los fotogramas como imagenes?')) {
+    if (isIOS_early) {
+      if (confirm('iOS tiene soporte limitado para video. ¿Quieres descargar los fotogramas como imagenes PNG?')) {
+        exportFramesAsImages();
+      }
+    } else if (confirm('Tu navegador no soporta la grabacion de video. ¿Quieres descargar los fotogramas como imagenes?')) {
       exportFramesAsImages();
     } else {
       alert('La exportacion de video solo funciona en Chrome o Edge.');
@@ -1561,40 +1566,59 @@ async function exportVideo() {
     'video/mp4;codecs=avc1,opus',
     'video/mp4;codecs=avc1',
     'video/mp4',
+    'video/webm;codecs=vp9,opus',
     'video/webm;codecs=vp9',
+    'video/webm;codecs=vp8,opus',
     'video/webm;codecs=vp8',
     'video/webm'
   ];
-  // Usar captureStream(0) para control manual de frames (mas rapido)
   const FPS = 30;
   const FRAME_MS = 1000 / FPS;
-  const stream = canvas.captureStream(0);
+  // En movil captureStream(0) puede fallar; intentar con FPS fijo como fallback
+  let stream = null;
+  let useManualFrames = false;
+  try {
+    stream = canvas.captureStream(0);
+    const vt = stream.getVideoTracks()[0];
+    useManualFrames = !!(vt && typeof vt.requestFrame === 'function');
+  } catch (_) {}
+  if (!stream) {
+    try { stream = canvas.captureStream(FPS); } catch(_) {}
+  }
+  if (!stream) {
+    try { stream = canvas.captureStream(); } catch(_) {}
+  }
+  if (!stream) {
+    alert('Tu navegador no soporta la captura de video desde canvas.');
+    removeOverlay();
+    return;
+  }
+
   let mimeType = '';
   let recorder = null;
   const tryCreateRecorder = (type) => {
     try {
-      if (!type) return new MediaRecorder(stream, { videoBitsPerSecond: 2500000 });
-      return new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 2500000 });
+      const opts = { videoBitsPerSecond: 2500000 };
+      if (type) opts.mimeType = type;
+      return new MediaRecorder(stream, opts);
     } catch (_) {
       return null;
     }
   };
   for (const type of codecTypes) {
-    if (MediaRecorder.isTypeSupported(type)) {
-      const r = tryCreateRecorder(type);
-      if (r) {
-        recorder = r;
-        mimeType = type;
-        break;
+    try {
+      if (MediaRecorder.isTypeSupported(type)) {
+        const r = tryCreateRecorder(type);
+        if (r) { recorder = r; mimeType = type; break; }
       }
-    }
+    } catch(_) {}
   }
   if (!recorder) {
     recorder = tryCreateRecorder('');
   }
   if (!recorder) {
     alert('Tu navegador no soporta exportacion de video con MediaRecorder.');
-    if (previewWindow && !previewWindow.closed) previewWindow.close();
+    removeOverlay();
     return;
   }
 
@@ -1611,83 +1635,179 @@ async function exportVideo() {
   const speed = parseInt(document.getElementById('anim-speed')?.value || '1000', 10);
   // Numero de frames a mantener cada slide estatico (30 fps * speed en segundos)
   const framesPerSlide = Math.max(1, Math.round((speed / 1000) * FPS));
-  // Frames para la transicion entre slides
-  const transitionFrames = Math.max(1, Math.round((speed * 0.75 / 1000) * FPS));
+  // Frames para la transicion entre slides (movimiento progresivo)
+  const transitionFrames = Math.max(6, Math.round((speed * 0.75 / 1000) * FPS));
 
   const lerp = (a, b, t) => a + (b - a) * t;
+  // Ease-in-out para movimiento mas natural
+  const easeInOut = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+  // ─── Funcion para dibujar un token de jugador en canvas ───
+  const tokenRadius = Math.round(Math.min(width, height) * 0.028);
+  const ballRadius = Math.round(Math.min(width, height) * 0.012);
+  const fontSize = Math.round(tokenRadius * 0.9);
+  const nameFontSize = Math.round(tokenRadius * 0.55);
+
+  function drawToken(cx, cy, p) {
+    const isMyGK = p.team === 'my' && p.jersey === 1;
+    const isRivalGK = p.team === 'rival' && p.jersey === 1;
+    const color = isMyGK ? GK_COLOR : isRivalGK ? RIVAL_GK_COLOR : (p.team === 'my' ? state.myColor : state.rivalColor);
+    const textColor = isLight(color) ? '#111' : '#fff';
+
+    // Sombra
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = 6;
+    ctx.shadowOffsetY = 2;
+    // Circulo
+    ctx.beginPath();
+    ctx.arc(cx, cy, tokenRadius, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+    // Borde
+    ctx.beginPath();
+    ctx.arc(cx, cy, tokenRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = p.name ? '#000' : lighten(color, 40);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Dorsal
+    ctx.fillStyle = textColor;
+    ctx.font = `900 ${fontSize}px "Segoe UI", Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.dorsal || p.jersey, cx, cy + 1);
+    // Nombre debajo (si tiene)
+    if (p.name) {
+      ctx.font = `700 ${nameFontSize}px "Segoe UI", Arial, sans-serif`;
+      ctx.fillStyle = '#fff';
+      ctx.shadowColor = 'rgba(0,0,0,1)';
+      ctx.shadowBlur = 4;
+      ctx.fillText(p.name, cx, cy + tokenRadius + nameFontSize + 2);
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function drawBall(cx, cy) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur = 6;
+    ctx.shadowOffsetY = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, ballRadius, 0, Math.PI * 2);
+    ctx.fillStyle = '#111';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawScene(bgImage, players, ball) {
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(bgImage, 0, 0, width, height);
+    // Dibujar balon
+    if (ball) {
+      drawBall(ball.x / 100 * width, ball.y / 100 * height);
+    }
+    // Dibujar jugadores (respetar visibilidad de equipos)
+    players.forEach(p => {
+      if (!teamVisible[p.team]) return;
+      drawToken(p.x / 100 * width, p.y / 100 * height, p);
+    });
+  }
 
   try {
     document.body.classList.add('exporting-video');
 
-    // ─── FASE 1: Pre-capturar solo los slides estaticos con html2canvas ───
-    // (Las transiciones se generan por crossfade en canvas, sin html2canvas)
-    const capturedFrames = [];
-    for (let i = 0; i < total; i++) {
-      goToSlide(i, false);
-      await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
-      const frame = await html2canvas(pitch, {
-        backgroundColor: '#0f3d0f',
-        useCORS: true,
-        scale: 1,
-        width,
-        height,
-        x: 0,
-        y: 0,
-        scrollX: -window.scrollX,
-        scrollY: -window.scrollY,
-        logging: false,
-      });
-      capturedFrames.push(frame);
-      updateProgress('capture', i + 1, total);
-    }
+    // ─── FASE 1: Capturar fondo del campo UNA SOLA VEZ (sin tokens ni balon) ───
+    updateProgress('capture', 0, 1);
+    const playersContainer = document.getElementById('players-container');
+    const ballToken = document.getElementById('ball-token');
+    const drawCanvas = document.getElementById('draw-canvas');
+    // Ocultar elementos moviles para capturar solo el fondo
+    if (playersContainer) playersContainer.style.visibility = 'hidden';
+    if (ballToken) ballToken.style.visibility = 'hidden';
+    if (drawCanvas) drawCanvas.style.visibility = 'hidden';
+    await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+    const bgImage = await html2canvas(pitch, {
+      backgroundColor: '#0f3d0f',
+      useCORS: true,
+      scale: 1,
+      width,
+      height,
+      x: 0,
+      y: 0,
+      scrollX: -window.scrollX,
+      scrollY: -window.scrollY,
+      logging: false,
+    });
+    // Restaurar visibilidad
+    if (playersContainer) playersContainer.style.visibility = '';
+    if (ballToken) ballToken.style.visibility = '';
+    if (drawCanvas) drawCanvas.style.visibility = '';
+    updateProgress('capture', 1, 1);
 
-    // ─── FASE 2: Componer video pintando frames en el canvas ───
-    // Usar captureStream(0) + requestFrame() para no esperar en tiempo real
+    // Recoger datos de posiciones de cada slide
+    const slideData = state.slides.map(s => ({
+      players: JSON.parse(JSON.stringify(s.players || s)),
+      ball: s.ball ? { ...s.ball } : { x: 50, y: 50 },
+    }));
+
+    // ─── FASE 2: Componer video con interpolacion real ───
     const videoTrack = stream.getVideoTracks()[0];
-    const canRequestFrame = videoTrack && typeof videoTrack.requestFrame === 'function';
-    // Pintar un frame inicial para arrancar el stream
+    const canRequestFrame = useManualFrames && videoTrack && typeof videoTrack.requestFrame === 'function';
     ctx.fillStyle = '#0f3d0f';
     ctx.fillRect(0, 0, width, height);
-    recorder.start(100);
-    // Breve pausa para que el recorder arranque
-    await new Promise(res => setTimeout(res, 150));
+    // En movil usar timeslice mayor para evitar chunks vacios
+    recorder.start();
+    await new Promise(res => setTimeout(res, 200));
 
-    const totalComposeSteps = capturedFrames.length * 2 - 1; // slides + transiciones
+    const totalSlides = slideData.length;
+    const totalComposeSteps = totalSlides + (totalSlides - 1); // holds + transitions
     let composeStep = 0;
 
-    // Funcion helper para emitir un frame al recorder
     const emitFrame = async () => {
       if (canRequestFrame) {
         videoTrack.requestFrame();
         // Micro-pausa para que el encoder procese el frame
         await new Promise(res => setTimeout(res, 2));
       } else {
+        // Sin requestFrame (movil): esperar el tiempo real del frame
+        // para que captureStream(FPS) capture el canvas actualizado
         await new Promise(res => setTimeout(res, FRAME_MS));
       }
     };
 
-    for (let i = 0; i < capturedFrames.length; i++) {
-      // Mantener este slide estatico durante framesPerSlide
+    for (let i = 0; i < totalSlides; i++) {
+      const sd = slideData[i];
+      // Mantener slide estatico
       for (let f = 0; f < framesPerSlide; f++) {
-        ctx.clearRect(0, 0, width, height);
-        ctx.drawImage(capturedFrames[i], 0, 0, width, height);
+        drawScene(bgImage, sd.players, sd.ball);
         await emitFrame();
       }
       composeStep++;
       updateProgress('compose', composeStep, totalComposeSteps);
 
-      // Transicion crossfade al siguiente slide (sin html2canvas)
-      if (i < capturedFrames.length - 1) {
+      // Transicion interpolada al siguiente slide
+      if (i < totalSlides - 1) {
+        const from = slideData[i];
+        const to = slideData[i + 1];
         for (let f = 1; f <= transitionFrames; f++) {
-          const t = f / transitionFrames;
-          ctx.clearRect(0, 0, width, height);
-          // Dibujar frame actual
-          ctx.globalAlpha = 1 - t;
-          ctx.drawImage(capturedFrames[i], 0, 0, width, height);
-          // Superponer frame siguiente con opacidad creciente
-          ctx.globalAlpha = t;
-          ctx.drawImage(capturedFrames[i + 1], 0, 0, width, height);
-          ctx.globalAlpha = 1;
+          const rawT = f / transitionFrames;
+          const t = easeInOut(rawT); // ease-in-out para suavidad
+          // Interpolar posiciones de jugadores
+          const interpPlayers = from.players.map((p, idx) => ({
+            ...p,
+            x: lerp(p.x, to.players[idx].x, t),
+            y: lerp(p.y, to.players[idx].y, t),
+            // Usar nombre/dorsal del slide destino si cambia
+            name: to.players[idx].name || p.name,
+            dorsal: to.players[idx].dorsal || p.dorsal,
+          }));
+          // Interpolar posicion del balon
+          const interpBall = {
+            x: lerp(from.ball.x, to.ball.x, t),
+            y: lerp(from.ball.y, to.ball.y, t),
+          };
+          drawScene(bgImage, interpPlayers, interpBall);
           await emitFrame();
         }
         composeStep++;
@@ -1696,8 +1816,9 @@ async function exportVideo() {
     }
 
     // Pausa final de ~0.5s
+    const lastSd = slideData[totalSlides - 1];
     for (let f = 0; f < Math.round(FPS * 0.5); f++) {
-      ctx.drawImage(capturedFrames[capturedFrames.length - 1], 0, 0, width, height);
+      drawScene(bgImage, lastSd.players, lastSd.ball);
       await emitFrame();
     }
 
@@ -1713,29 +1834,49 @@ async function exportVideo() {
     const isMP4 = mimeType.includes('mp4');
     const blobType = mimeType || 'video/webm';
     const blob = new Blob(chunks, { type: blobType });
-    const videoUrl = URL.createObjectURL(blob);
     const fileName = isMP4 ? 'pizarra-tactica.mp4' : 'pizarra-tactica.webm';
 
-    // Descarga directa sin preview
+    // Intentar descarga: en iOS usar navigator.share si esta disponible
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS && navigator.share && navigator.canShare) {
+      try {
+        const file = new File([blob], fileName, { type: blobType });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: 'Pizarra Tactica - Video' });
+          updateProgress('done', 1, 1);
+          setTimeout(() => removeOverlay(), 1500);
+          return;
+        }
+      } catch(shareErr) {
+        console.warn('Share API fallback:', shareErr);
+      }
+    }
+
+    // Descarga estandar (funciona en Android Chrome, escritorio, etc.)
+    const videoUrl = URL.createObjectURL(blob);
     const autoDownload = document.createElement('a');
     autoDownload.href = videoUrl;
     autoDownload.download = fileName;
     autoDownload.style.display = 'none';
     document.body.appendChild(autoDownload);
     autoDownload.click();
-    setTimeout(() => document.body.removeChild(autoDownload), 200);
+    setTimeout(() => document.body.removeChild(autoDownload), 300);
+
+    // Fallback para iOS donde <a download> no funciona: abrir en nueva pestana
+    if (isIOS) {
+      setTimeout(() => {
+        window.open(videoUrl, '_blank');
+      }, 500);
+    }
 
     updateProgress('done', 1, 1);
-    // Cerrar overlay tras breve pausa
     setTimeout(() => removeOverlay(), 1500);
-
-    // Liberar recursos despues de un margen
     setTimeout(() => URL.revokeObjectURL(videoUrl), 60 * 1000);
 
   } catch (error) {
-    if (recorder.state !== 'inactive') recorder.stop();
-    alert('Error al exportar el video. Intentalo de nuevo.');
-    console.error(error);
+    try { if (recorder && recorder.state !== 'inactive') recorder.stop(); } catch(_) {}
+    alert('Error al exportar el video: ' + (error.message || error) + '. Intentalo de nuevo.');
+    console.error('Export video error:', error);
     removeOverlay();
   } finally {
     document.body.classList.remove('exporting-video');
