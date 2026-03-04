@@ -16,6 +16,14 @@
     {
       "src": "app.js",
       "use": "@vercel/static"
+    },
+    {
+      "src": "escudo.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "ACFC Blanco Cuadrado.png.png",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
