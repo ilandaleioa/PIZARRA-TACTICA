@@ -1306,6 +1306,8 @@ function playAnimation() {
     animInterval = null;
     const btn = document.getElementById('btn-play');
     if (btn) { btn.innerHTML = '&#9654;'; btn.title = 'Reproducir'; btn.style.background = '#2e7d32'; }
+    // Restaurar transiciones CSS al detener
+    document.querySelectorAll('.player-token, .ball-token').forEach(el => el.style.transition = '');
     return;
   }
   const total = state.slides.length;
@@ -1324,6 +1326,11 @@ function playAnimation() {
   const btn = document.getElementById('btn-play');
   if (btn) { btn.innerHTML = '&#9646;&#9646;'; btn.title = 'Detener'; btn.style.background = '#b71c1c'; }
 
+  // Desactivar transiciones CSS para que el JS controle el movimiento frame a frame
+  document.querySelectorAll('.player-token, .ball-token').forEach(el => {
+    el.style.transition = 'none';
+  });
+
   // Ir al primer slide instantaneamente
   goToSlide(0, false);
   let i = 1;
@@ -1331,6 +1338,11 @@ function playAnimation() {
   // Nueva animacion progresiva
   function interpolate(a, b, t) {
     return a + (b - a) * t;
+  }
+
+  // Easing cubico suave para movimiento uniforme
+  function easeInOut(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
   function dist(a, b) {
@@ -1343,14 +1355,16 @@ function playAnimation() {
     const start = performance.now();
     const fromPlayers = JSON.parse(JSON.stringify(fromSlide.players));
     const toPlayers = JSON.parse(JSON.stringify(toSlide.players));
-    const fromBall = { ...fromSlide.ball };
-    const toBall = { ...toSlide.ball };
+    const fromBall = fromSlide.ball ? { ...fromSlide.ball } : { x: 50, y: 50 };
+    const toBall = toSlide.ball ? { ...toSlide.ball } : { x: 50, y: 50 };
 
     // Calcular la distancia máxima a recorrer (jugador o balón)
     let maxDist = 0;
     fromPlayers.forEach((p, idx) => {
-      const d = dist(p, toPlayers[idx]);
-      if (d > maxDist) maxDist = d;
+      if (toPlayers[idx]) {
+        const d = dist(p, toPlayers[idx]);
+        if (d > maxDist) maxDist = d;
+      }
     });
     const ballDist = dist(fromBall, toBall);
     if (ballDist > maxDist) maxDist = ballDist;
@@ -1363,16 +1377,17 @@ function playAnimation() {
     }
 
     // La duración será proporcional a la distancia máxima (velocidad constante)
-    const duration = Math.max(200, (maxDist / 20) * speed); // 20 = referencia de campo
+    const duration = Math.max(300, (maxDist / 20) * speed); // 20 = referencia de campo
 
     function step(now) {
       const elapsed = now - start;
-      const t = Math.min(1, elapsed / duration);
+      const rawT = Math.min(1, elapsed / duration);
+      const t = easeInOut(rawT); // easing cubico suave
 
       const currPlayers = fromPlayers.map((p, idx) => ({
         ...p,
-        x: interpolate(p.x, toPlayers[idx].x, t),
-        y: interpolate(p.y, toPlayers[idx].y, t)
+        x: interpolate(p.x, (toPlayers[idx] || p).x, t),
+        y: interpolate(p.y, (toPlayers[idx] || p).y, t)
       }));
       const currBall = {
         x: interpolate(fromBall.x, toBall.x, t),
@@ -1380,7 +1395,7 @@ function playAnimation() {
       };
 
       updateTokenPositions(currPlayers, currBall);
-      if (t < 1) {
+      if (rawT < 1) {
         animInterval = requestAnimationFrame(step);
       } else {
         animInterval = null;
@@ -1397,13 +1412,19 @@ function playAnimation() {
       if (btn) { btn.innerHTML = '&#9654;'; btn.title = 'Reproducir'; btn.style.background = '#2e7d32'; }
       // Quedarse en el ultimo fotograma
       goToSlide(total - 1, false);
+      // Restaurar transiciones CSS
+      document.querySelectorAll('.player-token, .ball-token').forEach(el => el.style.transition = '');
       return;
     }
     const fromSlide = state.slides[i - 1];
     const toSlide = state.slides[i];
     animateStep(fromSlide, toSlide, () => {
       i++;
-      playNext();
+      // Pausa breve en cada frame intermedio para que se vea la posicion
+      animInterval = setTimeout(() => {
+        animInterval = null;
+        playNext();
+      }, Math.round(speed * 0.3));
     });
   }
   // Pausar en el primer frame antes de iniciar la animación
